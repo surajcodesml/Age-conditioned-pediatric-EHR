@@ -1,0 +1,58 @@
+# Data artifacts (entire tree — raw, processed, embeddings, etc.)
+data/
+archive/
+
+# Columnar / binary tables (any path in repo)
+*.parquet
+*.paraquet
+*.feather
+*.arrow
+
+# Arrays & scientific dumps
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+
+# Model weights & training outputs
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# Compressed datasets / dumps
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+
+# Local databases
+*.duckdb
+*.sqlite
+*.sqlite3
+
+# Experiment trackers & run folders
+*.log
+wandb/
+mlruns/
+lightning_logs/
+outputs/
+runs/
+
+# External cloned repos/symlinks
+external/
+
+# Python caches/build
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Notebook/editor local files
+.ipynb_checkpoints/
+*.code-workspace
