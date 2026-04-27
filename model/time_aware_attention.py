@@ -53,6 +53,7 @@ class TimeAwareAttention(nn.Module):
         code_embeddings: torch.Tensor,
         delta_t: torch.Tensor,
         attention_mask: torch.Tensor,
+        debug_sample: bool = False,
     ) -> torch.Tensor:
         """
         Args:
@@ -75,13 +76,46 @@ class TimeAwareAttention(nn.Module):
         device, dtype = scores.device, scores.dtype
         causal = torch.tril(torch.ones((l, l), device=device, dtype=torch.bool))
         pad_mask = attention_mask.unsqueeze(1) & attention_mask.unsqueeze(2)
-        full_mask = causal.unsqueeze(0) & pad_mask
+        full_mask = pad_mask
 
         scores = scores.masked_fill(~full_mask, float("-inf"))
         attn = F.softmax(scores, dim=-1)
         attn = attn.masked_fill(~full_mask, 0.0)
+        if debug_sample:
+            with torch.no_grad():
+                eps = 1e-8
+                attn_valid = attn[attention_mask]
+                if attn_valid.numel() > 0:
+                    entropy = -(attn_valid * torch.log(attn_valid.clamp_min(eps))).sum(dim=-1)
+                    max_w = attn_valid.max(dim=-1).values
+                    print(
+                        f"[attn] entropy_mean={float(entropy.mean()):.3f} "
+                        f"max_w_mean={float(max_w.mean()):.3f} "
+                        f"collapse_frac={float((max_w > 0.9).float().mean()):.3f}",
+                        flush=True,
+                    )
+
+                w_valid = w[full_mask]
+                if w_valid.numel() > 0:
+                    print(
+                        f"[w(t)] mean={float(w_valid.mean()):.3f} "
+                        f"std={float(w_valid.std(unbiased=False)):.3f} "
+                        f"low_frac={float((w_valid < 0.1).float().mean()):.3f} "
+                        f"high_frac={float((w_valid > 0.9).float().mean()):.3f}",
+                        flush=True,
+                    )
 
         e = torch.bmm(attn, v)
+        if debug_sample:
+            with torch.no_grad():
+                e_valid = e[attention_mask]
+                if e_valid.numel() > 0:
+                    print(
+                        f"[e_out] mean_abs={float(e_valid.abs().mean()):.3f} "
+                        f"std={float(e_valid.std(unbiased=False)):.3f} "
+                        f"dead_frac={float((e_valid.abs() < 0.01).float().mean()):.3f}",
+                        flush=True,
+                    )
         return e
 
 
@@ -99,6 +133,7 @@ class MultiScaleTemporalAggregation(nn.Module):
         e: torch.Tensor,
         timestamps_days: torch.Tensor,
         attention_mask: torch.Tensor,
+        debug_sample: bool = False,
     ) -> torch.Tensor:
         """
         Args:
@@ -114,7 +149,8 @@ class MultiScaleTemporalAggregation(nn.Module):
         t_current = timestamps_days[batch_idx, lengths - 1]
 
         delta_to_current = torch.abs(t_current.unsqueeze(1) - timestamps_days)
-        log_delta = torch.log1p(delta_to_current)
+        #log_delta = torch.log1p(delta_to_current)
+        log_delta = torch.log1p(delta_to_current / 7.0)  # match collator's units
 
         relevance = torch.einsum("d, bld -> bl", self.q_base, e)
         w = self.temporal_weight(log_delta)
@@ -123,8 +159,29 @@ class MultiScaleTemporalAggregation(nn.Module):
         scores = scores.masked_fill(~attention_mask, float("-inf"))
         alpha = torch.softmax(scores, dim=-1)
         alpha = alpha.masked_fill(~attention_mask, 0.0)
+        if debug_sample:
+            with torch.no_grad():
+                eps = 1e-8
+                lengths_f = lengths.clamp(min=1).to(dtype=alpha.dtype)
+                alpha_peak_idx = alpha.argmax(dim=-1).to(dtype=alpha.dtype)
+                peak_rel_pos = alpha_peak_idx / lengths_f
+                
+                # Per-row entropy: alpha is [B, L], compute entropy along L then mean over B
+                row_entropy = -(alpha * torch.log(alpha.clamp_min(eps))).sum(dim=-1)  # [B]
+                print(
+                    f"[agg_alpha] entropy={float(row_entropy.mean()):.3f} "
+                    f"peak_rel_pos={float(peak_rel_pos.mean()):.3f}",
+                    flush=True,
+                )
 
         h = torch.einsum("bl, bld -> bd", alpha, e)
+        if debug_sample:
+            with torch.no_grad():
+                print(
+                    f"[h_repr] mean_abs={float(h.abs().mean()):.3f} "
+                    f"std={float(h.std(unbiased=False)):.3f}",
+                    flush=True,
+                )
         return h
 
 

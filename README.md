@@ -127,8 +127,8 @@ Core TALE-EHR pretraining components are now implemented end-to-end:
   - Full TALE-EHR model with frozen BGE table, temporal encoder, demographic/history projections,
     code predictor `f`, and intensity predictor `g`
 - `model/train.py`
-  - Pretraining loop (Algorithm 1 phase): focal code loss + temporal point-process loss,
-    AMP support, grad clipping, checkpointing, and dry-run mode
+  - Pretraining loop (Algorithm 1 phase): selectable code loss (`bce` default, optional `focal`) +
+    temporal point-process loss, AMP support, grad clipping, checkpointing, dry-run mode, and resume support
 
 ### Quick sanity checks
 
@@ -157,12 +157,47 @@ conda run -n ehr python model/train.py \
   --data_dir data/processed \
   --embedding_path data/processed/bge_embeddings.pt \
   --vocab_path data/processed/code_vocab.json \
-  --epochs 10 --batch_size 16 --lr 1e-4 --gamma_loss 1.0
+  --epochs 10 \
+  --batch_size 32 \
+  --num_workers 8 \
+  --use_tensorized \
+  --device cuda \
+  --code_loss bce \
+  --gamma_loss 500.0 \
+  --bce_pos_weight 0.0 \
+  --run_name run_full_bce_g500
+```
+
+### Resume an interrupted run
+
+```bash
+conda run -n ehr python -u model/train.py \
+  --epochs 10 \
+  --batch_size 32 \
+  --num_workers 8 \
+  --use_tensorized \
+  --data_dir data/processed \
+  --device cuda \
+  --code_loss bce \
+  --gamma_loss 500.0 \
+  --bce_pos_weight 0.0 \
+  --run_name run_20260427_152603 \
+  --resume_from checkpoints/run_20260427_152603/epoch_003.pt
 ```
 
 Notes:
 - If `val_events.parquet` is missing, training falls back to `test_events.parquet` for validation.
 - `delta_t` is the primary memory bottleneck; reduce `--batch_size` first if OOM occurs.
+- Each run writes:
+  - `checkpoints/<run_name>/train.log` (epoch summary lines)
+  - `checkpoints/<run_name>/console.log` (all stdout/stderr, including diagnostics prints)
+- On resume, logs append (they are not overwritten), and training restarts at `checkpoint_epoch + 1`.
+
+### Minimal diagnostic + stability notes
+
+- Code-prediction collapse was mitigated by making `bce` the default code loss and increasing `--gamma_loss` default to `500.0` so code-loss gradients are not starved by time loss.
+- Optional diagnostics in `model/time_aware_attention.py` and `model/tale_ehr.py` are sampled (~0.5% forward passes) and print compact stats for attention entropy/collapse, temporal weights, representation scale/dead activations, logits, and intensity.
+- Pause safely with `Ctrl+C`; avoid hard kill (`kill -9`). Resume from the latest completed `epoch_XXX.pt`.
 
 ## 3. Age-Conditioned Extension (TODO)
 

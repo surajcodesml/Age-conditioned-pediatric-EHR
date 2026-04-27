@@ -58,10 +58,14 @@ class TALEEHR(nn.Module):
             poly_degree=poly_degree,
         )
 
+        #self.demo_proj = nn.Sequential(nn.Linear(self.demo_dim, self.demo_hidden), nn.GELU())
+        #self.history_proj = nn.Sequential(nn.Linear(self.d_model, self.demo_hidden), nn.GELU())
+        #predictor_in = self.demo_hidden * 2
+        
         self.demo_proj = nn.Sequential(nn.Linear(self.demo_dim, self.demo_hidden), nn.GELU())
-        self.history_proj = nn.Sequential(nn.Linear(self.d_model, self.demo_hidden), nn.GELU())
+        self.history_proj = nn.Identity()  # don't compress history
+        predictor_in = self.d_model + self.demo_hidden  # 256 + 64 = 320
 
-        predictor_in = self.demo_hidden * 2
         self.code_predictor = nn.Sequential(
             nn.Linear(predictor_in, predictor_in),
             nn.GELU(),
@@ -78,6 +82,15 @@ class TALEEHR(nn.Module):
             nn.GELU(),
             nn.Linear(self.demo_hidden, 1),
         )
+        
+        # Initialize final code-predictor bias to the log-odds of the marginal
+        # positive rate (~0.04% = 1/30635 * mean_codes_per_visit ≈ 0.0004).
+        # This gives the model a free baseline; gradients then push
+        # patient-specific deviations on top of the bias instead of having to
+        # learn the marginal from scratch (which causes collapse).
+        with torch.no_grad():
+            final_code_layer = self.code_predictor[-1]
+            final_code_layer.bias.fill_(-7.0)
 
     def forward(self, batch: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
         code_indices = batch["code_indices"]
@@ -85,10 +98,11 @@ class TALEEHR(nn.Module):
         attention_mask = batch["attention_mask"]
         timestamps_days = batch["timestamps_days"]
         demographics = batch["demographics"]
+        debug_sample = bool(torch.rand(1, device=code_indices.device).item() < 0.005)
 
         code_embeddings = self.embedding_table[code_indices]
-        e = self.time_aware_attention(code_embeddings, delta_t, attention_mask)
-        h = self.temporal_aggregation(e, timestamps_days, attention_mask)
+        e = self.time_aware_attention(code_embeddings, delta_t, attention_mask, debug_sample=debug_sample)
+        h = self.temporal_aggregation(e, timestamps_days, attention_mask, debug_sample=debug_sample)
 
         b = code_indices.shape[0]
         device = code_indices.device
@@ -101,7 +115,24 @@ class TALEEHR(nn.Module):
         combined = torch.cat([h_proj, d_proj], dim=-1)
 
         code_logits = self.code_predictor(combined)
-        intensity = F.softplus(self.intensity_predictor(combined).squeeze(-1))
+        if debug_sample:
+            with torch.no_grad():
+                print(
+                    f"[logits] mean={float(code_logits.mean()):.3f} "
+                    f"std={float(code_logits.std(unbiased=False)):.3f} "
+                    f"min={float(code_logits.min()):.3f} "
+                    f"max={float(code_logits.max()):.3f} "
+                    f"sigmoid_mean={float(torch.sigmoid(code_logits).mean()):.5f}",
+                    flush=True,
+                )
+        intensity = self.intensity_predictor(combined).squeeze(-1)
+        if debug_sample:
+            with torch.no_grad():
+                print(
+                    f"[intensity] mean={float(intensity.mean()):.3f} "
+                    f"std={float(intensity.std(unbiased=False)):.3f}",
+                    flush=True,
+                )
         return {"code_logits": code_logits, "intensity": intensity, "h": h}
 
 
