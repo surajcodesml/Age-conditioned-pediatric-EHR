@@ -133,6 +133,9 @@ def pretrain(
     code_loss_name: str = "bce",
     bce_pos_weight: float = 0.0,
     resume_from: str | Path | None = None,
+    model_variant: str = "baseline",
+    age_conditioning_mode: str | None = None,
+    age_diag_every: int = 200,
 ) -> None:
     device_t = torch.device(device)
     model.to(device_t)
@@ -146,6 +149,21 @@ def pretrain(
         if not resume_path.exists():
             raise FileNotFoundError(f"Resume checkpoint not found: {resume_path}")
         ckpt = torch.load(resume_path, map_location=device_t)
+        ckpt_variant = ckpt.get("model_variant", "baseline")
+        current_variant = getattr(model, "_variant_tag", "baseline")
+        if ckpt_variant != current_variant:
+            raise ValueError(
+                f"Checkpoint variant '{ckpt_variant}' does not match current "
+                f"model variant '{current_variant}'. Refusing to load."
+            )
+        ckpt_mode = ckpt.get("age_conditioning_mode", None)
+        current_mode = getattr(model, "_age_mode_tag", None)
+        if current_variant == "age_conditioned" and ckpt_mode != current_mode:
+            print(
+                f"[resume] WARNING: checkpoint age_conditioning_mode='{ckpt_mode}' "
+                f"differs from current '{current_mode}'. Continuing anyway.",
+                flush=True,
+            )
         model.load_state_dict(ckpt["model_state_dict"])
         optimizer.load_state_dict(ckpt["optimizer_state_dict"])
         start_epoch = int(ckpt.get("epoch", 0)) + 1
@@ -170,7 +188,10 @@ def pretrain(
     with open(save_dir / "config.json", "w") as f:
         json.dump({"epochs": epochs, "lr": lr, "gamma_loss": gamma_loss,
                "device": device, "dry_run": dry_run, "code_loss": code_loss_name,
-               "bce_pos_weight": bce_pos_weight, "resume_from": str(resume_from) if resume_from else None}, f, indent=2)
+               "bce_pos_weight": bce_pos_weight, "resume_from": str(resume_from) if resume_from else None,
+               "model_variant": getattr(model, "_variant_tag", "baseline"),
+               "age_conditioning_mode": getattr(model, "_age_mode_tag", None),
+               "age_diag_every": age_diag_every}, f, indent=2)
 
     log_file = save_dir / "train.log"
     log_mode = "a" if resume_from is not None else "w"
@@ -221,6 +242,22 @@ def pretrain(
             train_code += float(loss_code.detach().item())
             train_time += float(loss_time.detach().item())
             n_train += 1
+            if (
+                model_variant == "age_conditioned"
+                and age_diag_every > 0
+                and (step % age_diag_every == 0 or step == 1)
+            ):
+                try:
+                    from model.age_diagnostics import compute_alpha_delta_stats, log_alpha_delta_stats
+                except ModuleNotFoundError:
+                    from age_diagnostics import compute_alpha_delta_stats, log_alpha_delta_stats
+                model.eval()
+                with torch.no_grad():
+                    stats = compute_alpha_delta_stats(model, batch)
+                model.train()
+                msg_diag = log_alpha_delta_stats(stats, step=step)
+                print(msg_diag, flush=True)
+                log_fh.write(msg_diag + "\n")
             if step % 50 == 0 or step == 1:
                 print(f"  ep{epoch:03d} step {step:6d} "
                     f"loss={float(loss.detach().item()):.4f} "
@@ -285,6 +322,8 @@ def pretrain(
             "optimizer_state_dict": optimizer.state_dict(),
             "epoch": epoch,
             "val_loss": val_loss,
+            "model_variant": getattr(model, "_variant_tag", "baseline"),
+            "age_conditioning_mode": getattr(model, "_age_mode_tag", None),
         }, ckpt_path)
         print(f"Saved checkpoint: {ckpt_path}", flush=True)
         log_fh.write(f"Saved checkpoint: {ckpt_path}\n")
@@ -318,6 +357,29 @@ if __name__ == "__main__":
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--d_model", type=int, default=256)
     parser.add_argument("--poly_degree", type=int, default=5)
+    parser.add_argument(
+        "--model_variant",
+        choices=["baseline", "age_conditioned"],
+        default="baseline",
+        help="Which model class to use. 'baseline' = TALEEHR (default), "
+             "'age_conditioned' = TALEEHRAge with age-conditioned polynomial decay.",
+    )
+    parser.add_argument(
+        "--age_conditioning_mode",
+        choices=["real", "random_constant", "none"],
+        default="real",
+        help="Only used when --model_variant=age_conditioned. "
+             "'real' uses gamma(a_i); 'random_constant' is a parameter-matched "
+             "control with no age signal; 'none' forces Delta_alpha=0 (should "
+             "match baseline).",
+    )
+    parser.add_argument(
+        "--age_diag_every",
+        type=int,
+        default=200,
+        help="If --model_variant=age_conditioned, log ||Delta_alpha(a)|| stats "
+             "every N training steps. Set to 0 to disable.",
+    )
     parser.add_argument("--gamma_loss", type=float, default=500.0)
     parser.add_argument(
         "--code_loss",
@@ -395,17 +457,35 @@ if __name__ == "__main__":
             persistent_workers=(args.num_workers > 0),
             prefetch_factor=(4 if args.num_workers > 0 else None),
             worker_init_fn=_dataloader_worker_init,
-            multiprocessing_context="spawn"
         )
+        if args.num_workers > 0:
+            _loader_kw["multiprocessing_context"] = "spawn"
         train_loader = DataLoader(train_ds, shuffle=True, **_loader_kw)
         val_loader = DataLoader(val_ds, shuffle=False, **_loader_kw)
 
-        model = TALEEHR(
-            embedding_path=args.embedding_path,
-            num_codes=num_codes,
-            d_model=args.d_model,
-            poly_degree=args.poly_degree,
-        )
+        if args.model_variant == "baseline":
+            model = TALEEHR(
+                embedding_path=args.embedding_path,
+                num_codes=num_codes,
+                d_model=args.d_model,
+                poly_degree=args.poly_degree,
+            )
+        elif args.model_variant == "age_conditioned":
+            try:
+                from model.tale_ehr_age import TALEEHRAge
+            except ModuleNotFoundError:
+                from tale_ehr_age import TALEEHRAge
+            model = TALEEHRAge(
+                embedding_path=args.embedding_path,
+                num_codes=num_codes,
+                d_model=args.d_model,
+                poly_degree=args.poly_degree,
+                age_conditioning_mode=args.age_conditioning_mode,
+            )
+        else:
+            raise ValueError(f"Unknown model_variant: {args.model_variant}")
+        model._variant_tag = args.model_variant
+        model._age_mode_tag = args.age_conditioning_mode if args.model_variant == "age_conditioned" else None
         pretrain(
             model=model,
             train_loader=train_loader,
@@ -419,6 +499,9 @@ if __name__ == "__main__":
             code_loss_name=args.code_loss,
             bce_pos_weight=args.bce_pos_weight,
             resume_from=args.resume_from,
+            model_variant=args.model_variant,
+            age_conditioning_mode=args.age_conditioning_mode,
+            age_diag_every=args.age_diag_every,
         )
         total_time = time.perf_counter() - start
         print(f"Total training time: {total_time:.1f}s", flush=True)

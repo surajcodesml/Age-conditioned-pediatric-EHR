@@ -2,6 +2,9 @@
 data/
 archive/
 
+# ignore .tmp files
+*.tmp
+
 # Columnar / binary tables (any path in repo)
 *.parquet
 *.paraquet
