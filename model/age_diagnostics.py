@@ -14,11 +14,19 @@ def compute_alpha_delta_stats(model, batch: dict[str, torch.Tensor]) -> dict:
     mask = batch["attention_mask"]
     age_emb = model.time_aware_attention.age_emb
     coeff_gen = model.time_aware_attention.temporal_weight.age_coeff_gen
+    agg_age_emb = model.temporal_aggregation.age_emb
+    agg_coeff_gen = model.temporal_aggregation.temporal_weight.age_coeff_gen
 
     with torch.no_grad():
         gamma = age_emb(age_years.clamp(min=0.0))
         delta_alpha = coeff_gen(gamma)
         norms = delta_alpha.norm(dim=-1)
+        lengths = mask.sum(dim=1).to(dtype=torch.long)
+        batch_idx = torch.arange(age_years.shape[0], device=age_years.device)
+        age_current = age_years[batch_idx, lengths - 1].clamp(min=0.0)
+        gamma_agg = agg_age_emb(age_current)
+        delta_alpha_agg = agg_coeff_gen(gamma_agg)
+        norms_agg = delta_alpha_agg.norm(dim=-1)
 
     valid = mask.bool()
     norms_valid = norms[valid]
@@ -56,6 +64,10 @@ def compute_alpha_delta_stats(model, batch: dict[str, torch.Tensor]) -> dict:
         "delta_alpha_norm_mean": float(mean_val),
         "delta_alpha_norm_std": float(std_val),
         "delta_alpha_norm_by_age_bucket": by_bucket,
+        "delta_alpha_agg_norm_mean": float(norms_agg.mean().detach().item()),
+        "delta_alpha_agg_norm_std": float(norms_agg.std(unbiased=False).detach().item()),
+        "delta_alpha_agg_norm_min": float(norms_agg.min().detach().item()),
+        "delta_alpha_agg_norm_max": float(norms_agg.max().detach().item()),
     }
 
 
@@ -64,8 +76,16 @@ def log_alpha_delta_stats(stats: dict, step: int, prefix: str = "") -> str:
     mean_val = float(stats.get("delta_alpha_norm_mean", float("nan")))
     std_val = float(stats.get("delta_alpha_norm_std", float("nan")))
     by_bucket = stats.get("delta_alpha_norm_by_age_bucket", {})
+    agg_mean = float(stats.get("delta_alpha_agg_norm_mean", float("nan")))
+    agg_std = float(stats.get("delta_alpha_agg_norm_std", float("nan")))
+    agg_min = float(stats.get("delta_alpha_agg_norm_min", float("nan")))
+    agg_max = float(stats.get("delta_alpha_agg_norm_max", float("nan")))
 
-    header = f"{prefix}[age_diag] step {step} ||Δα||={mean_val:.3f}±{std_val:.3f}"
+    header = (
+        f"{prefix}[age_diag] step {step} ||Δα||={mean_val:.3f}±{std_val:.3f} "
+        f"||Δα_agg(a_current)||={agg_mean:.3f}±{agg_std:.3f} "
+        f"[{agg_min:.3f},{agg_max:.3f}]"
+    )
     parts: list[str] = [header]
     for name in [
         "neonate",

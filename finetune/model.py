@@ -97,8 +97,15 @@ class TALEEHRClassifier(nn.Module):
                 demo_hidden=hparams["demo_hidden"],
             )
         load_result = self.backbone.load_state_dict(state_dict, strict=False)
-        if load_result.unexpected_keys:
-            raise RuntimeError(f"Unexpected keys in pretrained load: {load_result.unexpected_keys}")
+        # Allow legacy pretraining-head keys that no longer exist in the current model
+        # (e.g. intensity_predictor from the Poisson TPP era, superseded by time_params_predictor).
+        _known_legacy_prefixes = ("intensity_predictor.", "time_params_predictor.")
+        truly_unexpected = [
+            k for k in load_result.unexpected_keys
+            if not any(k.startswith(p) for p in _known_legacy_prefixes)
+        ]
+        if truly_unexpected:
+            raise RuntimeError(f"Unexpected keys in pretrained load: {truly_unexpected}")
 
         # Discard pretraining heads: classification uses last event repr + demo feature.
         self.backbone.code_predictor = nn.Identity()

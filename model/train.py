@@ -68,17 +68,18 @@ def focal_code_loss(
     return loss.mean()
 
 
-def temporal_point_process_loss(
-    intensity: torch.Tensor,       # [B] predicted intensity at the event
-    target_time_gap: torch.Tensor, # [B] observed Δt to next event (days or weeks)
-    T: float | None = None,
-    n_mc_samples: int = 20,
-) -> torch.Tensor:
+def weibull_nll_loss(time_params: torch.Tensor, target_time_gap: torch.Tensor) -> torch.Tensor:
     eps = 1e-6
-    lam = F.softplus(intensity) + eps
-    tau_weeks = (target_time_gap / 7.0).clamp(min=eps, max=520.0).to(lam.dtype)
-    nll = lam * tau_weeks - torch.log(lam)
-    return nll.mean()
+    k = F.softplus(time_params[:, 0]) + eps
+    lam = F.softplus(time_params[:, 1]) + eps
+    t = target_time_gap.clamp(min=eps)
+    log_pdf = (
+        torch.log(k)
+        - torch.log(lam)
+        + (k - 1.0) * (torch.log(t) - torch.log(lam))
+        - (t / lam).pow(k)
+    )
+    return -log_pdf.mean()
 
 
 def compute_metrics(code_logits: torch.Tensor, target_codes: torch.Tensor, ks: tuple[int, ...] = (5, 10, 20)) -> dict[str, float]:
@@ -120,6 +121,95 @@ class _TeeStream:
             stream.flush()
 
 
+def log_polynomial_diagnostics(model, step: int, log_fh, model_variant: str = "baseline") -> None:
+    """Log canonical w(Δt) curves, polynomial coeff/grad diagnostics, and q_base norm."""
+    with torch.no_grad():
+        days_grid = torch.tensor([0.0, 1.0, 7.0, 30.0, 90.0, 365.0, 730.0, 1095.0])
+        log_dt = torch.log1p(days_grid / 7.0).to(next(model.parameters()).device)
+
+        attn_tw = model.time_aware_attention.temporal_weight
+        attn_coeffs = attn_tw.coefficients.detach().cpu().tolist()
+        attn_w: list[float] = []
+        for t in log_dt:
+            poly = 0.0
+            for k, c in enumerate(attn_coeffs):
+                poly += c * float(t.item() ** k)
+            attn_w.append(float(torch.sigmoid(torch.tensor(poly)).item()))
+
+        agg_tw = model.temporal_aggregation.temporal_weight
+        agg_coeffs = agg_tw.coefficients.detach().cpu().tolist()
+        agg_w: list[float] = []
+        for t in log_dt:
+            poly = 0.0
+            for k, c in enumerate(agg_coeffs):
+                poly += c * float(t.item() ** k)
+            agg_w.append(float(torch.sigmoid(torch.tensor(poly)).item()))
+        agg_w_young: list[float] | None = None
+        agg_w_old: list[float] | None = None
+        if model_variant == "age_conditioned":
+            agg_age_emb = model.temporal_aggregation.age_emb
+            young_features = agg_age_emb(torch.tensor([5.0], device=log_dt.device))
+            old_features = agg_age_emb(torch.tensor([65.0], device=log_dt.device))
+            agg_w_young = model.temporal_aggregation.temporal_weight(log_dt.unsqueeze(0), young_features).squeeze(0)
+            agg_w_old = model.temporal_aggregation.temporal_weight(log_dt.unsqueeze(0), old_features).squeeze(0)
+            agg_w_young = agg_w_young.detach().cpu().tolist()
+            agg_w_old = agg_w_old.detach().cpu().tolist()
+
+        def shape_of(curve: list[float]) -> str:
+            decreasing = all(curve[i] >= curve[i + 1] - 1e-6 for i in range(len(curve) - 1))
+            increasing = all(curve[i] <= curve[i + 1] + 1e-6 for i in range(len(curve) - 1))
+            if decreasing and not increasing:
+                return "DECREASING"
+            if increasing and not decreasing:
+                return "INCREASING"
+            return "MIXED"
+
+        attn_shape = shape_of(attn_w)
+        agg_shape = shape_of(agg_w)
+        q_base_norm = float(model.temporal_aggregation.q_base.norm())
+
+        attn_grads = (
+            attn_tw.coefficients.grad.detach().cpu().abs().tolist()
+            if attn_tw.coefficients.grad is not None
+            else [None] * len(attn_coeffs)
+        )
+        agg_grads = (
+            agg_tw.coefficients.grad.detach().cpu().abs().tolist()
+            if agg_tw.coefficients.grad is not None
+            else [None] * len(agg_coeffs)
+        )
+
+    days_strs = ["0d", "1d", "7d", "30d", "90d", "1y", "2y", "3y"]
+    attn_w_str = " ".join(f"{d}={w:.2f}" for d, w in zip(days_strs, attn_w))
+    agg_w_str = " ".join(f"{d}={w:.2f}" for d, w in zip(days_strs, agg_w))
+    msg_attn = (
+        f"[w_curve_attn] step {step} {attn_shape} | {attn_w_str} | "
+        f"coeffs={[round(c, 4) for c in attn_coeffs]} | "
+        f"grads={[round(g, 5) if g is not None else 'None' for g in attn_grads]}"
+    )
+    msg_agg = (
+        f"[w_curve_agg]  step {step} {agg_shape} | {agg_w_str} | "
+        f"coeffs={[round(c, 4) for c in agg_coeffs]} | "
+        f"grads={[round(g, 5) if g is not None else 'None' for g in agg_grads]} | "
+        f"q_base_norm={q_base_norm:.3f}"
+    )
+    print(msg_attn, flush=True)
+    print(msg_agg, flush=True)
+    log_fh.write(msg_attn + "\n")
+    log_fh.write(msg_agg + "\n")
+    if agg_w_young is not None and agg_w_old is not None:
+        msg_agg_young = f"[w_curve_agg_young] step {step} | " + " ".join(
+            f"{d}={w:.2f}" for d, w in zip(days_strs, agg_w_young)
+        )
+        msg_agg_old = f"[w_curve_agg_old]   step {step} | " + " ".join(
+            f"{d}={w:.2f}" for d, w in zip(days_strs, agg_w_old)
+        )
+        print(msg_agg_young, flush=True)
+        print(msg_agg_old, flush=True)
+        log_fh.write(msg_agg_young + "\n")
+        log_fh.write(msg_agg_old + "\n")
+
+
 def pretrain(
     model: nn.Module,
     train_loader: DataLoader,
@@ -136,6 +226,7 @@ def pretrain(
     model_variant: str = "baseline",
     age_conditioning_mode: str | None = None,
     age_diag_every: int = 200,
+    w_curve_every: int = 0,
 ) -> None:
     device_t = torch.device(device)
     model.to(device_t)
@@ -191,7 +282,7 @@ def pretrain(
                "bce_pos_weight": bce_pos_weight, "resume_from": str(resume_from) if resume_from else None,
                "model_variant": getattr(model, "_variant_tag", "baseline"),
                "age_conditioning_mode": getattr(model, "_age_mode_tag", None),
-               "age_diag_every": age_diag_every}, f, indent=2)
+               "age_diag_every": age_diag_every, "w_curve_every": w_curve_every}, f, indent=2)
 
     log_file = save_dir / "train.log"
     log_mode = "a" if resume_from is not None else "w"
@@ -227,14 +318,26 @@ def pretrain(
             with ctx:
                 out = model(batch)
                 loss_code = code_loss_fn(out["code_logits"], batch["target_codes"])
-                # Use max observed gap in batch as horizon proxy T.
-                T = float(torch.clamp(batch["target_time_gap"].max(), min=1.0).item())
-                loss_time = temporal_point_process_loss(out["intensity"], batch["target_time_gap"], T=T)
+                loss_time = weibull_nll_loss(out["time_params"], batch["target_time_gap"])
                 loss = loss_time + gamma_loss * loss_code
+            if step == 1 or step % 200 == 0 or step in {500, 1500}:
+                with torch.no_grad():
+                    k = F.softplus(out["time_params"][:, 0]) + 1e-6
+                    lam = F.softplus(out["time_params"][:, 1]) + 1e-6
+                    print(
+                        f"[weibull] step={step} "
+                        f"k_mean={float(k.mean()):.6f} k_std={float(k.std(unbiased=False)):.6f} "
+                        f"lam_mean={float(lam.mean()):.6f} lam_std={float(lam.std(unbiased=False)):.6f} "
+                        f"loss_time={float(loss_time.detach().item()):.6f} "
+                        f"loss_code={float(loss_code.detach().item()):.6f}",
+                        flush=True,
+                    )
 
             scaler.scale(loss).backward()
             scaler.unscale_(optimizer)
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            if w_curve_every > 0 and (step % w_curve_every == 0 or step == 1):
+                log_polynomial_diagnostics(model, step, log_fh, model_variant=model_variant)
             scaler.step(optimizer)
             scaler.update()
 
@@ -259,12 +362,17 @@ def pretrain(
                 print(msg_diag, flush=True)
                 log_fh.write(msg_diag + "\n")
             if step % 50 == 0 or step == 1:
-                print(f"  ep{epoch:03d} step {step:6d} "
+                code_contrib = gamma_loss * float(loss_code.detach().item())
+                time_contrib = float(loss_time.detach().item())
+                ratio = code_contrib / max(time_contrib, 1e-8)
+                print(
+                    f"  ep{epoch:03d} step {step:6d} "
                     f"loss={float(loss.detach().item()):.4f} "
                     f"(code={float(loss_code.detach().item()):.4f}, "
-                    f"time={float(loss_time.detach().item()):.4f})",
-                    flush=True)
-
+                    f"time={float(loss_time.detach().item()):.4f}, "
+                    f"gamma*code/time={ratio:.3f})",
+                    flush=True,
+                )
         model.eval()
         val_total = 0.0
         val_code = 0.0
@@ -281,8 +389,7 @@ def pretrain(
                 with ctx:
                     out = model(batch)
                     loss_code = code_loss_fn(out["code_logits"], batch["target_codes"])
-                    T = float(torch.clamp(batch["target_time_gap"].max(), min=1.0).item())
-                    loss_time = temporal_point_process_loss(out["intensity"], batch["target_time_gap"], T=T)
+                    loss_time = weibull_nll_loss(out["time_params"], batch["target_time_gap"])
                     loss = loss_time + gamma_loss * loss_code
                 val_total += float(loss.detach().item())
                 val_code += float(loss_code.detach().item())
@@ -380,7 +487,13 @@ if __name__ == "__main__":
         help="If --model_variant=age_conditioned, log ||Delta_alpha(a)|| stats "
              "every N training steps. Set to 0 to disable.",
     )
-    parser.add_argument("--gamma_loss", type=float, default=500.0)
+    parser.add_argument(
+        "--w_curve_every",
+        type=int,
+        default=0,
+        help="If >0, log w(Δt) curve at canonical time gaps every N steps. Set to 100 or 500 for debugging.",
+    )
+    parser.add_argument("--gamma_loss", type=float, default=1.0)
     parser.add_argument(
         "--code_loss",
         choices=["bce", "focal"],
@@ -502,6 +615,7 @@ if __name__ == "__main__":
             model_variant=args.model_variant,
             age_conditioning_mode=args.age_conditioning_mode,
             age_diag_every=args.age_diag_every,
+            w_curve_every=args.w_curve_every,
         )
         total_time = time.perf_counter() - start
         print(f"Total training time: {total_time:.1f}s", flush=True)

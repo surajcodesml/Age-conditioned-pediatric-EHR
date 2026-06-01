@@ -8,7 +8,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-
 class PolynomialTemporalWeight(nn.Module):
     """Learnable polynomial in t passed through sigmoid (Eq. 4 temporal factor w(t))."""
 
@@ -173,6 +172,15 @@ class MultiScaleTemporalAggregation(nn.Module):
                     f"peak_rel_pos={float(peak_rel_pos.mean()):.3f}",
                     flush=True,
                 )
+                w_valid = w[attention_mask]
+                if w_valid.numel() > 0:
+                    print(
+                        f"[agg_w(t)] mean={float(w_valid.mean()):.3f} "
+                        f"std={float(w_valid.std(unbiased=False)):.3f} "
+                        f"low_frac={float((w_valid < 0.1).float().mean()):.3f} "
+                        f"high_frac={float((w_valid > 0.9).float().mean()):.3f}",
+                        flush=True,
+                    )
 
         h = torch.einsum("bl, bld -> bd", alpha, e)
         if debug_sample:

@@ -15,8 +15,10 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from model.tale_ehr import TALEEHR
-from model.time_aware_attention import MultiScaleTemporalAggregation
-from model.time_aware_attention_age import AgeConditionedTimeAwareAttention
+from model.time_aware_attention_age import (
+    AgeConditionedMultiScaleTemporalAggregation,
+    AgeConditionedTimeAwareAttention,
+)
 
 
 class TALEEHRAge(nn.Module):
@@ -62,9 +64,12 @@ class TALEEHRAge(nn.Module):
             age_hidden_dim=age_hidden_dim,
             age_conditioning_mode=age_conditioning_mode,
         )
-        self.temporal_aggregation = MultiScaleTemporalAggregation(
+        self.temporal_aggregation = AgeConditionedMultiScaleTemporalAggregation(
             d_model=self.d_model,
             poly_degree=poly_degree,
+            age_emb_dim=age_emb_dim,
+            age_hidden_dim=age_hidden_dim,
+            age_conditioning_mode=age_conditioning_mode,
         )
 
         self.demo_proj = nn.Sequential(nn.Linear(self.demo_dim, self.demo_hidden), nn.GELU())
@@ -78,14 +83,14 @@ class TALEEHRAge(nn.Module):
             nn.GELU(),
             nn.Linear(predictor_in, self.num_codes),
         )
-        self.intensity_predictor = nn.Sequential(
+        self.time_params_predictor = nn.Sequential(
             nn.Linear(predictor_in, predictor_in),
             nn.GELU(),
             nn.Linear(predictor_in, predictor_in),
             nn.GELU(),
             nn.Linear(predictor_in, self.demo_hidden),
             nn.GELU(),
-            nn.Linear(self.demo_hidden, 1),
+            nn.Linear(self.demo_hidden, 2),
         )
 
         with torch.no_grad():
@@ -113,7 +118,13 @@ class TALEEHRAge(nn.Module):
             age_years,
             debug_sample=debug_sample,
         )
-        h = self.temporal_aggregation(e, timestamps_days, attention_mask, debug_sample=debug_sample)
+        h = self.temporal_aggregation(
+            e,
+            timestamps_days,
+            attention_mask,
+            age_years,
+            debug_sample=debug_sample,
+        )
 
         if return_repr_only:
             demo_features = self.demo_proj(demographics)
@@ -140,15 +151,15 @@ class TALEEHRAge(nn.Module):
                     f"sigmoid_mean={float(torch.sigmoid(code_logits).mean()):.5f}",
                     flush=True,
                 )
-        intensity = self.intensity_predictor(combined).squeeze(-1)
+        time_params = self.time_params_predictor(combined)
         if debug_sample:
             with torch.no_grad():
                 print(
-                    f"[intensity] mean={float(intensity.mean()):.3f} "
-                    f"std={float(intensity.std(unbiased=False)):.3f}",
+                    f"[time_params] mean={float(time_params.mean()):.3f} "
+                    f"std={float(time_params.std(unbiased=False)):.3f}",
                     flush=True,
                 )
-        return {"code_logits": code_logits, "intensity": intensity, "h": h}
+        return {"code_logits": code_logits, "time_params": time_params, "h": h}
 
 
 def _count_trainable(module: nn.Module) -> int:
@@ -197,10 +208,10 @@ if __name__ == "__main__":
         }
         out = model_age(batch)
         assert out["code_logits"].shape == (b, num_codes)
-        assert out["intensity"].shape == (b,)
+        assert out["time_params"].shape == (b, 2)
         assert out["h"].shape == (b, 64)
         assert torch.isfinite(out["code_logits"]).all()
-        assert torch.isfinite(out["intensity"]).all()
+        assert torch.isfinite(out["time_params"]).all()
         assert torch.isfinite(out["h"]).all()
 
         model_base = TALEEHR(
@@ -220,6 +231,16 @@ if __name__ == "__main__":
             age_emb_dim=32,
             age_hidden_dim=64,
         )
+        model_none_perturbed = TALEEHRAge(
+            embedding_path=emb_path,
+            num_codes=num_codes,
+            d_model=64,
+            poly_degree=5,
+            demo_hidden=32,
+            age_conditioning_mode="none",
+            age_emb_dim=32,
+            age_hidden_dim=64,
+        )
 
         # Explicit shared-parameter copy gives deterministic parity independent of construction order/RNG.
         with torch.no_grad():
@@ -229,16 +250,32 @@ if __name__ == "__main__":
             model_none.time_aware_attention.temporal_weight.coefficients.copy_(
                 model_base.time_aware_attention.temporal_weight.coefficients
             )
-            model_none.temporal_aggregation.load_state_dict(model_base.temporal_aggregation.state_dict())
+            model_none.temporal_aggregation.q_base.copy_(model_base.temporal_aggregation.q_base)
+            model_none.temporal_aggregation.temporal_weight.coefficients.copy_(
+                model_base.temporal_aggregation.temporal_weight.coefficients
+            )
             model_none.demo_proj.load_state_dict(model_base.demo_proj.state_dict())
             model_none.history_proj.load_state_dict(model_base.history_proj.state_dict())
             model_none.code_predictor.load_state_dict(model_base.code_predictor.state_dict())
-            model_none.intensity_predictor.load_state_dict(model_base.intensity_predictor.state_dict())
+            model_none.time_params_predictor.load_state_dict(model_base.time_params_predictor.state_dict())
+            model_none_perturbed.load_state_dict(model_none.state_dict())
+            model_none_perturbed.time_aware_attention.temporal_weight.age_coeff_gen.mlp[-1].weight.copy_(
+                torch.randn_like(model_none_perturbed.time_aware_attention.temporal_weight.age_coeff_gen.mlp[-1].weight)
+            )
+            model_none_perturbed.time_aware_attention.temporal_weight.age_coeff_gen.mlp[-1].bias.copy_(
+                torch.randn_like(model_none_perturbed.time_aware_attention.temporal_weight.age_coeff_gen.mlp[-1].bias)
+            )
+            model_none_perturbed.temporal_aggregation.temporal_weight.age_coeff_gen.mlp[-1].weight.copy_(
+                torch.randn_like(model_none_perturbed.temporal_aggregation.temporal_weight.age_coeff_gen.mlp[-1].weight)
+            )
+            model_none_perturbed.temporal_aggregation.temporal_weight.age_coeff_gen.mlp[-1].bias.copy_(
+                torch.randn_like(model_none_perturbed.temporal_aggregation.temporal_weight.age_coeff_gen.mlp[-1].bias)
+            )
 
-        out_base = model_base(batch)
-        out_none = model_none(batch)
+        out_base = model_none(batch)
+        out_none = model_none_perturbed(batch)
         assert torch.allclose(out_base["code_logits"], out_none["code_logits"], atol=1e-5, rtol=1e-5)
-        assert torch.allclose(out_base["intensity"], out_none["intensity"], atol=1e-5, rtol=1e-5)
+        assert torch.allclose(out_base["time_params"], out_none["time_params"], atol=1e-5, rtol=1e-5)
         assert torch.allclose(out_base["h"], out_none["h"], atol=1e-5, rtol=1e-5)
 
         model_sens = TALEEHRAge(
@@ -252,11 +289,13 @@ if __name__ == "__main__":
             age_hidden_dim=64,
         )
         with torch.no_grad():
-            model_sens.time_aware_attention.temporal_weight.age_coeff_gen.mlp[-1].weight.copy_(
-                torch.randn_like(model_sens.time_aware_attention.temporal_weight.age_coeff_gen.mlp[-1].weight) * 0.1
+            model_sens.time_aware_attention.temporal_weight.age_coeff_gen.mlp[-1].weight.zero_()
+            model_sens.time_aware_attention.temporal_weight.age_coeff_gen.mlp[-1].bias.zero_()
+            model_sens.temporal_aggregation.temporal_weight.age_coeff_gen.mlp[-1].weight.copy_(
+                torch.randn_like(model_sens.temporal_aggregation.temporal_weight.age_coeff_gen.mlp[-1].weight) * 1.0
             )
-            model_sens.time_aware_attention.temporal_weight.age_coeff_gen.mlp[-1].bias.copy_(
-                torch.randn_like(model_sens.time_aware_attention.temporal_weight.age_coeff_gen.mlp[-1].bias) * 0.1
+            model_sens.temporal_aggregation.temporal_weight.age_coeff_gen.mlp[-1].bias.copy_(
+                torch.randn_like(model_sens.temporal_aggregation.temporal_weight.age_coeff_gen.mlp[-1].bias) * 1.0
             )
         batch_young = dict(batch)
         batch_old = dict(batch)
@@ -267,11 +306,12 @@ if __name__ == "__main__":
         out_young = model_sens(batch_young)
         out_old = model_sens(batch_old)
         assert (out_young["code_logits"] - out_old["code_logits"]).abs().max().detach().item() > 1e-3
+        assert (out_young["h"] - out_old["h"]).abs().max().detach().item() > 1e-7
 
         trainable_base = _count_trainable(model_base)
         trainable_age = _count_trainable(model_age)
         delta = trainable_age - trainable_base
         print(f"Trainable parameter delta vs baseline: {delta}")
-        assert delta == 2502
+        assert delta == 5004
 
         print("Smoke test passed.")

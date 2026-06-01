@@ -9,7 +9,6 @@ import sys
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
@@ -75,14 +74,14 @@ class TALEEHR(nn.Module):
             nn.GELU(),
             nn.Linear(predictor_in, self.num_codes),
         )
-        self.intensity_predictor = nn.Sequential(
+        self.time_params_predictor = nn.Sequential(
             nn.Linear(predictor_in, predictor_in),
             nn.GELU(),
             nn.Linear(predictor_in, predictor_in),
             nn.GELU(),
             nn.Linear(predictor_in, self.demo_hidden),
             nn.GELU(),
-            nn.Linear(self.demo_hidden, 1),
+            nn.Linear(self.demo_hidden, 2),
         )
         
         # Initialize final code-predictor bias to the log-odds of the marginal
@@ -135,15 +134,15 @@ class TALEEHR(nn.Module):
                     f"sigmoid_mean={float(torch.sigmoid(code_logits).mean()):.5f}",
                     flush=True,
                 )
-        intensity = self.intensity_predictor(combined).squeeze(-1)
+        time_params = self.time_params_predictor(combined)
         if debug_sample:
             with torch.no_grad():
                 print(
-                    f"[intensity] mean={float(intensity.mean()):.3f} "
-                    f"std={float(intensity.std(unbiased=False)):.3f}",
+                    f"[time_params] mean={float(time_params.mean()):.3f} "
+                    f"std={float(time_params.std(unbiased=False)):.3f}",
                     flush=True,
                 )
-        return {"code_logits": code_logits, "intensity": intensity, "h": h}
+        return {"code_logits": code_logits, "time_params": time_params, "h": h}
 
 
 def _count_params(module: nn.Module) -> tuple[int, int]:
@@ -195,13 +194,13 @@ if __name__ == "__main__":
             }
         )
         print("code_logits:", tuple(out["code_logits"].shape))
-        print("intensity:", tuple(out["intensity"].shape))
+        print("time_params:", tuple(out["time_params"].shape))
         print("h:", tuple(out["h"].shape))
         assert out["code_logits"].shape == (b, num_codes)
-        assert out["intensity"].shape == (b,)
+        assert out["time_params"].shape == (b, 2)
         assert out["h"].shape == (b, 64)
         assert torch.isfinite(out["code_logits"]).all()
-        assert torch.isfinite(out["intensity"]).all()
+        assert torch.isfinite(out["time_params"]).all()
         assert torch.isfinite(out["h"]).all()
 
         total, trainable = _count_params(model)

@@ -79,11 +79,27 @@ class DiseaseClassificationDataset(Dataset):
     def _load_cohort_rows(self) -> list[dict[str, int]]:
         con = duckdb.connect()
         try:
+            schema_cur = con.execute(
+                "SELECT * FROM read_parquet(?) LIMIT 0",
+                [_esc(self.cohort_parquet)],
+            )
+            available_cols = {str(col_meta[0]).lower() for col_meta in (schema_cur.description or [])}
+            hadm_expr = "CAST(hadm_id AS BIGINT) AS hadm_id" if "hadm_id" in available_cols else "CAST(-1 AS BIGINT) AS hadm_id"
+            n_events_expr = (
+                "CAST(n_events_in_window AS BIGINT) AS n_events_in_window"
+                if "n_events_in_window" in available_cols
+                else "CAST(0 AS BIGINT) AS n_events_in_window"
+            )
             cols = con.execute(
-                """
-                SELECT subject_id, label, last_event_idx
+                f"""
+                SELECT
+                    CAST(subject_id AS BIGINT) AS subject_id,
+                    {hadm_expr},
+                    CAST(label AS INTEGER) AS label,
+                    CAST(last_event_idx AS BIGINT) AS last_event_idx,
+                    {n_events_expr}
                 FROM read_parquet(?)
-                ORDER BY subject_id
+                ORDER BY subject_id, hadm_id
                 """,
                 [_esc(self.cohort_parquet)],
             ).fetchnumpy()
@@ -95,8 +111,10 @@ class DiseaseClassificationDataset(Dataset):
             out.append(
                 {
                     "subject_id": int(cols["subject_id"][i]),
+                    "hadm_id": int(cols["hadm_id"][i]),
                     "label": int(cols["label"][i]),
                     "last_event_idx": int(cols["last_event_idx"][i]),
+                    "n_events_in_window": int(cols["n_events_in_window"][i]),
                 }
             )
         return out
@@ -161,12 +179,14 @@ class DiseaseClassificationDataset(Dataset):
 
         return {
             "subject_id": subject_id,
+            "hadm_id": int(row["hadm_id"]),
             "code_indices": code_indices,
             "timestamps_days": timestamps_days,
             "age_days": age_days,
             "sex": sex,
             "race": race,
             "unk_vocab_index": self.unk_vocab_index,
+            "n_events_in_window": int(row["n_events_in_window"]),
             "label": float(label),
         }
 
@@ -244,12 +264,14 @@ class TensorizedDiseaseClassificationDataset(Dataset):
 
         return {
             "subject_id": int(shard["subject_id"][pos]),
+            "hadm_id": int(shard["hadm_id"][pos]) if "hadm_id" in shard.files else -1,
             "code_indices": code_indices,
             "timestamps_days": timestamps_days,
             "age_days": age_days,
             "sex": int(shard["sex"][pos]),
             "race": int(shard["race"][pos]),
             "unk_vocab_index": int(np.asarray(shard["unk_vocab_index"]).reshape(-1)[0]),
+            "n_events_in_window": int(shard["n_events_in_window"][pos]) if "n_events_in_window" in shard.files else 0,
             "label": float(shard["label"][pos]),
         }
 
@@ -271,7 +293,7 @@ def _dataloader_worker_init(_worker_id: int) -> None:
         pass
 
 
-def disease_collate(batch: list[dict[str, Any]]) -> dict[str, torch.Tensor]:
+def disease_collate(batch: list[dict[str, Any]]) -> dict[str, Any]:
     """Pad sequences and build pairwise temporal matrix for disease classification."""
     if not batch:
         raise ValueError("empty batch")
@@ -331,6 +353,9 @@ def disease_collate(batch: list[dict[str, Any]]) -> dict[str, torch.Tensor]:
         "attention_mask": attention_mask,
         "demographics": torch.from_numpy(demo),
         "labels": torch.from_numpy(labels_np),
+        "subject_id": [int(item["subject_id"]) for item in batch],
+        "hadm_id": [int(item["hadm_id"]) for item in batch],
+        "n_events_in_window": [int(item["n_events_in_window"]) for item in batch],
     }
 
 
