@@ -216,6 +216,24 @@ def _process_split(
             seq_lens.append(int(len(code_indices)))
 
         shard_path = out_split_dir / f"shard_{shard_idx:05d}.npz"
+        seq_len_arr = np.asarray([len(c) for c in code_indices_list], dtype=np.int64)
+        offsets = np.zeros(len(code_indices_list) + 1, dtype=np.int64)
+        np.cumsum(seq_len_arr, out=offsets[1:])
+        code_concat = (
+            np.concatenate(code_indices_list).astype(np.int64)
+            if code_indices_list
+            else np.zeros(0, np.int64)
+        )
+        ts_concat = (
+            np.concatenate(timestamps_list).astype(np.float32)
+            if timestamps_list
+            else np.zeros(0, np.float32)
+        )
+        age_concat = (
+            np.concatenate(age_days_list).astype(np.float32)
+            if age_days_list
+            else np.zeros(0, np.float32)
+        )
         np.savez(
             shard_path,
             subject_id=np.asarray(subject_ids, dtype=np.int64),
@@ -225,9 +243,10 @@ def _process_split(
             race=np.asarray(races, dtype=np.int16),
             los_days=np.asarray(los_days_out, dtype=np.float32),
             unk_vocab_index=np.asarray([unk_vocab_index], dtype=np.int64),
-            code_indices=np.asarray(code_indices_list, dtype=object),
-            timestamps_days=np.asarray(timestamps_list, dtype=object),
-            age_days=np.asarray(age_days_list, dtype=object),
+            offsets=offsets,
+            code_indices=code_concat,
+            timestamps_days=ts_concat,
+            age_days=age_concat,
         )
         total_written += len(subject_ids)
         if shard_idx % 10 == 0 or shard_idx == (n_shards - 1):
@@ -277,23 +296,25 @@ def _verify_train_admission_behavior(
         return False, "no train shards found for verification"
 
     for shard_path in shard_paths:
-        with np.load(shard_path, allow_pickle=True) as z:
+        with np.load(shard_path, allow_pickle=False) as z:
             sids = z["subject_id"].astype(np.int64)
             hadms = z["hadm_id"].astype(np.int64)
             labels = z["label"].astype(np.float32)
             los_days = z["los_days"].astype(np.float32)
-            codes = z["code_indices"]
+            off = z["offsets"]
+            code_flat = z["code_indices"]
 
             for i in range(len(sids)):
                 sid = int(sids[i])
                 if sid in selected:
+                    s_, e_ = int(off[i]), int(off[i + 1])
                     captured[sid].append(
                         {
                             "cohort_row_idx": offset + i,
                             "hadm_id": int(hadms[i]),
                             "label": float(labels[i]),
                             "los_days": float(los_days[i]),
-                            "code_indices": np.asarray(codes[i], dtype=np.int64),
+                            "code_indices": np.asarray(code_flat[s_:e_], dtype=np.int64),
                         }
                     )
         offset += len(sids)

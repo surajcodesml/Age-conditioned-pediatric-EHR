@@ -120,6 +120,53 @@ def _compute_metrics(y_true: np.ndarray, y_prob: np.ndarray) -> dict[str, float]
     return out
 
 
+# Developmental bands (years at the prediction index) for age-stratified breakdown.
+DEV_BANDS: tuple[tuple[str, float, float], ...] = (
+    ("<1", 0.0, 1.0),
+    ("1-5", 1.0, 6.0),
+    ("6-11", 6.0, 12.0),
+    ("12-17", 12.0, 18.0),
+    ("18-25", 18.0, 26.0),
+)
+
+
+def age_stratified_metrics(
+    y_true: np.ndarray,
+    y_prob: np.ndarray,
+    age_years: np.ndarray,
+    min_band_n: int = 20,
+) -> dict[str, dict[str, float]]:
+    """AUROC/AUPRC per developmental band, using each subject's age at the
+    prediction index. Bands with too few samples or a single class are marked
+    ``unreliable`` (metrics left as NaN). Additive, reused by both the MIMIC and
+    Synthea fine-tune paths (extends evaluate(), not a fork)."""
+    out: dict[str, dict[str, float]] = {}
+    y_true = np.asarray(y_true).astype(np.int32)
+    y_prob = np.asarray(y_prob).astype(np.float64)
+    age_years = np.asarray(age_years).astype(np.float64)
+    for name, lo, hi in DEV_BANDS:
+        mask = (age_years >= lo) & (age_years < hi)
+        yt = y_true[mask]
+        yp = y_prob[mask]
+        n = int(yt.size)
+        n_pos = int((yt == 1).sum())
+        n_neg = int((yt == 0).sum())
+        rec: dict[str, float] = {
+            "n": n,
+            "n_pos": n_pos,
+            "n_neg": n_neg,
+            "prevalence": float(n_pos / n) if n else float("nan"),
+            "auroc": float("nan"),
+            "auprc": float("nan"),
+            "unreliable": bool(n < min_band_n or n_pos == 0 or n_neg == 0),
+        }
+        if not rec["unreliable"]:
+            rec["auroc"] = float(roc_auc_score(yt, yp))
+            rec["auprc"] = float(average_precision_score(yt, yp))
+        out[name] = rec
+    return out
+
+
 @torch.no_grad()
 def evaluate(
     model: nn.Module,
@@ -723,6 +770,20 @@ def main() -> int:
             flush=True,
         )
 
+        test_age_stratified = age_stratified_metrics(
+            test_full["y_true"],
+            test_full["y_prob"],
+            np.clip(test_full["age_at_landmark"].astype(np.float64), 0.0, None),
+        )
+        print("[age_stratified test] AUROC by developmental band:", flush=True)
+        for band, rec in test_age_stratified.items():
+            flag = " (unreliable)" if rec["unreliable"] else ""
+            print(
+                f"  {band:>6}: n={int(rec['n']):5d} prev={rec['prevalence']:.3f} "
+                f"AUROC={rec['auroc']:.4f} AUPRC={rec['auprc']:.4f}{flag}",
+                flush=True,
+            )
+
         with (run_dir / "history.json").open("w", encoding="utf-8") as f:
             json.dump(
                 {
@@ -732,6 +793,7 @@ def main() -> int:
                     "test_loss": test_loss,
                     "test_metrics": test_metrics,
                     "test_extended": test_extended,
+                    "test_age_stratified": test_age_stratified,
                 },
                 f,
                 indent=2,

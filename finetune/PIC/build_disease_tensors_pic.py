@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
-"""Tensorize disease cohorts into sharded NPZ files for fast multi-worker loading."""
+"""Tensorize PIC disease cohorts into sharded NPZ files for fast loading.
+
+Same shard layout as ``finetune/build_disease_tensors.py`` but additionally
+writes the ``hadm_id`` and ``n_events_in_window`` arrays that
+``TensorizedDiseaseClassificationDataset`` reads (the parent tensorizer in this
+checkout omits ``hadm_id``, which the dataset requires). Event ordering matches
+``(timestamp_days, event_time, code_id)`` exactly so ``last_event_idx`` lines up
+with the cohort builder.
+"""
 
 from __future__ import annotations
 
@@ -8,47 +16,23 @@ import json
 import math
 import time
 from pathlib import Path
-from typing import Any
 
 import duckdb
 import numpy as np
 import pandas as pd
 
+from finetune.dataset import encode_race  # reused, read-only
+
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Build tensorized shards for disease fine-tuning cohorts.")
-    parser.add_argument("--cohort_dir", type=Path, required=True, help="Directory with train/val/test cohort parquet files.")
-    parser.add_argument("--events_parquet", type=Path, default=Path("data/processed/patient_events_rolled_full.parquet"))
-    parser.add_argument("--vocab_path", type=Path, default=Path("data/processed/code_vocab.json"))
-    parser.add_argument("--out_dir", type=Path, required=True, help="Output tensorized root directory.")
+    parser = argparse.ArgumentParser(description="Build PIC tensorized disease shards.")
+    parser.add_argument("--cohort_dir", type=Path, required=True)
+    parser.add_argument("--events_parquet", type=Path, required=True)
+    parser.add_argument("--vocab_path", type=Path, required=True)
+    parser.add_argument("--out_dir", type=Path, required=True)
     parser.add_argument("--max_seq_len", type=int, default=1024)
     parser.add_argument("--shard_size", type=int, default=50_000)
     return parser.parse_args()
-
-
-def encode_race(race_val: Any) -> int:
-    if race_val is None:
-        return 6
-    if isinstance(race_val, float) and np.isnan(race_val):
-        return 6
-    s = str(race_val).strip().upper()
-    if not s or s == "NAN":
-        return 6
-    if s in {"UNKNOWN", "UNABLE TO OBTAIN", "PREFER NOT TO SAY", "N/A", "DECLINED"}:
-        return 6
-    if s.startswith("WHITE"):
-        return 0
-    if s.startswith("BLACK"):
-        return 1
-    if s.startswith("ASIAN"):
-        return 2
-    if s.startswith("HISPANIC"):
-        return 3
-    if s.startswith("AMERICAN INDIAN") or s.startswith("ALASKA NATIVE"):
-        return 4
-    if s == "OTHER" or s.startswith("OTHER "):
-        return 5
-    return 5
 
 
 def _build_subject_event_map(
@@ -64,6 +48,7 @@ def _build_subject_event_map(
             WITH ordered AS (
                 SELECT
                     e.subject_id,
+                    e.hadm_id,
                     e.code_id,
                     e.timestamp_days,
                     e.age_at_event_days,
@@ -76,14 +61,8 @@ def _build_subject_event_map(
                 FROM read_parquet('{events_sql}') e
                 JOIN chunk_cohort c USING (subject_id)
             )
-            SELECT
-                o.subject_id,
-                o.code_id,
-                o.timestamp_days,
-                o.age_at_event_days,
-                o.sex,
-                o.race,
-                o.event_idx
+            SELECT o.subject_id, o.hadm_id, o.code_id, o.timestamp_days,
+                   o.age_at_event_days, o.sex, o.race, o.event_idx
             FROM ordered o
             JOIN chunk_cohort c USING (subject_id)
             WHERE o.event_idx <= c.last_event_idx
@@ -133,9 +112,11 @@ def _process_split(
         event_map = _build_subject_event_map(con, events_parquet, cohort_chunk)
 
         subject_ids: list[int] = []
+        hadm_ids: list[int] = []
         labels: list[float] = []
         sexs: list[int] = []
         races: list[int] = []
+        n_events_window: list[int] = []
         code_indices_list: list[np.ndarray] = []
         timestamps_list: list[np.ndarray] = []
         age_days_list: list[np.ndarray] = []
@@ -152,6 +133,10 @@ def _process_split(
             age_days = g["age_at_event_days"].astype(np.float32).to_numpy()
             sex = int(g["sex"].iloc[0])
             race = encode_race(g["race"].iloc[0])
+            # hadm of the last in-window event (index-admission proxy / metadata only)
+            hadm_val = g["hadm_id"].iloc[-1]
+            hadm_id = int(hadm_val) if pd.notna(hadm_val) else -1
+            n_evt = int(code_ids.shape[0])
 
             if code_ids.shape[0] > max_seq_len:
                 sl = slice(-max_seq_len, None)
@@ -166,9 +151,11 @@ def _process_split(
             )
 
             subject_ids.append(sid)
+            hadm_ids.append(hadm_id)
             labels.append(label)
             sexs.append(sex)
             races.append(race)
+            n_events_window.append(n_evt)
             code_indices_list.append(code_indices)
             timestamps_list.append(timestamps_days.astype(np.float32, copy=False))
             age_days_list.append(age_days.astype(np.float32, copy=False))
@@ -177,27 +164,17 @@ def _process_split(
         seq_len_arr = np.asarray([len(c) for c in code_indices_list], dtype=np.int64)
         offsets = np.zeros(len(code_indices_list) + 1, dtype=np.int64)
         np.cumsum(seq_len_arr, out=offsets[1:])
-        code_concat = (
-            np.concatenate(code_indices_list).astype(np.int64)
-            if code_indices_list
-            else np.zeros(0, np.int64)
-        )
-        ts_concat = (
-            np.concatenate(timestamps_list).astype(np.float32)
-            if timestamps_list
-            else np.zeros(0, np.float32)
-        )
-        age_concat = (
-            np.concatenate(age_days_list).astype(np.float32)
-            if age_days_list
-            else np.zeros(0, np.float32)
-        )
+        code_concat = np.concatenate(code_indices_list).astype(np.int64) if code_indices_list else np.zeros(0, np.int64)
+        ts_concat = np.concatenate(timestamps_list).astype(np.float32) if timestamps_list else np.zeros(0, np.float32)
+        age_concat = np.concatenate(age_days_list).astype(np.float32) if age_days_list else np.zeros(0, np.float32)
         np.savez(
             shard_path,
             subject_id=np.asarray(subject_ids, dtype=np.int64),
+            hadm_id=np.asarray(hadm_ids, dtype=np.int64),
             label=np.asarray(labels, dtype=np.float32),
             sex=np.asarray(sexs, dtype=np.int8),
             race=np.asarray(races, dtype=np.int16),
+            n_events_in_window=np.asarray(n_events_window, dtype=np.int64),
             unk_vocab_index=np.asarray([unk_vocab_index], dtype=np.int64),
             offsets=offsets,
             code_indices=code_concat,
@@ -205,12 +182,7 @@ def _process_split(
             age_days=age_concat,
         )
         total_written += len(subject_ids)
-        if shard_idx % 10 == 0 or shard_idx == (n_shards - 1):
-            print(
-                f"[{split}] shard {shard_idx + 1}/{n_shards} "
-                f"rows={len(subject_ids):,} total_written={total_written:,}",
-                flush=True,
-            )
+        print(f"[{split}] shard {shard_idx + 1}/{n_shards} rows={len(subject_ids):,} total={total_written:,}", flush=True)
 
     elapsed = time.perf_counter() - t0
     print(f"[{split}] done in {elapsed:.1f}s | rows={total_written:,} shards={n_shards}", flush=True)
@@ -219,12 +191,9 @@ def _process_split(
 
 def main() -> int:
     args = parse_args()
-    if not args.cohort_dir.exists():
-        raise FileNotFoundError(f"Missing cohort dir: {args.cohort_dir}")
-    if not args.events_parquet.exists():
-        raise FileNotFoundError(f"Missing events parquet: {args.events_parquet}")
-    if not args.vocab_path.exists():
-        raise FileNotFoundError(f"Missing vocab path: {args.vocab_path}")
+    for p in (args.cohort_dir, args.events_parquet, args.vocab_path):
+        if not p.exists():
+            raise FileNotFoundError(f"Missing required path: {p}")
 
     with args.vocab_path.open("r", encoding="utf-8") as f:
         code_vocab: dict[str, int] = {str(k): int(v) for k, v in json.load(f).items()}
@@ -239,19 +208,17 @@ def main() -> int:
             cohort_parquet = args.cohort_dir / f"{split}_cohort.parquet"
             if not cohort_parquet.exists():
                 raise FileNotFoundError(f"Missing split cohort: {cohort_parquet}")
-            out_split_dir = args.out_dir / split
             split_totals[split] = _process_split(
                 con=con,
                 split=split,
                 cohort_parquet=cohort_parquet,
                 events_parquet=args.events_parquet,
                 code_vocab=code_vocab,
-                out_split_dir=out_split_dir,
+                out_split_dir=args.out_dir / split,
                 max_seq_len=args.max_seq_len,
                 shard_size=args.shard_size,
             )
-
-        print("[done] tensorized disease dataset", flush=True)
+        print("[done] tensorized PIC disease dataset", flush=True)
         for split in ("train", "val", "test"):
             rows, shards = split_totals[split]
             print(f"  - {split}: rows={rows:,}, shards={shards}, dir={args.out_dir / split}", flush=True)

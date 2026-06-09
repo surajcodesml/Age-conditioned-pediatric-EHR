@@ -59,3 +59,6 @@ __pycache__/
 # Notebook/editor local files
 .ipynb_checkpoints/
 *.code-workspace
+
+# Synthea generated outputs (regenerate locally with synthea/generate_synthea.sh)
+synthea/output/

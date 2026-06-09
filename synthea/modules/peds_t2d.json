@@ -1,0 +1,139 @@
+{
+  "name": "Pediatric Type 2 Diabetes (obesity-linked, age-varying latency)",
+  "remarks": [
+    "Conditioned on pediatric obesity (attribute 'peds_obese'). T2D onsets AFTER",
+    "obesity (so first_occurrence_idx > 0 with >=1 prior event), and the latency",
+    "from obesity to T2D VARIES BY AGE: long latency in young children, short",
+    "latency in adolescents/young adults. This makes the T2D onset-age distribution",
+    "non-flat and gives the age-conditioned backbone exploitable temporal structure."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Wait_For_Obesity"
+    },
+    "Wait_For_Obesity": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Attribute",
+        "attribute": "peds_obese",
+        "operator": "==",
+        "value": true
+      },
+      "direct_transition": "T2D_Susceptibility"
+    },
+    "T2D_Susceptibility": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "distribution": 0.28, "transition": "Latency_By_Age" },
+        { "distribution": 0.72, "transition": "No_T2D" }
+      ]
+    },
+    "Latency_By_Age": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Age",
+            "operator": "<",
+            "quantity": 6,
+            "unit": "years"
+          },
+          "transition": "Latency_Long"
+        },
+        {
+          "condition": {
+            "condition_type": "Age",
+            "operator": "<",
+            "quantity": 12,
+            "unit": "years"
+          },
+          "transition": "Latency_Medium"
+        },
+        {
+          "condition": {
+            "condition_type": "Age",
+            "operator": "<",
+            "quantity": 18,
+            "unit": "years"
+          },
+          "transition": "Latency_Short"
+        },
+        {
+          "transition": "Latency_Very_Short"
+        }
+      ]
+    },
+    "Latency_Long": {
+      "type": "Delay",
+      "range": { "low": 1, "high": 4, "unit": "years" },
+      "direct_transition": "Onset_T2D"
+    },
+    "Latency_Medium": {
+      "type": "Delay",
+      "range": { "low": 0.75, "high": 2.5, "unit": "years" },
+      "direct_transition": "Onset_T2D"
+    },
+    "Latency_Short": {
+      "type": "Delay",
+      "range": { "low": 0.5, "high": 1.5, "unit": "years" },
+      "direct_transition": "Onset_T2D"
+    },
+    "Latency_Very_Short": {
+      "type": "Delay",
+      "range": { "low": 0.25, "high": 1, "unit": "years" },
+      "direct_transition": "Onset_T2D"
+    },
+    "Onset_T2D": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "peds_t2d_condition",
+      "target_encounter": "T2D_Encounter",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "44054006",
+          "display": "Diabetes mellitus type 2 (disorder)"
+        }
+      ],
+      "direct_transition": "T2D_Encounter"
+    },
+    "T2D_Encounter": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "peds_t2d_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "162673000",
+          "display": "General examination of patient (procedure)"
+        }
+      ],
+      "direct_transition": "HbA1c_Observation"
+    },
+    "HbA1c_Observation": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "4548-4",
+          "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+        }
+      ],
+      "range": { "low": 6.5, "high": 11.0 },
+      "direct_transition": "End_T2D_Encounter"
+    },
+    "End_T2D_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "T2D_Terminal"
+    },
+    "T2D_Terminal": {
+      "type": "Terminal"
+    },
+    "No_T2D": {
+      "type": "Terminal"
+    }
+  },
+  "gmf_version": 2
+}

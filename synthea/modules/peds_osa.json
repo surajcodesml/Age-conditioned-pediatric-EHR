@@ -1,0 +1,120 @@
+{
+  "name": "Pediatric Obstructive Sleep Apnea (obesity-linked, age-varying latency)",
+  "remarks": [
+    "Conditioned on pediatric obesity (attribute 'peds_obese'). OSA onsets AFTER",
+    "obesity with an age-varying latency (faster onset at older ages). Provides a",
+    "second obesity-linked downstream task with age-structured onset timing."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Wait_For_Obesity"
+    },
+    "Wait_For_Obesity": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Attribute",
+        "attribute": "peds_obese",
+        "operator": "==",
+        "value": true
+      },
+      "direct_transition": "OSA_Susceptibility"
+    },
+    "OSA_Susceptibility": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "distribution": 0.2, "transition": "Latency_By_Age" },
+        { "distribution": 0.8, "transition": "No_OSA" }
+      ]
+    },
+    "Latency_By_Age": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Age",
+            "operator": "<",
+            "quantity": 6,
+            "unit": "years"
+          },
+          "transition": "Latency_Long"
+        },
+        {
+          "condition": {
+            "condition_type": "Age",
+            "operator": "<",
+            "quantity": 12,
+            "unit": "years"
+          },
+          "transition": "Latency_Medium"
+        },
+        {
+          "transition": "Latency_Short"
+        }
+      ]
+    },
+    "Latency_Long": {
+      "type": "Delay",
+      "range": { "low": 1, "high": 4, "unit": "years" },
+      "direct_transition": "Onset_OSA"
+    },
+    "Latency_Medium": {
+      "type": "Delay",
+      "range": { "low": 0.75, "high": 2.5, "unit": "years" },
+      "direct_transition": "Onset_OSA"
+    },
+    "Latency_Short": {
+      "type": "Delay",
+      "range": { "low": 0.5, "high": 1.5, "unit": "years" },
+      "direct_transition": "Onset_OSA"
+    },
+    "Onset_OSA": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "peds_osa_condition",
+      "target_encounter": "OSA_Encounter",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "78275009",
+          "display": "Obstructive sleep apnea syndrome (disorder)"
+        }
+      ],
+      "direct_transition": "OSA_Encounter"
+    },
+    "OSA_Encounter": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "peds_osa_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "162673000",
+          "display": "General examination of patient (procedure)"
+        }
+      ],
+      "direct_transition": "Sleep_Study_Procedure"
+    },
+    "Sleep_Study_Procedure": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "82078001",
+          "display": "Sleep apnea monitoring with alarm (regime/therapy)"
+        }
+      ],
+      "direct_transition": "End_OSA_Encounter"
+    },
+    "End_OSA_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "OSA_Terminal"
+    },
+    "OSA_Terminal": {
+      "type": "Terminal"
+    },
+    "No_OSA": {
+      "type": "Terminal"
+    }
+  },
+  "gmf_version": 2
+}

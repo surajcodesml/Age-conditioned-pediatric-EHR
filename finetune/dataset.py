@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import OrderedDict
 import json
 import os
 from pathlib import Path
@@ -220,42 +221,65 @@ class TensorizedDiseaseClassificationDataset(Dataset):
 
         self._index: list[tuple[int, int]] = []
         for shard_id, shard_path in enumerate(self._shard_paths):
-            npz = np.load(shard_path, mmap_mode="r", allow_pickle=True)
+            npz = np.load(shard_path, mmap_mode="r", allow_pickle=False)
             n = int(len(npz["subject_id"]))
             npz.close()
             for pos in range(n):
                 self._index.append((shard_id, pos))
 
-        self._shard_cache: dict[int, Any] = {}
+        self._shard_cache: OrderedDict[int, dict[str, Any]] = OrderedDict()
 
     def __len__(self) -> int:
         return len(self._index)
 
-    def _load_shard(self, shard_id: int) -> Any:
+    def _load_shard(self, shard_id: int) -> dict[str, Any]:
         if shard_id in self._shard_cache:
-            shard = self._shard_cache.pop(shard_id)
-            self._shard_cache[shard_id] = shard
-            return shard
+            d = self._shard_cache.pop(shard_id)
+            self._shard_cache[shard_id] = d
+            return d
 
         if len(self._shard_cache) >= self.shard_cache_size:
-            oldest_key = next(iter(self._shard_cache))
-            oldest = self._shard_cache.pop(oldest_key)
-            try:
-                oldest.close()
-            except Exception:
-                pass
+            _, old = self._shard_cache.popitem(last=False)
+            npz_old = old.get("_npz")
+            if npz_old is not None:
+                try:
+                    npz_old.close()
+                except Exception:
+                    pass
 
-        shard = np.load(self._shard_paths[shard_id], mmap_mode="r", allow_pickle=True)
-        self._shard_cache[shard_id] = shard
-        return shard
+        npz = np.load(self._shard_paths[shard_id], mmap_mode="r", allow_pickle=False)
+        # Old object-array shards lack the flat `offsets` index; touching their
+        # ragged arrays would raise a raw "Object arrays cannot be loaded" error
+        # (allow_pickle=False), so detect the legacy layout up front.
+        if "offsets" not in npz.files:
+            raise RuntimeError(
+                f"{self._shard_paths[shard_id]} is in the old object-array format; re-run tensorization."
+            )
+        d: dict[str, Any] = {
+            "_npz": npz,
+            "offsets": npz["offsets"],
+            "code_indices": npz["code_indices"],
+            "timestamps_days": npz["timestamps_days"],
+            "age_days": npz["age_days"],
+            "subject_id": npz["subject_id"],
+            "hadm_id": npz["hadm_id"] if "hadm_id" in npz.files else None,
+            "sex": npz["sex"],
+            "race": npz["race"],
+            "label": npz["label"],
+            "unk_vocab_index": int(np.asarray(npz["unk_vocab_index"]).reshape(-1)[0]),
+            "n_events_in_window": npz["n_events_in_window"] if "n_events_in_window" in npz.files else None,
+        }
+        self._shard_cache[shard_id] = d
+        return d
 
     def __getitem__(self, idx: int) -> dict[str, Any]:
         shard_id, pos = self._index[idx]
-        shard = self._load_shard(shard_id)
-
-        code_indices = np.asarray(shard["code_indices"][pos], dtype=np.int64)
-        timestamps_days = np.asarray(shard["timestamps_days"][pos], dtype=np.float32)
-        age_days = np.asarray(shard["age_days"][pos], dtype=np.float32)
+        s = self._load_shard(shard_id)
+        off = s["offsets"]
+        start, end = int(off[pos]), int(off[pos + 1])
+        code_indices = np.asarray(s["code_indices"][start:end], dtype=np.int64)
+        timestamps_days = np.asarray(s["timestamps_days"][start:end], dtype=np.float32)
+        age_days = np.asarray(s["age_days"][start:end], dtype=np.float32)
         if code_indices.shape[0] > self.max_seq_len:
             sl = slice(-self.max_seq_len, None)
             code_indices = code_indices[sl]
@@ -263,22 +287,24 @@ class TensorizedDiseaseClassificationDataset(Dataset):
             age_days = age_days[sl]
 
         return {
-            "subject_id": int(shard["subject_id"][pos]),
-            "hadm_id": int(shard["hadm_id"][pos]) if "hadm_id" in shard.files else -1,
+            "subject_id": int(s["subject_id"][pos]),
+            "hadm_id": int(s["hadm_id"][pos]) if s["hadm_id"] is not None else -1,
             "code_indices": code_indices,
             "timestamps_days": timestamps_days,
             "age_days": age_days,
-            "sex": int(shard["sex"][pos]),
-            "race": int(shard["race"][pos]),
-            "unk_vocab_index": int(np.asarray(shard["unk_vocab_index"]).reshape(-1)[0]),
-            "n_events_in_window": int(shard["n_events_in_window"][pos]) if "n_events_in_window" in shard.files else 0,
-            "label": float(shard["label"][pos]),
+            "sex": int(s["sex"][pos]),
+            "race": int(s["race"][pos]),
+            "unk_vocab_index": int(s["unk_vocab_index"]),
+            "n_events_in_window": int(s["n_events_in_window"][pos]) if s["n_events_in_window"] is not None else 0,
+            "label": float(s["label"][pos]),
         }
 
     def __del__(self) -> None:
         for shard in self._shard_cache.values():
             try:
-                shard.close()
+                npz = shard.get("_npz")
+                if npz is not None:
+                    npz.close()
             except Exception:
                 pass
         self._shard_cache.clear()
