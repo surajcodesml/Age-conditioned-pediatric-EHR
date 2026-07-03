@@ -33,6 +33,7 @@ class TALEEHRAge(nn.Module):
         age_conditioning_mode: str = "real",
         age_emb_dim: int = 32,
         age_hidden_dim: int = 64,
+        kernel_injection: str = "additive_logspace",
     ) -> None:
         super().__init__()
         self.embedding_path = Path(embedding_path)
@@ -63,6 +64,7 @@ class TALEEHRAge(nn.Module):
             age_emb_dim=age_emb_dim,
             age_hidden_dim=age_hidden_dim,
             age_conditioning_mode=age_conditioning_mode,
+            kernel_injection=kernel_injection,
         )
         self.temporal_aggregation = AgeConditionedMultiScaleTemporalAggregation(
             d_model=self.d_model,

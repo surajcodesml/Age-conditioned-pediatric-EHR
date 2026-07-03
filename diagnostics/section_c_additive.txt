@@ -1,0 +1,20 @@
+[load] age_additive_code_only_full_20260623/epoch_010 inj=additive_logspace val_loss=0.0108 missing=[] unexpected=[]
+
+=== C. INFERENCE ABLATIONS (40 val batches) ===
+real ages                        code_bce=0.0107 recall@10=0.1124 recall@20=0.2104 recall@5=0.0579
+const age=63y (data mean)        code_bce=0.0110 recall@10=0.1085 recall@20=0.2013 recall@5=0.0571
+[attn] entropy_mean=2.329 max_w_mean=0.340 collapse_frac=0.045
+[w(t)] mean=0.042 std=0.091 low_frac=0.830 high_frac=0.000
+[attn_qk] q_norm_mean=31.436 q_norm_std=2.828 k_norm_mean=16.067 k_norm_std=2.464
+[e_out] mean_abs=0.226 std=0.185 dead_frac=0.029
+[agg_alpha] entropy=5.495 peak_rel_pos=0.644
+[agg_w(t)] mean=0.983 std=0.049 low_frac=0.000 high_frac=0.890
+[h_repr] mean_abs=0.214 std=0.157
+[logits] mean=-11.015 std=2.749 min=-19.313 max=2.557 sigmoid_mean=0.00216
+[time_params] mean=-0.080 std=0.024
+const age=30y                    code_bce=0.0112 recall@10=0.1137 recall@20=0.2102 recall@5=0.0589
+const age=5y                     code_bce=0.0140 recall@10=0.1002 recall@20=0.1930 recall@5=0.0530
+ages shuffled across batch       code_bce=0.0126 recall@10=0.1031 recall@20=0.1961 recall@5=0.0527
+temporal kernel OFF (w=1)        code_bce=0.0107 recall@10=0.1134 recall@20=0.2076 recall@5=0.0587
+
+Done.

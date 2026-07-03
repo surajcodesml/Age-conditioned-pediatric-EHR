@@ -26,6 +26,7 @@ class TALEEHR(nn.Module):
         poly_degree: int = 5,
         demo_dim: int = 3,
         demo_hidden: int = 64,
+        kernel_injection: str = "additive_logspace",
     ) -> None:
         super().__init__()
         self.embedding_path = Path(embedding_path)
@@ -53,6 +54,7 @@ class TALEEHR(nn.Module):
             embedding_dim=1024,
             d_model=self.d_model,
             poly_degree=poly_degree,
+            kernel_injection=kernel_injection,
         )
         self.temporal_aggregation = MultiScaleTemporalAggregation(
             d_model=self.d_model,

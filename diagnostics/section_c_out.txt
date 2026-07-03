@@ -1,0 +1,20 @@
+[load] epoch=12 val_loss=11.1719 missing=[] unexpected=[]
+
+=== C. INFERENCE ABLATIONS (40 val batches) ===
+real ages                        code_bce=0.0106 recall@10=0.1207 recall@20=0.2184 recall@5=0.0648
+const age=63y (data mean)        code_bce=0.0108 recall@10=0.1136 recall@20=0.2074 recall@5=0.0598
+[attn] entropy_mean=4.751 max_w_mean=0.136 collapse_frac=0.011
+[w(t)] mean=0.175 std=0.320 low_frac=0.688 high_frac=0.000
+[attn_qk] q_norm_mean=18.689 q_norm_std=4.776 k_norm_mean=57.828 k_norm_std=9.747
+[e_out] mean_abs=0.238 std=0.237 dead_frac=0.025
+[agg_alpha] entropy=5.121 peak_rel_pos=0.771
+[agg_w(t)] mean=0.393 std=0.483 low_frac=0.591 high_frac=0.384
+[h_repr] mean_abs=0.199 std=0.225
+[logits] mean=-12.279 std=3.597 min=-22.479 max=2.966 sigmoid_mean=0.00204
+[time_params] mean=269.593 std=662.643
+const age=30y                    code_bce=0.0111 recall@10=0.1214 recall@20=0.2172 recall@5=0.0618
+const age=5y                     code_bce=0.0133 recall@10=0.1047 recall@20=0.1964 recall@5=0.0535
+ages shuffled across batch       code_bce=0.0119 recall@10=0.1055 recall@20=0.1984 recall@5=0.0544
+temporal kernel OFF (w=1)        code_bce=0.0115 recall@10=0.1170 recall@20=0.2111 recall@5=0.0615
+
+Done.

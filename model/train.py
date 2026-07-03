@@ -121,6 +121,33 @@ class _TeeStream:
             stream.flush()
 
 
+def log_attention_qk_norms(
+    model: nn.Module,
+    batch: dict[str, torch.Tensor],
+    step: int,
+    log_fh,
+) -> dict[str, float] | None:
+    """Log attention-path ||q|| and ||k|| norms (per-token L2, masked valid positions)."""
+    attn = getattr(model, "time_aware_attention", None)
+    if attn is None or not hasattr(attn, "attention_qk_norm_stats"):
+        return None
+    if not hasattr(model, "embedding_table"):
+        return None
+
+    with torch.no_grad():
+        code_embeddings = model.embedding_table[batch["code_indices"]]
+        stats = attn.attention_qk_norm_stats(code_embeddings, batch["attention_mask"])
+
+    msg = (
+        f"[attn_qk_norm] step {step} "
+        f"q_norm_mean={stats['q_norm_mean']:.3f} q_norm_std={stats['q_norm_std']:.3f} | "
+        f"k_norm_mean={stats['k_norm_mean']:.3f} k_norm_std={stats['k_norm_std']:.3f}"
+    )
+    print(msg, flush=True)
+    log_fh.write(msg + "\n")
+    return stats
+
+
 def log_polynomial_diagnostics(model, step: int, log_fh, model_variant: str = "baseline") -> None:
     """Log canonical w(Δt) curves, polynomial coeff/grad diagnostics, and q_base norm."""
     with torch.no_grad():
@@ -227,6 +254,8 @@ def pretrain(
     age_conditioning_mode: str | None = None,
     age_diag_every: int = 200,
     w_curve_every: int = 0,
+    no_time_loss: bool = False,
+    attn_qk_every: int = 50,
 ) -> None:
     device_t = torch.device(device)
     model.to(device_t)
@@ -282,11 +311,17 @@ def pretrain(
                "bce_pos_weight": bce_pos_weight, "resume_from": str(resume_from) if resume_from else None,
                "model_variant": getattr(model, "_variant_tag", "baseline"),
                "age_conditioning_mode": getattr(model, "_age_mode_tag", None),
-               "age_diag_every": age_diag_every, "w_curve_every": w_curve_every}, f, indent=2)
+               "age_diag_every": age_diag_every, "w_curve_every": w_curve_every,
+               "no_time_loss": no_time_loss, "attn_qk_every": attn_qk_every}, f, indent=2)
 
     log_file = save_dir / "train.log"
     log_mode = "a" if resume_from is not None else "w"
     log_fh = open(log_file, log_mode, buffering=1)  # line-buffered
+
+    if no_time_loss:
+        msg = "[train] code-only mode: Weibull time loss computed for logging but excluded from backward pass"
+        print(msg, flush=True)
+        log_fh.write(msg + "\n")
 
     if start_epoch > epochs:
         print(
@@ -319,13 +354,17 @@ def pretrain(
                 out = model(batch)
                 loss_code = code_loss_fn(out["code_logits"], batch["target_codes"])
                 loss_time = weibull_nll_loss(out["time_params"], batch["target_time_gap"])
-                loss = loss_time + gamma_loss * loss_code
+                if no_time_loss:
+                    loss = gamma_loss * loss_code
+                else:
+                    loss = loss_time + gamma_loss * loss_code
             if step == 1 or step % 200 == 0 or step in {500, 1500}:
                 with torch.no_grad():
                     k = F.softplus(out["time_params"][:, 0]) + 1e-6
                     lam = F.softplus(out["time_params"][:, 1]) + 1e-6
+                    time_tag = "detached" if no_time_loss else "active"
                     print(
-                        f"[weibull] step={step} "
+                        f"[weibull:{time_tag}] step={step} "
                         f"k_mean={float(k.mean()):.6f} k_std={float(k.std(unbiased=False)):.6f} "
                         f"lam_mean={float(lam.mean()):.6f} lam_std={float(lam.std(unbiased=False)):.6f} "
                         f"loss_time={float(loss_time.detach().item()):.6f} "
@@ -338,6 +377,8 @@ def pretrain(
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             if w_curve_every > 0 and (step % w_curve_every == 0 or step == 1):
                 log_polynomial_diagnostics(model, step, log_fh, model_variant=model_variant)
+            if attn_qk_every > 0 and (step % attn_qk_every == 0 or step == 1):
+                log_attention_qk_norms(model, batch, step, log_fh)
             scaler.step(optimizer)
             scaler.update()
 
@@ -365,8 +406,9 @@ def pretrain(
                 code_contrib = gamma_loss * float(loss_code.detach().item())
                 time_contrib = float(loss_time.detach().item())
                 ratio = code_contrib / max(time_contrib, 1e-8)
+                time_mode = "code_only" if no_time_loss else "code+time"
                 print(
-                    f"  ep{epoch:03d} step {step:6d} "
+                    f"  ep{epoch:03d} step {step:6d} [{time_mode}] "
                     f"loss={float(loss.detach().item()):.4f} "
                     f"(code={float(loss_code.detach().item()):.4f}, "
                     f"time={float(loss_time.detach().item()):.4f}, "
@@ -390,7 +432,10 @@ def pretrain(
                     out = model(batch)
                     loss_code = code_loss_fn(out["code_logits"], batch["target_codes"])
                     loss_time = weibull_nll_loss(out["time_params"], batch["target_time_gap"])
-                    loss = loss_time + gamma_loss * loss_code
+                    if no_time_loss:
+                        loss = gamma_loss * loss_code
+                    else:
+                        loss = loss_time + gamma_loss * loss_code
                 val_total += float(loss.detach().item())
                 val_code += float(loss_code.detach().item())
                 val_time += float(loss_time.detach().item())
@@ -472,6 +517,14 @@ if __name__ == "__main__":
              "'age_conditioned' = TALEEHRAge with age-conditioned polynomial decay.",
     )
     parser.add_argument(
+        "--kernel_injection",
+        choices=["multiplicative", "additive_logspace"],
+        default="additive_logspace",
+        help="How the temporal kernel enters attention pre-softmax logits: "
+             "'multiplicative' scales logits by w=sigmoid(poly); "
+             "'additive_logspace' adds logsigmoid(poly) (default).",
+    )
+    parser.add_argument(
         "--age_conditioning_mode",
         choices=["real", "random_constant", "none"],
         default="real",
@@ -530,6 +583,19 @@ if __name__ == "__main__":
         action="store_true",
         help="Run exactly 3 training steps and 1 validation step, then exit.",
     )
+    parser.add_argument(
+        "--no_time_loss",
+        action="store_true",
+        help="Train with code loss only. Weibull time loss is still computed and "
+             "logged for diagnostics but excluded from the optimization objective.",
+    )
+    parser.add_argument(
+        "--attn_qk_every",
+        type=int,
+        default=50,
+        help="Log attention-path ||q|| and ||k|| norms every N training steps. "
+             "Set to 0 to disable.",
+    )
     args = parser.parse_args()
     
     run_name = args.run_name or time.strftime("run_%Y%m%d_%H%M%S")
@@ -544,6 +610,7 @@ if __name__ == "__main__":
     try:
         print(f"[run] checkpoints -> {args.save_dir}", flush=True)
         print(f"[run] console log -> {console_log_path}", flush=True)
+        print(f"[run] kernel_injection={args.kernel_injection}", flush=True)
 
         start = time.perf_counter()
         with args.vocab_path.open("r", encoding="utf-8") as f:
@@ -582,6 +649,7 @@ if __name__ == "__main__":
                 num_codes=num_codes,
                 d_model=args.d_model,
                 poly_degree=args.poly_degree,
+                kernel_injection=args.kernel_injection,
             )
         elif args.model_variant == "age_conditioned":
             try:
@@ -594,6 +662,7 @@ if __name__ == "__main__":
                 d_model=args.d_model,
                 poly_degree=args.poly_degree,
                 age_conditioning_mode=args.age_conditioning_mode,
+                kernel_injection=args.kernel_injection,
             )
         else:
             raise ValueError(f"Unknown model_variant: {args.model_variant}")
@@ -616,6 +685,8 @@ if __name__ == "__main__":
             age_conditioning_mode=args.age_conditioning_mode,
             age_diag_every=args.age_diag_every,
             w_curve_every=args.w_curve_every,
+            no_time_loss=args.no_time_loss,
+            attn_qk_every=args.attn_qk_every,
         )
         total_time = time.perf_counter() - start
         print(f"Total training time: {total_time:.1f}s", flush=True)

@@ -31,8 +31,12 @@ def _forward_with_causal_mask(
     v = baseline.mlp_v(code_embeddings)
     scale = 1.0 / math.sqrt(baseline.d_model)
     scores = torch.bmm(q, k.transpose(-1, -2)) * scale
-    w = baseline.temporal_weight(delta_t)
-    scores = scores * w
+    poly = baseline.temporal_weight.poly_value(delta_t)
+    w = torch.sigmoid(poly)
+    if baseline.kernel_injection == "multiplicative":
+        scores = scores * w
+    else:  # "additive_logspace"
+        scores = scores + F.logsigmoid(poly)
     _, l, _ = scores.shape
     causal = torch.tril(torch.ones((l, l), device=scores.device, dtype=torch.bool))
     pad_mask = attention_mask.unsqueeze(1) & attention_mask.unsqueeze(2)
@@ -65,7 +69,7 @@ class AgeConditionedPolynomialWeight(nn.Module):
             mode=age_conditioning_mode,
         )
 
-    def forward(self, delta_t: torch.Tensor, age_features: torch.Tensor) -> torch.Tensor:
+    def _poly(self, delta_t: torch.Tensor, age_features: torch.Tensor) -> torch.Tensor:
         alpha_delta = self.age_coeff_gen(age_features)
         alpha = self.coefficients + alpha_delta
 
@@ -78,7 +82,13 @@ class AgeConditionedPolynomialWeight(nn.Module):
         poly = torch.zeros_like(delta_t)
         for k in range(self.poly_degree + 1):
             poly = poly + alpha[..., k : k + 1] * powers[k]
-        return torch.sigmoid(poly)
+        return poly
+
+    def poly_value(self, delta_t: torch.Tensor, age_features: torch.Tensor) -> torch.Tensor:
+        return self._poly(delta_t, age_features)
+
+    def forward(self, delta_t: torch.Tensor, age_features: torch.Tensor) -> torch.Tensor:
+        return torch.sigmoid(self._poly(delta_t, age_features))
 
 
 class AgeConditionedMultiScaleTemporalAggregation(nn.Module):
@@ -173,8 +183,14 @@ class AgeConditionedTimeAwareAttention(nn.Module):
         age_emb_dim: int = 32,
         age_hidden_dim: int = 64,
         age_conditioning_mode: str = "real",
+        kernel_injection: str = "additive_logspace",
     ) -> None:
         super().__init__()
+        if kernel_injection not in {"multiplicative", "additive_logspace"}:
+            raise ValueError(
+                f"kernel_injection must be 'multiplicative' or 'additive_logspace', got {kernel_injection!r}"
+            )
+        self.kernel_injection = kernel_injection
         self.embedding_dim = int(embedding_dim)
         self.d_model = int(d_model)
 
@@ -204,8 +220,12 @@ class AgeConditionedTimeAwareAttention(nn.Module):
 
         scale = 1.0 / math.sqrt(self.d_model)
         scores = torch.bmm(q, k.transpose(-1, -2)) * scale
-        w = self.temporal_weight(delta_t, age_features)
-        scores = scores * w
+        poly = self.temporal_weight.poly_value(delta_t, age_features)
+        w = torch.sigmoid(poly)
+        if self.kernel_injection == "multiplicative":
+            scores = scores * w
+        else:  # "additive_logspace"
+            scores = scores + F.logsigmoid(poly)
 
         _, l, _ = scores.shape
         device = scores.device
@@ -243,6 +263,14 @@ class AgeConditionedTimeAwareAttention(nn.Module):
         e = torch.bmm(attn, v)
         if debug_sample:
             with torch.no_grad():
+                qk_stats = self.attention_qk_norm_stats(code_embeddings, attention_mask)
+                print(
+                    f"[attn_qk] q_norm_mean={qk_stats['q_norm_mean']:.3f} "
+                    f"q_norm_std={qk_stats['q_norm_std']:.3f} "
+                    f"k_norm_mean={qk_stats['k_norm_mean']:.3f} "
+                    f"k_norm_std={qk_stats['k_norm_std']:.3f}",
+                    flush=True,
+                )
                 e_valid = e[attention_mask]
                 if e_valid.numel() > 0:
                     print(
@@ -252,6 +280,31 @@ class AgeConditionedTimeAwareAttention(nn.Module):
                         flush=True,
                     )
         return e
+
+    @torch.no_grad()
+    def attention_qk_norm_stats(
+        self,
+        code_embeddings: torch.Tensor,
+        attention_mask: torch.Tensor,
+    ) -> dict[str, float]:
+        """Per-token L2 norms of attention-path q/k over valid (non-pad) positions."""
+        q = self.mlp_q(code_embeddings)
+        k = self.mlp_k(code_embeddings)
+        if not attention_mask.any():
+            return {
+                "q_norm_mean": float("nan"),
+                "q_norm_std": float("nan"),
+                "k_norm_mean": float("nan"),
+                "k_norm_std": float("nan"),
+            }
+        q_norms = q[attention_mask].float().norm(dim=-1)
+        k_norms = k[attention_mask].float().norm(dim=-1)
+        return {
+            "q_norm_mean": float(q_norms.mean()),
+            "q_norm_std": float(q_norms.std(unbiased=False)),
+            "k_norm_mean": float(k_norms.mean()),
+            "k_norm_std": float(k_norms.std(unbiased=False)),
+        }
 
 
 def _make_inputs(

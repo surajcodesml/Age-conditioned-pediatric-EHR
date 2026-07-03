@@ -18,7 +18,7 @@ class PolynomialTemporalWeight(nn.Module):
         coeffs[0] = 0.5
         self.coefficients = nn.Parameter(coeffs)
 
-    def forward(self, t: torch.Tensor) -> torch.Tensor:
+    def _poly(self, t: torch.Tensor) -> torch.Tensor:
         powers = [torch.ones_like(t)]
         cur = t
         for _ in range(self.poly_degree):
@@ -27,7 +27,13 @@ class PolynomialTemporalWeight(nn.Module):
         poly = torch.zeros_like(t)
         for k in range(self.poly_degree + 1):
             poly = poly + self.coefficients[k] * powers[k]
-        return torch.sigmoid(poly)
+        return poly
+
+    def poly_value(self, t: torch.Tensor) -> torch.Tensor:
+        return self._poly(t)
+
+    def forward(self, t: torch.Tensor) -> torch.Tensor:
+        return torch.sigmoid(self._poly(t))
 
 
 class TimeAwareAttention(nn.Module):
@@ -38,8 +44,14 @@ class TimeAwareAttention(nn.Module):
         embedding_dim: int = 1024,
         d_model: int = 256,
         poly_degree: int = 5,
+        kernel_injection: str = "additive_logspace",
     ) -> None:
         super().__init__()
+        if kernel_injection not in {"multiplicative", "additive_logspace"}:
+            raise ValueError(
+                f"kernel_injection must be 'multiplicative' or 'additive_logspace', got {kernel_injection!r}"
+            )
+        self.kernel_injection = kernel_injection
         self.embedding_dim = embedding_dim
         self.d_model = d_model
         self.mlp_q = nn.Sequential(nn.Linear(embedding_dim, d_model), nn.GELU())
@@ -68,14 +80,18 @@ class TimeAwareAttention(nn.Module):
 
         scale = 1.0 / math.sqrt(self.d_model)
         scores = torch.bmm(q, k.transpose(-1, -2)) * scale
-        w = self.temporal_weight(delta_t)
-        scores = scores * w
+        poly = self.temporal_weight.poly_value(delta_t)
+        w = torch.sigmoid(poly)
+        if self.kernel_injection == "multiplicative":
+            scores = scores * w
+        else:  # "additive_logspace"
+            scores = scores + F.logsigmoid(poly)
 
         b, l, _ = scores.shape
         device, dtype = scores.device, scores.dtype
         causal = torch.tril(torch.ones((l, l), device=device, dtype=torch.bool))
         pad_mask = attention_mask.unsqueeze(1) & attention_mask.unsqueeze(2)
-        full_mask = pad_mask
+        full_mask = pad_mask & causal.unsqueeze(0) # Casual mask added, making it same as age version
 
         scores = scores.masked_fill(~full_mask, float("-inf"))
         attn = F.softmax(scores, dim=-1)
