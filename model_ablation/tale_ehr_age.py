@@ -179,13 +179,19 @@ class TALEEHRAblation(nn.Module):
             demo_features = self.demo_proj(demographics)
             return {"h_repr": e, "demo_features": demo_features}
 
-        af_kernel_agg = self.temporal_aggregation.age_emb(self._kernel_age_years(age_years))
-        h = self.temporal_aggregation(e, batch["timestamps_days"], attention_mask, af_kernel_agg)
-
         b = code_indices.shape[0]
+        batch_idx = torch.arange(b, device=code_indices.device)
         lengths = attention_mask.sum(dim=1).long()
         last_idx = (lengths - 1).clamp(min=0)
-        demo_last = demographics[torch.arange(b, device=code_indices.device), last_idx]
+
+        # Aggregation is modulated by a SINGLE current age per sequence (age at the
+        # last valid event), matching its delta-to-current construction -> features
+        # are [B, age_emb_dim] and Delta-alpha is [B, D+1].
+        age_current = age_years[batch_idx, last_idx]
+        af_kernel_agg = self.temporal_aggregation.age_emb(self._kernel_age_years(age_current))
+        h = self.temporal_aggregation(e, batch["timestamps_days"], attention_mask, af_kernel_agg)
+
+        demo_last = demographics[batch_idx, last_idx]
         combined = torch.cat([self.history_proj(h), self.demo_proj(demo_last)], dim=-1)
         code_logits = self.code_predictor(combined)
         return {"code_logits": code_logits, "h": h}

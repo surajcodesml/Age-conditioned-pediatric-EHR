@@ -10,8 +10,10 @@ kernel, no time/Weibull loss.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
+import subprocess
 import sys
 import time
 from contextlib import nullcontext
@@ -57,6 +59,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--max_seq_len", type=int, default=1024)
     p.add_argument("--seed", type=int, default=42)  # SHARED across arms
     p.add_argument("--num_workers", type=int, default=max(2, min(8, (os.cpu_count() or 8) - 2)))
+    p.add_argument("--log_every", type=int, default=500, help="print a progress heartbeat every N steps")
     p.add_argument("--device", type=str, default=("cuda" if torch.cuda.is_available() else "cpu"))
     p.add_argument("--run_dir", type=Path, default=None)
     p.add_argument("--dry_run_one_epoch", action="store_true")
@@ -68,6 +71,37 @@ def set_seed(seed: int) -> None:
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+
+
+def _git_commit() -> str | None:
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=str(REPO_ROOT), stderr=subprocess.DEVNULL
+        ).decode().strip()
+    except Exception:
+        return None
+
+
+def _sha256(path: Path) -> str | None:
+    try:
+        h = hashlib.sha256()
+        with path.open("rb") as f:
+            for chunk in iter(lambda: f.read(1 << 20), b""):
+                h.update(chunk)
+        return h.hexdigest()
+    except Exception:
+        return None
+
+
+def _grad_l2(params) -> float:
+    """L2 norm of grads over a param subset (pre-clip). 0.0 if the subset has no grads
+    (e.g. arms whose age pathway carries no parameters)."""
+    sq, found = 0.0, False
+    for p in params:
+        if p.grad is not None:
+            sq += float(p.grad.detach().float().norm().item()) ** 2
+            found = True
+    return sq ** 0.5 if found else 0.0
 
 
 def _move(batch: dict[str, Any], device: torch.device) -> dict[str, Any]:
@@ -168,13 +202,52 @@ def main() -> int:
     use_amp = device.type == "cuda"
     scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
 
-    best_auroc, best_epoch = -float("inf"), 0
+    # Age-pathway parameters (kernel Delta-alpha generator + additive-embed MLP). Empty
+    # for arms whose pathway carries no params (vanilla). Tracked so we can prove the
+    # age path actually learned (grad non-trivial) even if the arm ultimately loses.
+    age_params = [p for n, p in model.backbone.named_parameters()
+                  if ("age_coeff_gen" in n) or ("additive_age_emb" in n)]
+
+    # ---- config snapshot: proves all arms share the same backbone + settings -----
+    config = {
+        "task": "chd_heart_malformations_classification",
+        "arm": args.arm,
+        "seed": args.seed,
+        "git_commit": _git_commit(),
+        "started_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "device": str(device),
+        "cohort_dir": str(args.cohort_dir) if args.cohort_dir else None,
+        "tensorized_dir": str(args.tensorized_dir) if args.tensorized_dir else None,
+        "pretrained_ckpt": str(args.pretrained_ckpt),
+        "pretrained_ckpt_sha256": _sha256(Path(args.pretrained_ckpt)),
+        "pos_weight": pos_weight,
+        "age_pathway_param_count": int(model.backbone.age_pathway_param_count()),
+        "selection_metric": "val_auprc (max)",  # PRE-DECLARED before runs
+        "hyperparameters": {
+            "epochs": args.epochs, "batch_size": args.batch_size,
+            "lr_backbone": args.lr_backbone, "lr_head": args.lr_head,
+            "max_seq_len": args.max_seq_len, "num_workers": args.num_workers,
+            "grad_clip_max_norm": 1.0, "optimizer": "AdamW", "amp": use_amp,
+        },
+        "lr_param_groups": [
+            {"name": name, "lr": float(g["lr"]), "n_params": int(sum(p.numel() for p in g["params"]))}
+            for name, g in zip(("backbone", "head"), optimizer.param_groups)
+        ],
+        "age_pathway_lr_group": "backbone",  # age params live in the backbone LR group
+    }
+    with (run_dir / "config.json").open("w") as f:
+        json.dump(config, f, indent=2)
+
+    best_auprc, best_epoch = -float("inf"), 0  # PRE-DECLARED selection metric: val AUPRC
     best_ckpt = run_dir / "best.pt"
     history: list[dict[str, Any]] = []
     total_epochs = 1 if args.dry_run_one_epoch else args.epochs
     for epoch in range(1, total_epochs + 1):
         model.train()
         tl = []
+        grad_norms: list[float] = []
+        age_grad_norms: list[float] = []
+        ep_t0 = time.perf_counter()
         for step, batch in enumerate(train_loader, 1):
             batch = _move(batch, device)
             optimizer.zero_grad(set_to_none=True)
@@ -183,31 +256,76 @@ def main() -> int:
                 loss = criterion(model(batch), batch["labels"])
             scaler.scale(loss).backward()
             scaler.unscale_(optimizer)
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            age_grad_norms.append(_grad_l2(age_params))  # pre-clip age-pathway grad norm
+            gn = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             scaler.step(optimizer)
             scaler.update()
             tl.append(float(loss.item()))
-        val_loss, vm, *_ = evaluate(model, val_loader, criterion, device)
+            grad_norms.append(float(gn))  # pre-clip total grad norm
+            if args.log_every and step % args.log_every == 0:
+                elapsed = time.perf_counter() - ep_t0
+                recent = tl[-args.log_every:]
+                print(
+                    f"  [{args.arm} epoch {epoch:03d} step {step:>6}] "
+                    f"running_loss={np.mean(recent):.6f} gradnorm={grad_norms[-1]:.4f} "
+                    f"age_gradnorm={age_grad_norms[-1]:.3e} {step / max(elapsed, 1e-9):.1f} it/s",
+                    flush=True,
+                )
+        ep_secs = time.perf_counter() - ep_t0
+
+        val_loss, vm, yt, yp, age = evaluate(model, val_loader, criterion, device)
+        val_strat = age_stratified(yt, yp, np.clip(age, 0.0, None))
         print(f"Epoch {epoch:03d} | train_loss={np.mean(tl):.6f} | val_loss={val_loss:.6f} | "
-              f"val_AUROC={vm['auroc']:.6f} | val_AUPRC={vm['auprc']:.6f}", flush=True)
-        history.append({"epoch": epoch, "train_loss": float(np.mean(tl)), "val_auroc": vm["auroc"]})
-        rank = vm["auroc"] if np.isfinite(vm["auroc"]) else -float("inf")
-        if rank > best_auroc:
-            best_auroc, best_epoch = rank, epoch
+              f"val_AUPRC={vm['auprc']:.6f} | val_AUROC={vm['auroc']:.6f} | "
+              f"age_gradnorm(mean)={np.mean(age_grad_norms) if age_grad_norms else 0.0:.3e}", flush=True)
+        history.append({
+            "epoch": epoch,
+            "train_loss": float(np.mean(tl)),
+            "val_loss": float(val_loss),
+            "val_auprc": vm["auprc"],   # PRIMARY
+            "val_auroc": vm["auroc"],   # secondary
+            "val_age_stratified": val_strat,
+            "age_pathway_grad_norm_preclip": {
+                "mean": float(np.mean(age_grad_norms)) if age_grad_norms else 0.0,
+                "max": float(np.max(age_grad_norms)) if age_grad_norms else 0.0,
+                "last": float(age_grad_norms[-1]) if age_grad_norms else 0.0,
+            },
+            "total_grad_norm_preclip": {
+                "mean": float(np.mean(grad_norms)) if grad_norms else float("nan"),
+                "max": float(np.max(grad_norms)) if grad_norms else float("nan"),
+            },
+            "lr_param_groups": [float(g["lr"]) for g in optimizer.param_groups],
+            "epoch_seconds": ep_secs,
+        })
+        # Checkpoint selection on val AUPRC (pre-declared).
+        rank = vm["auprc"] if np.isfinite(vm["auprc"]) else -float("inf")
+        if rank > best_auprc:
+            best_auprc, best_epoch = rank, epoch
             torch.save({"epoch": epoch, "arm": args.arm, "model_state_dict": model.state_dict()}, best_ckpt)
+        # Persist history after every epoch so a crash still leaves the convergence curve.
+        with (run_dir / "history.json").open("w") as f:
+            json.dump({"arm": args.arm, "config": config, "best_epoch": best_epoch,
+                       "selection_metric": "val_auprc (max)", "history": history}, f, indent=2)
 
     if best_ckpt.exists():
         model.load_state_dict(torch.load(best_ckpt, map_location=device)["model_state_dict"])
     test_loss, tm, yt, yp, age = evaluate(model, test_loader, criterion, device)
     strat = age_stratified(yt, yp, np.clip(age, 0.0, None))
-    print(f"[test @ best epoch {best_epoch}] AUROC={tm['auroc']:.6f} AUPRC={tm['auprc']:.6f}", flush=True)
+    print(f"[test @ best epoch {best_epoch}] AUPRC={tm['auprc']:.6f} AUROC={tm['auroc']:.6f}", flush=True)
     print("[age_stratified test]", flush=True)
     for band, rec in strat.items():
         print(f"  {band:>6}: n={rec['n']:5d} AUROC={rec['auroc']:.4f} AUPRC={rec['auprc']:.4f}", flush=True)
     with (run_dir / "history.json").open("w") as f:
-        json.dump({"arm": args.arm, "best_epoch": best_epoch, "history": history,
+        json.dump({"arm": args.arm, "config": config, "best_epoch": best_epoch,
+                   "selection_metric": "val_auprc (max)", "history": history,
                    "test_metrics": tm, "test_age_stratified": strat}, f, indent=2)
-    return 0
+
+    # Deterministic teardown (see train.py): spawned DataLoader workers can SIGABRT in a
+    # C-extension destructor at interpreter shutdown, flipping the exit code even though
+    # all checkpoints and history.json are already written. Hard-exit past that race.
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(0)
 
 
 if __name__ == "__main__":

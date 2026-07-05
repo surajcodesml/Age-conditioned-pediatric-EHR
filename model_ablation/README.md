@@ -46,8 +46,11 @@ conda run -n ehr python model_ablation/verify_arms.py \
     --pretrained_ckpt checkpoints/run_20260427_152603/best_pretrain.pt \
     --tensorized_dir data/finetune/heart_failure_tensorized   # CHD stand-in until built
 
+# Re-tensorize pretrain shards into the flat, spawn-safe format (one-time; ~7 min)
+conda run -n ehr python model_ablation/tensorize_pretrain.py --out_dir data/processed/tensorized_flat
+
 # Shared vanilla pretrain (one backbone for all arms)
-conda run -n ehr python model_ablation/train.py --tensorized_dir data/processed/tensorized
+conda run -n ehr python model_ablation/train.py --tensorized_dir data/processed/tensorized_flat
 
 # Arm fine-tune (only --arm varies; seed/hparams identical across arms)
 conda run -n ehr python model_ablation/train_finetune.py --arm {vanilla|random_constant|additive|kernel} \
