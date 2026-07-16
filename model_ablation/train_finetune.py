@@ -47,16 +47,24 @@ except Exception:  # pragma: no cover
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Four-arm ablation fine-tune (CHD).")
     p.add_argument("--arm", type=str, required=True, choices=ARMS)
+    p.add_argument("--task_name", type=str, default="chd_heart_malformations",
+                   help="label recorded in config.json (e.g. pneumonia, mortality, los_gt7)")
     p.add_argument("--pretrained_ckpt", type=Path, required=True)
     p.add_argument("--cohort_dir", type=Path, default=None)
     p.add_argument("--tensorized_dir", type=Path, default=None)
     p.add_argument("--events_parquet", type=Path, default=REPO_ROOT / "data/processed/patient_events_rolled_full.parquet")
     p.add_argument("--vocab_path", type=Path, default=REPO_ROOT / "data/processed/code_vocab.json")
-    p.add_argument("--epochs", type=int, default=5)
+    p.add_argument("--epochs", type=int, default=30)
+    p.add_argument("--patience", type=int, default=6,
+                   help="early-stop after this many epochs with no val-AUPRC improvement")
     p.add_argument("--batch_size", type=int, default=64)
     p.add_argument("--lr_backbone", type=float, default=1e-5)
     p.add_argument("--lr_head", type=float, default=1e-3)
+    p.add_argument("--lr_age", type=float, default=1e-3,
+                   help="LR for the dedicated age-injection param group (kernel/additive/random_constant)")
     p.add_argument("--max_seq_len", type=int, default=1024)
+    p.add_argument("--max_rows", type=int, default=None,
+                   help="cap #samples per split (smoke tier 1); None = full data")
     p.add_argument("--seed", type=int, default=42)  # SHARED across arms
     p.add_argument("--num_workers", type=int, default=max(2, min(8, (os.cpu_count() or 8) - 2)))
     p.add_argument("--log_every", type=int, default=500, help="print a progress heartbeat every N steps")
@@ -174,6 +182,12 @@ def build_loaders(args):
         mk = lambda name: DiseaseClassificationDataset(args.cohort_dir / f"{name}_cohort.parquet",
                                                        args.events_parquet, args.vocab_path, args.max_seq_len)
         train_ds, val_ds, test_ds = mk("train"), mk("val"), mk("test")
+    if args.max_rows is not None:  # smoke tier 1: truncate each split's index in place
+        for ds in (train_ds, val_ds, test_ds):
+            if hasattr(ds, "_index"):
+                del ds._index[args.max_rows:]
+            elif hasattr(ds, "_rows"):
+                del ds._rows[args.max_rows:]
     return (train_ds,
             DataLoader(train_ds, shuffle=True, **kw),
             DataLoader(val_ds, shuffle=False, **kw),
@@ -194,23 +208,54 @@ def main() -> int:
 
     model = TALEEHRAblationClassifier(args.arm, args.pretrained_ckpt, freeze_backbone=False).to(device)
     print(f"[arm={args.arm}] age_pathway_params={model.backbone.age_pathway_param_count()}", flush=True)
-    optimizer = torch.optim.AdamW([
-        {"params": model.backbone.parameters(), "lr": args.lr_backbone},
-        {"params": model.classifier.parameters(), "lr": args.lr_head},
-    ])
+
+    # INV-demo: age must never enter through demographics. demo_proj consumes sex/race only.
+    assert model.backbone.demo_dim == 2, f"demo_dim must be 2 (sex, race); got {model.backbone.demo_dim}"
+
+    # ---- dedicated age-injection optimizer group (the fix) --------------------------
+    # Age-injection params = the kernel Delta-alpha generator (age_coeff_gen, both encoder-
+    # attention and aggregation stages) and the additive-embedding MLP (additive_age_emb).
+    # These previously sat inside the backbone group and trained at lr_backbone (1e-5),
+    # which left them effectively frozen. We split them into their own group at lr_age so
+    # `age params train at lr_age, everything else unchanged`. Partition by param id so no
+    # param lands in two groups. Applied UNIFORMLY across arms:
+    #   kernel / random_constant -> age_coeff_gen params (random_constant kept in the age
+    #                               group so it stays capacity- AND lr-matched to kernel;
+    #                               only the age INPUT differs between them);
+    #   additive                 -> additive_age_emb params;
+    #   vanilla                  -> no such params -> age group empty (omitted).
+    # Base kernel coefficients (temporal_weight.coefficients) intentionally stay in the
+    # backbone group for ALL arms ("everything else unchanged").
+    def _is_age_name(n: str) -> bool:
+        return ("age_coeff_gen" in n) or ("additive_age_emb" in n)
+
+    age_named = [(n, p) for n, p in model.backbone.named_parameters() if _is_age_name(n)]
+    age_params = [p for _, p in age_named]
+    age_param_ids = {id(p) for p in age_params}
+    backbone_params = [p for p in model.backbone.parameters() if id(p) not in age_param_ids]
+
+    param_groups = [
+        {"name": "backbone", "params": backbone_params, "lr": args.lr_backbone},
+        {"name": "head", "params": list(model.classifier.parameters()), "lr": args.lr_head},
+    ]
+    if age_params:  # vanilla contributes no age params -> keep the group empty (omit)
+        param_groups.append({"name": "age", "params": age_params, "lr": args.lr_age})
+    optimizer = torch.optim.AdamW(param_groups)
+
+    # Init snapshots so we can prove the age path actually MOVED. With Adam, the update
+    # step is ~= lr even when the gradient is tiny, so grad-norm alone (small for the
+    # kernel path by construction) does NOT show learning; parameter drift does.
+    age_init = [p.detach().clone() for p in age_params]
+    _tw = model.backbone.time_aware_attention.temporal_weight
+    coeff_init = _tw.coefficients.detach().clone()  # age-free base kernel (stays in backbone group)
+
     criterion = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([pos_weight], device=device))
     use_amp = device.type == "cuda"
     scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
 
-    # Age-pathway parameters (kernel Delta-alpha generator + additive-embed MLP). Empty
-    # for arms whose pathway carries no params (vanilla). Tracked so we can prove the
-    # age path actually learned (grad non-trivial) even if the arm ultimately loses.
-    age_params = [p for n, p in model.backbone.named_parameters()
-                  if ("age_coeff_gen" in n) or ("additive_age_emb" in n)]
-
     # ---- config snapshot: proves all arms share the same backbone + settings -----
     config = {
-        "task": "chd_heart_malformations_classification",
+        "task": args.task_name,
         "arm": args.arm,
         "seed": args.seed,
         "git_commit": _git_commit(),
@@ -221,26 +266,35 @@ def main() -> int:
         "pretrained_ckpt": str(args.pretrained_ckpt),
         "pretrained_ckpt_sha256": _sha256(Path(args.pretrained_ckpt)),
         "pos_weight": pos_weight,
+        "demo_dim": int(model.backbone.demo_dim),  # asserted == 2 above (no age leak via demographics)
         "age_pathway_param_count": int(model.backbone.age_pathway_param_count()),
+        "age_pathway_param_names": [n for n, _ in age_named],
         "selection_metric": "val_auprc (max)",  # PRE-DECLARED before runs
+        "early_stopping": {"metric": "val_auprc", "mode": "max", "patience": args.patience},
         "hyperparameters": {
-            "epochs": args.epochs, "batch_size": args.batch_size,
-            "lr_backbone": args.lr_backbone, "lr_head": args.lr_head,
-            "max_seq_len": args.max_seq_len, "num_workers": args.num_workers,
+            "epochs": args.epochs, "patience": args.patience, "batch_size": args.batch_size,
+            "lr_backbone": args.lr_backbone, "lr_head": args.lr_head, "lr_age": args.lr_age,
+            "max_seq_len": args.max_seq_len, "max_rows": args.max_rows, "num_workers": args.num_workers,
             "grad_clip_max_norm": 1.0, "optimizer": "AdamW", "amp": use_amp,
         },
         "lr_param_groups": [
-            {"name": name, "lr": float(g["lr"]), "n_params": int(sum(p.numel() for p in g["params"]))}
-            for name, g in zip(("backbone", "head"), optimizer.param_groups)
+            {"name": g.get("name", f"group{i}"), "lr": float(g["lr"]),
+             "n_params": int(sum(p.numel() for p in g["params"])),
+             "n_tensors": int(len(g["params"]))}
+            for i, g in enumerate(optimizer.param_groups)
         ],
-        "age_pathway_lr_group": "backbone",  # age params live in the backbone LR group
+        "age_pathway_lr_group": "age",  # age-injection params now train at lr_age
     }
     with (run_dir / "config.json").open("w") as f:
         json.dump(config, f, indent=2)
+    for g in config["lr_param_groups"]:
+        print(f"[optim] group={g['name']:<8} lr={g['lr']:.1e} n_params={g['n_params']:>10} "
+              f"n_tensors={g['n_tensors']}", flush=True)
 
     best_auprc, best_epoch = -float("inf"), 0  # PRE-DECLARED selection metric: val AUPRC
     best_ckpt = run_dir / "best.pt"
     history: list[dict[str, Any]] = []
+    epochs_no_improve = 0
     total_epochs = 1 if args.dry_run_one_epoch else args.epochs
     for epoch in range(1, total_epochs + 1):
         model.train()
@@ -273,11 +327,19 @@ def main() -> int:
                 )
         ep_secs = time.perf_counter() - ep_t0
 
+        # Age-pathway parameter DRIFT from init (proves the path moved despite tiny grads).
+        with torch.no_grad():
+            age_drift = float(np.sqrt(sum(float((p - p0).norm().item()) ** 2
+                                          for p, p0 in zip(age_params, age_init)))) if age_params else 0.0
+            coeff_delta = (_tw.coefficients.detach() - coeff_init).cpu().numpy()
+            coeff_drift = float(np.linalg.norm(coeff_delta))
+
         val_loss, vm, yt, yp, age = evaluate(model, val_loader, criterion, device)
         val_strat = age_stratified(yt, yp, np.clip(age, 0.0, None))
         print(f"Epoch {epoch:03d} | train_loss={np.mean(tl):.6f} | val_loss={val_loss:.6f} | "
               f"val_AUPRC={vm['auprc']:.6f} | val_AUROC={vm['auroc']:.6f} | "
-              f"age_gradnorm(mean)={np.mean(age_grad_norms) if age_grad_norms else 0.0:.3e}", flush=True)
+              f"age_gradnorm(mean)={np.mean(age_grad_norms) if age_grad_norms else 0.0:.3e} | "
+              f"age_drift={age_drift:.3e}", flush=True)
         history.append({
             "epoch": epoch,
             "train_loss": float(np.mean(tl)),
@@ -290,6 +352,12 @@ def main() -> int:
                 "max": float(np.max(age_grad_norms)) if age_grad_norms else 0.0,
                 "last": float(age_grad_norms[-1]) if age_grad_norms else 0.0,
             },
+            # Cumulative drift from init: the real evidence the age path learned. Adam makes
+            # the step ~= lr regardless of grad size, so this should be non-trivial once the
+            # age params sit in their own lr_age group.
+            "age_pathway_drift_l2": age_drift,
+            "base_coeff_drift_l2": coeff_drift,
+            "base_coeff_delta": [float(x) for x in coeff_delta],
             "total_grad_norm_preclip": {
                 "mean": float(np.mean(grad_norms)) if grad_norms else float("nan"),
                 "max": float(np.max(grad_norms)) if grad_norms else float("nan"),
@@ -301,11 +369,20 @@ def main() -> int:
         rank = vm["auprc"] if np.isfinite(vm["auprc"]) else -float("inf")
         if rank > best_auprc:
             best_auprc, best_epoch = rank, epoch
+            epochs_no_improve = 0
             torch.save({"epoch": epoch, "arm": args.arm, "model_state_dict": model.state_dict()}, best_ckpt)
+        else:
+            epochs_no_improve += 1
         # Persist history after every epoch so a crash still leaves the convergence curve.
         with (run_dir / "history.json").open("w") as f:
             json.dump({"arm": args.arm, "config": config, "best_epoch": best_epoch,
+                       "best_val_auprc": best_auprc if np.isfinite(best_auprc) else None,
                        "selection_metric": "val_auprc (max)", "history": history}, f, indent=2)
+        # Early stopping on val AUPRC (disabled for dry-run).
+        if not args.dry_run_one_epoch and epochs_no_improve >= args.patience:
+            print(f"[early-stop] no val_AUPRC improvement for {epochs_no_improve} epochs "
+                  f"(patience={args.patience}); best epoch {best_epoch} AUPRC={best_auprc:.6f}", flush=True)
+            break
 
     if best_ckpt.exists():
         model.load_state_dict(torch.load(best_ckpt, map_location=device)["model_state_dict"])
@@ -317,6 +394,7 @@ def main() -> int:
         print(f"  {band:>6}: n={rec['n']:5d} AUROC={rec['auroc']:.4f} AUPRC={rec['auprc']:.4f}", flush=True)
     with (run_dir / "history.json").open("w") as f:
         json.dump({"arm": args.arm, "config": config, "best_epoch": best_epoch,
+                   "best_val_auprc": best_auprc if np.isfinite(best_auprc) else None,
                    "selection_metric": "val_auprc (max)", "history": history,
                    "test_metrics": tm, "test_age_stratified": strat}, f, indent=2)
 
