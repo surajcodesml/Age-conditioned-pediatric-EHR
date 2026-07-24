@@ -1,0 +1,49 @@
+{
+  "ckpt": "checkpoints/finetune/ablation/chd_run20260704_095448/kernel/best.pt",
+  "site": "attention",
+  "param_prefix": "backbone.time_aware_attention.temporal_weight.age_coeff_gen.",
+  "generator_is_dead_zero_init": false,
+  "base_coefficients": [
+    -0.606436014175415,
+    -1.0495526790618896,
+    0.3014262616634369,
+    -0.6328071355819702,
+    0.2091527283191681,
+    -0.09814359247684479
+  ],
+  "delta_alpha_norm": {
+    "mean": 0.07206685727772805,
+    "p50": 0.0652320322003819,
+    "p95": 0.16262942771627434,
+    "max": 0.2267413586744093,
+    "argmax_age_years": 0.8
+  },
+  "by_band": {
+    "neonate": {
+      "norm_mean": 0.20162414891408822,
+      "norm_max": 0.20162414891408822
+    },
+    "infant": {
+      "norm_mean": 0.18364816655884786,
+      "norm_max": 0.2267413586744093
+    },
+    "child": {
+      "norm_mean": 0.14960291815089527,
+      "norm_max": 0.21335015248383574
+    },
+    "adolescent": {
+      "norm_mean": 0.12599201206140512,
+      "norm_max": 0.17566586620208857
+    },
+    "adult": {
+      "norm_mean": 0.058003824538220346,
+      "norm_max": 0.13333838951690136
+    },
+    "older_adult": {
+      "norm_mean": 0.05002207925379074,
+      "norm_max": 0.13343016091071672
+    }
+  },
+  "recommended_radius_for_E1": 0.16262942771627434,
+  "peds_vs_adult_mean_offset_gap_L2": 0.09214502283884607
+}

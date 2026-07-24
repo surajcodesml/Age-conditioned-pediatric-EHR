@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import subprocess
 import sys
@@ -28,8 +29,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from model_ablation.arms import ARMS
 from model_ablation.dataset import TensorizedEHRDataset, _dataloader_worker_init, ehr_collate
-from model_ablation.tale_ehr import TALEEHR
+from model_ablation.tale_ehr_age import TALEEHRAblation
 from model_ablation.time_aware_attention_age import CHEB_TMAX, _chebyshev_powers
 
 
@@ -38,6 +40,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--tensorized_dir", type=Path, default=REPO_ROOT / "data/processed/tensorized_flat")
     p.add_argument("--embedding_path", type=Path, default=REPO_ROOT / "data/processed/bge_embeddings.pt")
     p.add_argument("--vocab_path", type=Path, default=REPO_ROOT / "data/processed/code_vocab.json")
+    p.add_argument("--arm", type=str, default="vanilla", choices=ARMS,
+                   help="age-conditioning arm; the shared backbone pretrain is 'vanilla'")
     p.add_argument("--epochs", type=int, default=8)
     p.add_argument("--batch_size", type=int, default=16)
     p.add_argument("--lr", type=float, default=1e-4)
@@ -169,6 +173,66 @@ def w_curve(model) -> dict[str, Any]:
     }
 
 
+@torch.no_grad()
+def alpha_norms(model) -> dict[str, Any]:
+    """L2 norm of each site's BASE kernel coefficients (the vanilla kernel shape).
+
+    Tracked per epoch because ||alpha|| is what sets the achievable row-centered
+    logit change: the kernel can only move attention as far as its coefficients
+    reach (see exp/e1_kernel_headroom.py).
+    """
+    out: dict[str, Any] = {}
+    for site, tw in (("attn", model.time_aware_attention.temporal_weight),
+                     ("agg", model.temporal_aggregation.temporal_weight)):
+        c = tw.coefficients.detach().float().cpu()
+        out[site] = {"l2": float(c.norm()), "coeffs": [float(v) for v in c]}
+    return out
+
+
+@torch.no_grad()
+def attention_entropy(model, batch) -> dict[str, float]:
+    """Mean within-row Shannon entropy (nats) of the attention distribution.
+
+    Rebuilds the attention rows exactly as AgeConditionedTimeAwareAttention does
+    -- additive log-space kernel, causal & padding mask -- so the number reflects
+    the real forward pass. Reported alongside log(row_len), the uniform ceiling:
+    entropy near that ceiling means the kernel is not concentrating anything.
+    """
+    att = model.time_aware_attention
+    ce = model.embedding_table[batch["code_indices"]]
+    mask = batch["attention_mask"]
+    age_years = batch["age_years"]
+
+    add_delta = model.additive_age_emb(model.additive_fourier(model._additive_age_years(age_years)))
+    ce = ce + add_delta * mask.unsqueeze(-1).to(add_delta.dtype)
+
+    q, k = att.mlp_q(ce), att.mlp_k(ce)
+    scores = torch.bmm(q, k.transpose(-1, -2)) / math.sqrt(att.d_model)
+    af = att.age_emb(model._kernel_age_years(age_years))
+    scores = scores + F.logsigmoid(att.temporal_weight.poly_value(batch["delta_t"], af))
+
+    l = scores.shape[1]
+    causal = torch.tril(torch.ones((l, l), device=scores.device, dtype=torch.bool))
+    full = (mask.unsqueeze(1) & mask.unsqueeze(2)) & causal.unsqueeze(0)
+    scores = scores.masked_fill(~full, float("-inf"))
+    attn = torch.softmax(scores, dim=-1).masked_fill(~full, 0.0)
+
+    ent = -(attn.clamp_min(1e-12).log() * attn).sum(-1)      # [B, L] nats
+    n_keys = full.sum(-1)                                     # keys visible per row
+    valid = mask & (n_keys > 1)                               # 1-key rows have entropy 0 by construction
+    if not bool(valid.any()):
+        return {"attn_entropy_mean": float("nan"), "attn_entropy_uniform_ceiling": float("nan"),
+                "attn_entropy_ratio": float("nan")}
+    e = ent[valid].float()
+    ceil = n_keys[valid].float().log()
+    return {
+        "attn_entropy_mean": float(e.mean()),
+        "attn_entropy_uniform_ceiling": float(ceil.mean()),
+        # 1.0 == indistinguishable from uniform attention over the visible row
+        "attn_entropy_ratio": float((e / ceil.clamp_min(1e-12)).mean()),
+    }
+
+
 def main() -> int:
     args = parse_args()
     set_seed(args.seed)
@@ -185,9 +249,14 @@ def main() -> int:
     train_loader = DataLoader(train_ds, shuffle=True, **kw)
     val_loader = DataLoader(val_ds, shuffle=False, **kw)
 
-    model = TALEEHR(embedding_path=args.embedding_path, num_codes=num_codes,
-                    d_model=args.d_model, poly_degree=args.poly_degree).to(device)
-    model._variant_tag = "vanilla"
+    model = TALEEHRAblation(embedding_path=args.embedding_path, num_codes=num_codes,
+                            arm=args.arm, d_model=args.d_model,
+                            poly_degree=args.poly_degree).to(device)
+    model._variant_tag = args.arm
+    # INV-demo: age must not be reachable through demo_proj. demo_dim == 2 (sex, race).
+    assert model.demo_dim == 2, f"demo_dim must be 2 (sex, race), got {model.demo_dim}"
+    assert model.demo_proj[0].in_features == 2, (
+        f"demo_proj takes {model.demo_proj[0].in_features} inputs; age is leaking into demographics")
     opt = Adam(model.parameters(), lr=args.lr)
     use_amp = device.type == "cuda"
     scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
@@ -219,7 +288,8 @@ def main() -> int:
     # ---- config snapshot (hyperparameters + provenance for the run) ---------
     config = {
         "task": "shared_vanilla_pretrain",
-        "model_variant": "vanilla",
+        "model_variant": args.arm,
+        "arm": args.arm,
         "seed": args.seed,
         "git_commit": _git_commit(),
         "started_at": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -306,13 +376,15 @@ def main() -> int:
         train_bce = float(np.mean(losses)) if losses else float("nan")
         val_metrics = evaluate_pretrain(model, val_loader, device, use_amp, args.val_max_batches)
         qk = qk_norm_stats(model, last_batch) if last_batch is not None else {}
+        ent = attention_entropy(model, last_batch) if last_batch is not None else {}
+        anorm = alpha_norms(model)
         gnorm = {
             "mean": float(np.mean(grad_norms)) if grad_norms else float("nan"),
             "max": float(np.max(grad_norms)) if grad_norms else float("nan"),
             "last": float(grad_norms[-1]) if grad_norms else float("nan"),
         }
 
-        torch.save({"epoch": epoch, "model_variant": "vanilla",
+        torch.save({"epoch": epoch, "model_variant": args.arm,
                     "model_state_dict": model.state_dict(),
                     "optimizer_state_dict": opt.state_dict(),
                     "scaler_state_dict": scaler.state_dict()},
@@ -328,6 +400,8 @@ def main() -> int:
             **val_metrics,
             "grad_norm_preclip": gnorm,
             "qk_norm": qk,
+            "alpha_norm": anorm,
+            "attn_entropy": ent,
             "w_curve": w_curve(model),
             "lr_param_groups": [float(g["lr"]) for g in opt.param_groups],
             "epoch_seconds": ep_secs,
@@ -347,6 +421,10 @@ def main() -> int:
             f"val_bce={val_bce:.6f} | val_auroc={val_metrics.get('val_auroc', float('nan')):.6f} | "
             f"val_r@10={val_metrics.get('val_recall@10', float('nan')):.4f} | "
             f"gradnorm(mean/max)={gnorm['mean']:.3f}/{gnorm['max']:.3f} | "
+            f"||alpha||(attn/agg)={anorm['attn']['l2']:.4f}/{anorm['agg']['l2']:.4f} | "
+            f"attn_H={ent.get('attn_entropy_mean', float('nan')):.4f}"
+            f"/{ent.get('attn_entropy_uniform_ceiling', float('nan')):.4f} "
+            f"(ratio {ent.get('attn_entropy_ratio', float('nan')):.4f}) | "
             f"best_epoch={best_epoch} | {ep_secs:.1f}s",
             flush=True,
         )
@@ -366,3 +444,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

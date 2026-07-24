@@ -5,8 +5,9 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."   # repo root
 
+ARM="${ARM:-vanilla}"
 STAMP=$(date +%Y%m%d_%H%M%S)
-SAVE_DIR="checkpoints/ablation_pretrain/run${STAMP}"
+SAVE_DIR="checkpoints/ablation_pretrain/${ARM}_run${STAMP}"
 LOG="${SAVE_DIR}/train.log"
 mkdir -p "$SAVE_DIR"
 
@@ -16,6 +17,7 @@ nohup conda run --no-capture-output -n ehr python model_ablation/train.py \
     --tensorized_dir data/processed/tensorized_flat \
     --embedding_path data/processed/bge_embeddings.pt \
     --vocab_path data/processed/code_vocab.json \
+    --arm "$ARM" \
     --epochs 8 \
     --batch_size 16 \
     --lr 1e-4 \

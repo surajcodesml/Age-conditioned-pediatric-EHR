@@ -1,0 +1,49 @@
+{
+  "ckpt": "checkpoints/finetune/ablation/chd_run20260704_095448/kernel/best.pt",
+  "site": "aggregation",
+  "param_prefix": "backbone.temporal_aggregation.temporal_weight.age_coeff_gen.",
+  "generator_is_dead_zero_init": true,
+  "base_coefficients": [
+    -0.9167276620864868,
+    -1.5370572805404663,
+    0.9629886746406555,
+    -0.12430329620838165,
+    -0.043954480439424515,
+    -0.2173888385295868
+  ],
+  "delta_alpha_norm": {
+    "mean": 0.0,
+    "p50": 0.0,
+    "p95": 0.0,
+    "max": 0.0,
+    "argmax_age_years": 0.0
+  },
+  "by_band": {
+    "neonate": {
+      "norm_mean": 0.0,
+      "norm_max": 0.0
+    },
+    "infant": {
+      "norm_mean": 0.0,
+      "norm_max": 0.0
+    },
+    "child": {
+      "norm_mean": 0.0,
+      "norm_max": 0.0
+    },
+    "adolescent": {
+      "norm_mean": 0.0,
+      "norm_max": 0.0
+    },
+    "adult": {
+      "norm_mean": 0.0,
+      "norm_max": 0.0
+    },
+    "older_adult": {
+      "norm_mean": 0.0,
+      "norm_max": 0.0
+    }
+  },
+  "recommended_radius_for_E1": 0.0,
+  "peds_vs_adult_mean_offset_gap_L2": 0.0
+}
