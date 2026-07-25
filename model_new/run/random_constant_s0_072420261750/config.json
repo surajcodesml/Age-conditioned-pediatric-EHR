@@ -1,0 +1,356 @@
+{
+  "run_id": "random_constant_s0_072420261750",
+  "git_commit": "3e9d5d5513f1d3a5d66f294ec3a00e92514f2532",
+  "git_dirty": true,
+  "seed": 0,
+  "arm": "random_constant",
+  "timestamp": "2026-07-24T17:50:11",
+  "model": {
+    "d_model": 256,
+    "n_layers": 1,
+    "use_residual": true,
+    "use_layernorm": true,
+    "use_ffn": true,
+    "ffn_mult": 4,
+    "use_out_proj": false,
+    "n_heads": 1,
+    "s": 5,
+    "tau_max": 6.72380256652832,
+    "fourier": {
+      "M": 16,
+      "p_min": 0.15,
+      "p_max": 6.0,
+      "log_age": true,
+      "age_emb_dim": 32
+    },
+    "age_hidden": 64,
+    "demo_dim": 9,
+    "demo_channels": [
+      "age_years",
+      "sex",
+      "race_WHITE",
+      "race_BLACK",
+      "race_ASIAN",
+      "race_HISPANIC",
+      "race_AMERICAN_INDIAN",
+      "race_OTHER",
+      "race_UNKNOWN"
+    ],
+    "demo_hidden": 64,
+    "race_encoding": "one_hot",
+    "age_standardization": {
+      "mean": 63.33600997924805,
+      "sd": 16.574804306030273,
+      "applies_to": "demographic channel 0 only; age_years stays raw"
+    },
+    "embedding_dim": 1024,
+    "injection": "log_space_additive",
+    "masking": "padding_only",
+    "pooling": "attention",
+    "gen_final_bias": false,
+    "center_delta_alpha": false,
+    "head_in": 320,
+    "head_out": 30635,
+    "head_final_bias": -7.0,
+    "task": "pretrain"
+  },
+  "params": {
+    "backbone": 1578378,
+    "age": 4864,
+    "head": 10091335,
+    "frozen_embedding": 31372288,
+    "total_trainable": 11674577,
+    "encoder_trainable": 1579909,
+    "age_share_of_encoder": 0.003078658327789765
+  },
+  "optim": {
+    "lr_backbone": 0.0002,
+    "lr_age": 0.002,
+    "lr_head": 0.002,
+    "n_tensors": {
+      "backbone": 20,
+      "age": 6,
+      "head": 4
+    },
+    "n_params": {
+      "backbone": 1578378,
+      "age": 4864,
+      "head": 10091335
+    },
+    "batch_size": 64,
+    "epochs": 20,
+    "optimizer": "Adam",
+    "grad_clip": 1.0,
+    "amp": false
+  },
+  "data": {
+    "paths": {
+      "tensorized_dir": "data/processed/tensorized_flat",
+      "embedding_path": "data/processed/bge_embeddings.pt",
+      "vocab_path": "data/processed/code_vocab.json"
+    },
+    "split_sizes": {
+      "train": 367296,
+      "val": 52227
+    },
+    "vocab_size": 30635,
+    "max_seq_len": 1024,
+    "tau_max": 6.72380256652832,
+    "tau_max_source": "exact max over full train split, N=367296 windows, of log1p(span_days/7); stored with 1 ulp of float32 headroom (float64 value 6.723802006619469)",
+    "corpus_stats": {
+      "split": "train",
+      "n_examples": 367296,
+      "n_patients": 143802,
+      "n_events": 405519425,
+      "tau_max": 6.72380256652832,
+      "tau_max_source": "exact max over full train split, N=367296 windows, of log1p(span_days/7); stored with 1 ulp of float32 headroom (float64 value 6.723802006619469)",
+      "span_days_max_tau": 6.723802006619469,
+      "span_days_max": 5816.82275390625,
+      "span_tau_quantiles": {
+        "0.01": 0.0,
+        "0.05": 0.002872853623037119,
+        "0.25": 0.7108467283798708,
+        "0.5": 3.4379476212654803,
+        "0.75": 4.878644843636911,
+        "0.95": 6.083888557188479,
+        "0.99": 6.456769458461758
+      },
+      "event_age_min": 16.64940269934976,
+      "event_age_max": 106.02980621149898,
+      "event_age_median": 58.702868326488705,
+      "event_age_mean": 63.33601047086648,
+      "event_age_sd": 16.574804662346914,
+      "event_age_band_counts": {
+        "<1": 0,
+        "1-5": 0,
+        "6-11": 0,
+        "12-17": 189861,
+        "18-40": 43161063,
+        "40-65": 158312324,
+        "65+": 203856177
+      },
+      "event_age_histogram": {
+        "edges": [
+          0.0,
+          1.0,
+          6.0,
+          12.0,
+          18.0,
+          40.0,
+          65.0,
+          200.0
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          189861,
+          43161063,
+          158312324,
+          203856177
+        ],
+        "fractions": [
+          0.0,
+          0.0,
+          0.0,
+          0.0004681921217460791,
+          0.10643402100898126,
+          0.3903939348898021,
+          0.5027038519794705
+        ]
+      },
+      "event_integer_age_fraction": 0.001306129786507761,
+      "event_age_ge_89_fraction": 0.03793323833993895,
+      "event_age_under_18_count": 189861,
+      "event_age_under_18_fraction": 0.0004681921217460791,
+      "example_age_band_counts": {
+        "<1": 0,
+        "1-5": 0,
+        "6-11": 0,
+        "12-17": 401,
+        "18-40": 69292,
+        "40-65": 141987,
+        "65+": 155616
+      },
+      "example_age_min": 17.50207076702601,
+      "example_age_median": 61.19016298767967,
+      "seq_len_quantiles": {
+        "0.01": 18.0,
+        "0.05": 41.0,
+        "0.25": 154.0,
+        "0.5": 663.0,
+        "0.75": 1024.0,
+        "0.95": 1024.0,
+        "0.99": 1024.0
+      },
+      "seq_len_max": 1024,
+      "sample_seed": 0,
+      "sample_n_windows": 4000,
+      "sample_n_pairs": 1069543462,
+      "dt_zero_fraction": 0.03546211383413608,
+      "integer_dt_fraction": 0.023285674961804313,
+      "timestamp_resolution": {
+        "t<1000d": 3.4332275390625e-05,
+        "t<100d": 9.250640869140625e-05,
+        "t<10d": 8.106231689453125e-05,
+        "t>=1000d": 6.103515625e-05
+      },
+      "tau_quantiles": {
+        "0.01": 0.0,
+        "0.05": 0.0036641076342830248,
+        "0.25": 0.19660518992057194,
+        "0.5": 2.347958933110865,
+        "0.75": 4.341966335768663,
+        "0.95": 5.8230438317393425,
+        "0.99": 6.324255839350278
+      },
+      "spread_padding_only": {
+        "0.01": 0.06843716208334208,
+        "0.05": 0.2876995109158014,
+        "0.25": 2.416126405604079,
+        "0.5": 4.463072833466257,
+        "0.75": 5.617782151513455,
+        "0.95": 6.3269351743499485,
+        "0.99": 6.545780020911577
+      },
+      "spread_causal": {
+        "0.01": 0.0,
+        "0.05": 0.004750598238814315,
+        "0.25": 0.17059388766807784,
+        "0.5": 3.149040726261402,
+        "0.75": 4.919899839340431,
+        "0.95": 6.146528530947505,
+        "0.99": 6.486885929861214
+      },
+      "frac_rows_spread_below_0p1": 0.015360409566768398,
+      "causal_frac_rows_spread_below_0p1": 0.21373396456111607
+    }
+  },
+  "band_characterization": {
+    "log_age": {
+      "M": 16,
+      "grid_step_years": 0.25,
+      "age_max_years": 90.0,
+      "saturation_gap_years_at_a5": 2.2525,
+      "saturation_gap_months_at_a5": 27.03,
+      "saturation_asymptote_analytic": 5.656854249492381,
+      "saturation_asymptote_empirical": 5.847196574295996,
+      "min_pairwise_distance": 0.18477928473914368,
+      "max_possible_distance": 8.0,
+      "grad_norm_at_0.5": 44.793498258545995,
+      "grad_norm_at_40": 1.6387878398822162,
+      "grad_ratio_0.5_over_40": 27.333311346614224,
+      "adult_min_pairwise_distance": 0.18477928473914368,
+      "nearest_adult_distance": {
+        "0.5": 4.606349653701964,
+        "2.0": 5.016383725824391,
+        "5.0": 5.204811790589508,
+        "10.0": 5.204811790589506
+      },
+      "nearest_adult_over_adult_min": {
+        "0.5": 24.928928912160437,
+        "2.0": 27.147976749158396,
+        "5.0": 28.16772344333531,
+        "10.0": 28.1677234433353
+      }
+    },
+    "legacy_linear": {
+      "M": 16,
+      "grid_step_years": 0.25,
+      "age_max_years": 90.0,
+      "saturation_gap_years_at_a5": 1.0285,
+      "saturation_gap_months_at_a5": 12.341999999999999,
+      "saturation_asymptote_analytic": 5.656854249492381,
+      "saturation_asymptote_empirical": 5.739232839666978,
+      "min_pairwise_distance": 3.346667708220463,
+      "max_possible_distance": 8.0,
+      "grad_norm_at_0.5": 93.82630147009142,
+      "grad_norm_at_40": 93.82630147482428,
+      "grad_ratio_0.5_over_40": 0.9999999999495572,
+      "adult_min_pairwise_distance": 3.346667708220463,
+      "nearest_adult_distance": {
+        "0.5": 4.056933220477017,
+        "2.0": 4.056933220477023,
+        "5.0": 4.056933220477011,
+        "10.0": 4.056933220477028
+      },
+      "nearest_adult_over_adult_min": {
+        "0.5": 1.2122306647032568,
+        "2.0": 1.2122306647032588,
+        "5.0": 1.212230664703255,
+        "10.0": 1.2122306647032601
+      }
+    }
+  },
+  "primary_endpoint": {
+    "dataset": "PIC heart_malformations",
+    "task": "binary classification: congenital heart malformation",
+    "metric": "AUPRC",
+    "comparison": "kernel vs random_constant is the identifying comparison (exactly parameter-matched); vanilla is the floor; additive is an alternative delivery site with a different architecture",
+    "age_bands": [
+      "<1",
+      "1-5",
+      "6-11",
+      "12-17",
+      "18-40",
+      "40-65",
+      "65+"
+    ],
+    "declared_before_run": true
+  },
+  "deviations_from_draft": [
+    {
+      "item": "direct log-space injection",
+      "reason": "score += sum_k alpha_k T_k(tau_tilde), per draft Eq. 3; the legacy code used logsigmoid(poly). Only one is implemented. ||alpha||_1 is monitored but not regularised: a kernel that grows to dominate QK is a finding, not a bug."
+    },
+    {
+      "item": "Fourier over log-age",
+      "reason": "the linear band saturates at a 7.4-month gap and is a near-orthogonal hash of age, leaving a constant Delta-alpha as the cheapest solution (D7)."
+    },
+    {
+      "item": "attention pooling",
+      "reason": "per the draft body; Figure 1A draws mean pooling."
+    },
+    {
+      "item": "padding-only masking",
+      "reason": "the draft says 'masked at padding'; the legacy code used causal tril. The pretraining target visit is outside the input window, so bidirectional attention within the window is not leakage (D4)."
+    },
+    {
+      "item": "additive arm concatenates to h",
+      "reason": "per the draft; not the older internal guide's 1024-dim delta on code embeddings."
+    },
+    {
+      "item": "no fabricated parameter matching",
+      "reason": "kernel and random_constant are exactly matched by construction and that is the identifying comparison. additive has a different architecture and a different count, reported honestly rather than padded. The draft's 'parameter-matched' language applies to the kernel/random_constant pair and should be corrected for additive."
+    },
+    {
+      "item": "demo_dim = 9, not 3",
+      "reason": "race has cardinality 7 in this pipeline and the legacy scalar encoding imposes an arbitrary ordinal on a categorical. One-hot gives demo_dim = 2 + n_race. Identical across arms. --race_encoding scalar restores demo_dim = 3."
+    },
+    {
+      "item": "age remains a demographic feature in every arm",
+      "reason": "it is the route age already has and the one DKM must improve on; removing it would make vanilla age-blind and the baseline a strawman (D3)."
+    },
+    {
+      "item": "demographic age channel is standardized (Fix C)",
+      "reason": "raw age (median ~56) beside eight 0/1 channels dominates demo_proj's input scale ~50x, making R1 -- the route DKM must beat -- a poorly-scaled function of age. Constants are frozen from the pretrain corpus and reused at fine-tune (INV-AGESTD). age_years fed to psi stays raw."
+    },
+    {
+      "item": "float64 lag arithmetic (Fix D)",
+      "reason": "at span_days ~5800 the float32 ulp is ~40s and differencing two large nearby timestamps loses precision exactly where tau is most sensitive. Differencing and log1p run in float64, cast to float32 after."
+    },
+    {
+      "item": "exact tau_max over the full split (Fix A)",
+      "reason": "tau_max is frozen into the checkpoint and defines every coefficient, so a sampled maximum the full split exceeds would clamp silently for the whole run. It is now the exact full-split maximum with one ulp of float32 headroom."
+    }
+  ],
+  "env": {
+    "torch": "2.8.0+rocm6.4",
+    "python": "3.10.19",
+    "device": "cuda",
+    "hip": "6.4.43482-0f2d60242",
+    "cuda": null,
+    "gpu": "AMD Radeon AI PRO R9700"
+  },
+  "figure_1a_note": "Figure 1A depicts a transformer encoder stack (LN -> attention -> Add&Norm -> FFN -> Add&Norm). This run used n_layers=1, residual=True, layernorm=True, ffn=True."
+}

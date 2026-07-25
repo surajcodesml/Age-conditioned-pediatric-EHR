@@ -494,7 +494,7 @@ conda run -n ehr python model_ablation/train_finetune.py \
 conda run -n ehr python model/train.py \
   --model_variant age_conditioned \
   --age_conditioning_mode real \
-  --kernel_injection additive_logspace \
+  --kernel_injection additive_logspace 
   --use_tensorized \
   --no_time_loss
 ```

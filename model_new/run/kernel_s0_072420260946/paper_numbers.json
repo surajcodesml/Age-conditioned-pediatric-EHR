@@ -1,0 +1,98 @@
+{
+  "arm": "kernel",
+  "age_pathway_params": 4864,
+  "age_share_of_encoder": 0.003078658327789765,
+  "params_by_group": {
+    "backbone": 1578378,
+    "age": 4864,
+    "head": 10091335,
+    "total_trainable": 11674577
+  },
+  "vocab_size": 30635,
+  "tau_max": 6.72380256652832,
+  "tau_max_source": "exact max over full train split, N=367296 windows, of log1p(span_days/7); stored with 1 ulp of float32 headroom (float64 value 6.723802006619469)",
+  "age_standardization": {
+    "mean": 63.33601047086648,
+    "sd": 16.574804662346914
+  },
+  "condition_numbers": {
+    "n_samples": 1103728,
+    "s": 5,
+    "tau_max": 6.72380256652832,
+    "monomial_with_constant": 2298128917.737116,
+    "chebyshev_with_constant": 106.89265768054689,
+    "monomial_no_constant": 1714996621.4229646,
+    "chebyshev_no_constant": 15.080634453164738,
+    "distribution": "empirical within-window pairwise lags"
+  },
+  "age_band_n_pretrain_events": {
+    "<1": 0,
+    "1-5": 0,
+    "6-11": 0,
+    "12-17": 189861,
+    "18-40": 43161063,
+    "40-65": 158312324,
+    "65+": 203856177
+  },
+  "youngest_event_age": 16.64940269934976,
+  "events_under_18": {
+    "count": 189861,
+    "fraction": 0.0004681921217460791
+  },
+  "band_characterization": {
+    "log_age": {
+      "M": 16,
+      "grid_step_years": 0.25,
+      "age_max_years": 90.0,
+      "saturation_gap_years_at_a5": 2.2525,
+      "saturation_gap_months_at_a5": 27.03,
+      "saturation_asymptote_analytic": 5.656854249492381,
+      "saturation_asymptote_empirical": 5.847196574295996,
+      "min_pairwise_distance": 0.18477928473914368,
+      "max_possible_distance": 8.0,
+      "grad_norm_at_0.5": 44.793498258545995,
+      "grad_norm_at_40": 1.6387878398822162,
+      "grad_ratio_0.5_over_40": 27.333311346614224,
+      "adult_min_pairwise_distance": 0.18477928473914368,
+      "nearest_adult_distance": {
+        "0.5": 4.606349653701964,
+        "2.0": 5.016383725824391,
+        "5.0": 5.204811790589508,
+        "10.0": 5.204811790589506
+      },
+      "nearest_adult_over_adult_min": {
+        "0.5": 24.928928912160437,
+        "2.0": 27.147976749158396,
+        "5.0": 28.16772344333531,
+        "10.0": 28.1677234433353
+      }
+    },
+    "legacy_linear": {
+      "M": 16,
+      "grid_step_years": 0.25,
+      "age_max_years": 90.0,
+      "saturation_gap_years_at_a5": 1.0285,
+      "saturation_gap_months_at_a5": 12.341999999999999,
+      "saturation_asymptote_analytic": 5.656854249492381,
+      "saturation_asymptote_empirical": 5.739232839666978,
+      "min_pairwise_distance": 3.346667708220463,
+      "max_possible_distance": 8.0,
+      "grad_norm_at_0.5": 93.82630147009142,
+      "grad_norm_at_40": 93.82630147482428,
+      "grad_ratio_0.5_over_40": 0.9999999999495572,
+      "adult_min_pairwise_distance": 3.346667708220463,
+      "nearest_adult_distance": {
+        "0.5": 4.056933220477017,
+        "2.0": 4.056933220477023,
+        "5.0": 4.056933220477011,
+        "10.0": 4.056933220477028
+      },
+      "nearest_adult_over_adult_min": {
+        "0.5": 1.2122306647032568,
+        "2.0": 1.2122306647032588,
+        "5.0": 1.212230664703255,
+        "10.0": 1.2122306647032601
+      }
+    }
+  }
+}
