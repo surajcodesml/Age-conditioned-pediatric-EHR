@@ -32,7 +32,7 @@ RUN_ROOT="${RUN_ROOT:-model_new/run_finetune_${MODE}}"
 COMMON=(
   --tensorized_dir  "$TASK_DIR"
   --embedding_path  data/processed/bge_embeddings.pt
-  --epochs "$EPOCHS" --batch_size 16 --num_workers 4
+  --epochs "$EPOCHS" --batch_size 64 --num_workers 8
   --lr_backbone 1e-5 --lr_age 1e-3 --lr_head 1e-3
   --device cuda --run_root "$RUN_ROOT"
 )

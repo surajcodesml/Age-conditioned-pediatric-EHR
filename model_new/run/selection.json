@@ -1,0 +1,23 @@
+{
+  "primary_rule": "per_arm_best",
+  "declared_before_any_cross_arm_comparison": true,
+  "declared_at": "2026-07-25T18:17:59",
+  "status": "declared; evaluation in progress",
+  "arms": [
+    "vanilla",
+    "kernel",
+    "random_constant",
+    "additive"
+  ],
+  "runs": {
+    "vanilla": "model_new/run/vanilla_s0",
+    "kernel": "model_new/run/kernel_s0_072420260946",
+    "random_constant": "model_new/run/random_constant_s0_072420261750",
+    "additive": "model_new/run/additive_s0_072520260143"
+  },
+  "rules_available": [
+    "per_arm_best",
+    "vanilla_matched",
+    "kernel_matched"
+  ]
+}

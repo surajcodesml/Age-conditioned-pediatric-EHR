@@ -262,6 +262,48 @@ Written to `model_new/run/<run_name>/`:
 Figure 3 (`w(τ|a)` curves) and the `Δα(a)` extrapolation figure are generated from `train.json`
 with no extra run.
 
+### 7b. Offline evaluation — `eval_pretrain.py`
+
+`train.json`'s `val_loss` is computed on `--val_max_batches` batches (50 by default) during
+training, and its recall figures come from the same subset. That is a training monitor, not an
+endpoint. `eval_pretrain.py` re-evaluates finished checkpoints offline on the **full** validation
+split and writes:
+
+```
+model_new/run/eval_pretrain/<arm>/epochs.json   per-epoch metrics + DKM diagnostics
+model_new/run/eval_pretrain/selection.json      the three selection rules  (also model_new/run/selection.json)
+model_new/run/eval_pretrain/summary.json        cross-arm table at primary_rule
+```
+
+Per arm and per saved epoch: validation BCE (element mean over all `(sequence, code)` pairs, no
+`pos_weight`), micro-AUPRC, macro-AUPRC over codes with ≥ `--min_pos` validation positives,
+recall@10/@20 with an **uncapped** `|true|` denominator, nDCG@20 — each of them pooled and
+stratified by `diagnostics.AGE_BANDS` — plus the gradient probe (per optimizer group, no
+`optimizer.step`), the per-site nonzero-gradient fraction of the coefficient generators,
+`‖Δα(a)‖₂` on both a dense 0–90 grid and the empirical validation age distribution, centered
+kernel separation across representative ages, the equal-norm headroom probe from `preflight`, and
+the Chebyshev Gram condition number on the validation lag distribution.
+
+Four properties are structural rather than incidental:
+
+- **One deterministic pass, shared by every metric and every arm.** `shuffle=False`, no dropout,
+  `torch.no_grad` outside the gradient probe. The batch sequence is hashed and the hash is
+  asserted identical for all four arms, so a difference cannot come from a different batch order.
+- **The score matrix is never materialised.** 52,227 × 30,635 is 1.6e9 scores. Micro- and
+  macro-AUPRC come from fixed-edge histograms whose edges are chosen once, from a pass over every
+  checkpoint, and shared by all arms; the estimator is tested against
+  `sklearn.average_precision_score` to 1e-3 in `tests/test_auprc_histogram.py`.
+- **Configs are compared before anything is measured.** Differences that are a consequence of the
+  arm are verified by rebuilding the model from the *shared* constructor kwargs; anything else is
+  a hard error unless named in `--allow_config_diff`, which is then recorded in every output file.
+- **`--primary_rule` is required, has no default, and is written to disk before any cross-arm
+  number is printed.** The three rules (`per_arm_best`, `vanilla_matched`, `kernel_matched`) are
+  all computed and all written regardless.
+
+A band with `n` below `--min_band_n` reports `n`, `n_pos`, `n_neg`, `unreliable: true` and a
+reason, with every metric `null`. MIMIC-IV hosp has no patients under 18, so every band below
+12–17 is empty and 12–17 itself holds 44 of the 52,227 validation sequences.
+
 ---
 
 ## 8. Optimizer groups
@@ -304,6 +346,11 @@ SEEDS="0 1 2" ./model_new/run/pretrain.sh          # extra seeds are a loop, not
 python -m model_new.train --arm kernel --seed 0 --run_name probe \
     --report_at_step 200 --stop_after_report
 
+# Offline evaluation + epoch selection over finished runs. --primary_rule has no default.
+python -m model_new.eval_pretrain --runs model_new/run/vanilla_s0 \
+    model_new/run/kernel_s0_072420260946 model_new/run/random_constant_s0_072420261750 \
+    model_new/run/additive_s0_072520260143 --primary_rule per_arm_best
+
 # Fine-tune all four arms from ONE shared backbone.
 CKPT=model_new/run/vanilla_s0/epoch_008.pt ./model_new/run/finetune.sh
 ```
@@ -325,7 +372,9 @@ Each of these exists in exactly one place:
 | Chebyshev evaluation | `basis.chebyshev_basis`; `diagnostics.gram_condition_numbers` imports it rather than inlining |
 | Fourier frequencies | built once per site in `_FourierBase.__init__`, persistent buffers, never rebuilt at load |
 | `w(τ)` statistics | computed once per epoch in `train.py`, emitted once by `diagnostics` |
-| age-band definitions | `diagnostics.AGE_BANDS`, shared by metrics and by the `Δα` decomposition |
+| age-band definitions | `diagnostics.AGE_BANDS`, shared by metrics, by the `Δα` decomposition and by `eval_pretrain` |
+| average precision | `diagnostics.average_precision_from_counts`, used by both the micro and the per-code histogram |
+| equal-norm headroom probe | `preflight.headroom`; `eval_pretrain` imports it rather than reimplementing it |
 | masking | `encoder.build_pair_mask` / `encoder.build_key_mask`, used by encoder and pooling |
 | optimizer groups | `optim.build_param_groups`, from declared sets |
 | printing | `diagnostics.py` only |

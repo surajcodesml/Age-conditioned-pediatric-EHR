@@ -30,6 +30,7 @@ Supporting tests (not invariants, still HARD):
 | `tests/test_chebyshev_numpy.py` | `ChebyshevKernel` matches `numpy.polynomial.chebyshev.chebval` with a zeroed constant term to 1e-6. |
 | `tests/test_checkpoint_roundtrip.py` | Save → load reproduces bit-identical logits for every arm, and restores `τ_max` and the frequency buffers rather than rebuilding them. |
 | `tests/test_no_stray_logging.py` | The grep half of `INV-LOG`, kept separately so the failure message names the offending file and line. |
+| `tests/test_auprc_histogram.py` | The streaming fixed-edge AUPRC estimator used by `eval_pretrain.py` matches `sklearn.average_precision_score` to 1e-3, per code and pooled; out-of-range scores are counted; an empty-target row is NaN rather than 0; a thin age band is flagged `unreliable` with NaN metrics. |
 
 ## Notes
 

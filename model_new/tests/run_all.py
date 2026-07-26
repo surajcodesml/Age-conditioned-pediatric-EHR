@@ -40,6 +40,7 @@ SUPPORTING_TESTS: list[tuple[str, str]] = [
     ("(checkpoint)", "test_checkpoint_roundtrip.py"),
     ("(logging)", "test_no_stray_logging.py"),
     ("(tau-gpu)", "test_tau_equivalence.py"),
+    ("(auprc)", "test_auprc_histogram.py"),
 ]
 
 
