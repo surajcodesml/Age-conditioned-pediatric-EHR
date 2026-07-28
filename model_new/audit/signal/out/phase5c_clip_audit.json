@@ -1,0 +1,573 @@
+{
+  "clip_site": {
+    "file": "finetune/PIC/build_cohorts_pic.py",
+    "function": "_build_window",
+    "parameter": "obs / --obs_window_days (default 1.0)",
+    "mechanism": "last_event_idx = max event_idx with timestamp_days <= obs; tensorize_pic._partition_pic_events QUALIFY event_idx <= last_event_idx",
+    "not_in": [
+      "tensorize_pic.py (only respects cohort last_event_idx)",
+      "source PIC CSVs"
+    ],
+    "also_enforced_in": {
+      "build_mortality": "excludes deathtime within obs of admittime",
+      "build_los": "excludes ICU LOS <= obs; label is LOS > 7d after window"
+    }
+  },
+  "obs_window_days": 1.0,
+  "per_task_split": {
+    "mortality": {
+      "train": {
+        "n_subjects": 8843,
+        "icu_stay_span_days": {
+          "n": 8843,
+          "p10": 0.7444,
+          "p50": 2.8625,
+          "p90": 26.843180000000007,
+          "max": 393.6576
+        },
+        "hosp_span_days": {
+          "n": 8843,
+          "p10": 3.7782060185185187,
+          "p50": 12.74349537037037,
+          "p90": 37.850606481481485,
+          "max": 393.65697916666664
+        },
+        "events_full": {
+          "p10": 293.0,
+          "p50": 698.0,
+          "p90": 2266.6000000000004,
+          "mean": 1096.0604998303743,
+          "sum": 9692463
+        },
+        "events_24h": {
+          "p10": 41.0,
+          "p50": 134.0,
+          "p90": 264.0,
+          "mean": 149.79305665498134,
+          "sum": 1324620
+        },
+        "frac_events_discarded_by_clip": {
+          "overall": 0.863335047036032,
+          "per_admission_median": 0.8212634822804314,
+          "per_admission_p10": 0.5127624028473887,
+          "per_admission_p90": 0.9515158604693135
+        },
+        "cohort_last_event_idx_matches_24h_rule": 1.0,
+        "max_ts_days_in_events": {
+          "n": 8843,
+          "p10": 4.673877314814815,
+          "p50": 13.973032407407407,
+          "p90": 55.84593518518519,
+          "max": 1177.7872453703703
+        }
+      },
+      "val": {
+        "n_subjects": 1266,
+        "icu_stay_span_days": {
+          "n": 1266,
+          "p10": 0.7521,
+          "p50": 2.94585,
+          "p90": 28.093400000000003,
+          "max": 142.9396
+        },
+        "hosp_span_days": {
+          "n": 1266,
+          "p10": 3.9253645833333337,
+          "p50": 13.010596064814816,
+          "p90": 37.67619212962963,
+          "max": 158.12275462962964
+        },
+        "events_full": {
+          "p10": 287.0,
+          "p50": 692.0,
+          "p90": 2156.0,
+          "mean": 1046.6998420221169,
+          "sum": 1325122
+        },
+        "events_24h": {
+          "p10": 45.0,
+          "p50": 134.0,
+          "p90": 273.0,
+          "mean": 151.7037914691943,
+          "sum": 192057
+        },
+        "frac_events_discarded_by_clip": {
+          "overall": 0.8550646657439843,
+          "per_admission_median": 0.8195323488045008,
+          "per_admission_p10": 0.48858026965298756,
+          "per_admission_p90": 0.9474510784045651
+        },
+        "cohort_last_event_idx_matches_24h_rule": 1.0,
+        "max_ts_days_in_events": {
+          "n": 1266,
+          "p10": 4.614068287037037,
+          "p50": 14.296730324074074,
+          "p90": 49.09688657407408,
+          "max": 1090.218275462963
+        }
+      },
+      "test": {
+        "n_subjects": 2538,
+        "icu_stay_span_days": {
+          "n": 2538,
+          "p10": 0.7278,
+          "p50": 2.7882,
+          "p90": 26.14614000000002,
+          "max": 444.0451
+        },
+        "hosp_span_days": {
+          "n": 2538,
+          "p10": 3.372592592592593,
+          "p50": 12.766938657407408,
+          "p90": 35.48105555555559,
+          "max": 444.04449074074074
+        },
+        "events_full": {
+          "p10": 288.0,
+          "p50": 703.0,
+          "p90": 2284.000000000002,
+          "mean": 1089.8881008668243,
+          "sum": 2766136
+        },
+        "events_24h": {
+          "p10": 46.0,
+          "p50": 135.0,
+          "p90": 267.0,
+          "mean": 149.83057525610718,
+          "sum": 380270
+        },
+        "frac_events_discarded_by_clip": {
+          "overall": 0.8625266436646644,
+          "per_admission_median": 0.8207829832062961,
+          "per_admission_p10": 0.5069250606796117,
+          "per_admission_p90": 0.9475845986738447
+        },
+        "cohort_last_event_idx_matches_24h_rule": 1.0,
+        "max_ts_days_in_events": {
+          "n": 2538,
+          "p10": 4.559364583333335,
+          "p50": 13.945706018518518,
+          "p90": 54.42781828703707,
+          "max": 1184.0083796296296
+        }
+      }
+    },
+    "los_gt7": {
+      "train": {
+        "n_subjects": 6135,
+        "icu_stay_span_days": {
+          "n": 6135,
+          "p10": 1.5458,
+          "p50": 5.8896,
+          "p90": 36.719300000000004,
+          "max": 393.6576
+        },
+        "hosp_span_days": {
+          "n": 6135,
+          "p10": 3.677335648148148,
+          "p50": 13.768587962962963,
+          "p90": 43.228597222222234,
+          "max": 393.65697916666664
+        },
+        "events_full": {
+          "p10": 299.0,
+          "p50": 860.0,
+          "p90": 2631.800000000001,
+          "mean": 1290.0158109209453,
+          "sum": 7914247
+        },
+        "events_24h": {
+          "p10": 46.0,
+          "p50": 148.0,
+          "p90": 282.0,
+          "mean": 161.38565607171964,
+          "sum": 990101
+        },
+        "frac_events_discarded_by_clip": {
+          "overall": 0.8748963735905639,
+          "per_admission_median": 0.8392036753445635,
+          "per_admission_p10": 0.5192637834268735,
+          "per_admission_p90": 0.9549876342729893
+        },
+        "cohort_last_event_idx_matches_24h_rule": 1.0,
+        "max_ts_days_in_events": {
+          "n": 6135,
+          "p10": 4.656134259259259,
+          "p50": 15.332245370370371,
+          "p90": 63.685766203703714,
+          "max": 1177.7872453703703
+        }
+      },
+      "val": {
+        "n_subjects": 894,
+        "icu_stay_span_days": {
+          "n": 894,
+          "p10": 1.2562,
+          "p50": 5.953849999999999,
+          "p90": 36.71749,
+          "max": 142.9396
+        },
+        "hosp_span_days": {
+          "n": 894,
+          "p10": 3.9125844907407417,
+          "p50": 13.887667824074073,
+          "p90": 43.852956018518526,
+          "max": 158.12275462962964
+        },
+        "events_full": {
+          "p10": 288.90000000000003,
+          "p50": 867.5,
+          "p90": 2554.2000000000016,
+          "mean": 1228.2919463087248,
+          "sum": 1098093
+        },
+        "events_24h": {
+          "p10": 58.30000000000001,
+          "p50": 148.0,
+          "p90": 285.0,
+          "mean": 164.78859060402684,
+          "sum": 147321
+        },
+        "frac_events_discarded_by_clip": {
+          "overall": 0.8658392321961801,
+          "per_admission_median": 0.8312761499614716,
+          "per_admission_p10": 0.5033846153846154,
+          "per_admission_p90": 0.9503532779405591
+        },
+        "cohort_last_event_idx_matches_24h_rule": 1.0,
+        "max_ts_days_in_events": {
+          "n": 894,
+          "p10": 4.742902777777778,
+          "p50": 15.40845486111111,
+          "p90": 56.91736805555557,
+          "max": 1090.218275462963
+        }
+      },
+      "test": {
+        "n_subjects": 1760,
+        "icu_stay_span_days": {
+          "n": 1760,
+          "p10": 1.4929500000000002,
+          "p50": 5.69655,
+          "p90": 33.98340000000001,
+          "max": 444.0451
+        },
+        "hosp_span_days": {
+          "n": 1760,
+          "p10": 3.752019675925926,
+          "p50": 13.85956597222222,
+          "p90": 41.8407962962963,
+          "max": 444.04449074074074
+        },
+        "events_full": {
+          "p10": 309.0,
+          "p50": 877.0,
+          "p90": 2723.0,
+          "mean": 1303.778409090909,
+          "sum": 2294650
+        },
+        "events_24h": {
+          "p10": 53.0,
+          "p50": 149.0,
+          "p90": 280.10000000000014,
+          "mean": 161.12727272727273,
+          "sum": 283584
+        },
+        "frac_events_discarded_by_clip": {
+          "overall": 0.8764151395637679,
+          "per_admission_median": 0.8446903455345837,
+          "per_admission_p10": 0.5490807642903018,
+          "per_admission_p90": 0.9517398853197222
+        },
+        "cohort_last_event_idx_matches_24h_rule": 1.0,
+        "max_ts_days_in_events": {
+          "n": 1760,
+          "p10": 5.0217581018518525,
+          "p50": 15.791730324074074,
+          "p90": 64.75786458333343,
+          "max": 1184.0083796296296
+        }
+      }
+    },
+    "pneumonia": {
+      "train": {
+        "n_subjects": 8978,
+        "icu_stay_span_days": {
+          "n": 8978,
+          "p10": 0.7243,
+          "p50": 2.81075,
+          "p90": 26.332150000000027,
+          "max": 393.6576
+        },
+        "hosp_span_days": {
+          "n": 8978,
+          "p10": 3.1541030092592592,
+          "p50": 12.166811342592592,
+          "p90": 37.61586805555557,
+          "max": 393.65697916666664
+        },
+        "events_full": {
+          "p10": 275.70000000000005,
+          "p50": 688.0,
+          "p90": 2250.9000000000005,
+          "mean": 1082.1744263755847,
+          "sum": 9715762
+        },
+        "events_24h": {
+          "p10": 41.0,
+          "p50": 134.0,
+          "p90": 265.0,
+          "mean": 149.90343060815326,
+          "sum": 1345833
+        },
+        "frac_events_discarded_by_clip": {
+          "overall": 0.8614794187012815,
+          "per_admission_median": 0.8175727572925485,
+          "per_admission_p10": 0.4818655266226195,
+          "per_admission_p90": 0.9509791348098456
+        },
+        "cohort_last_event_idx_matches_24h_rule": 1.0,
+        "max_ts_days_in_events": {
+          "n": 8978,
+          "p10": 4.262944444444445,
+          "p50": 13.87689236111111,
+          "p90": 55.12732986111113,
+          "max": 1177.7872453703703
+        }
+      },
+      "val": {
+        "n_subjects": 1279,
+        "icu_stay_span_days": {
+          "n": 1279,
+          "p10": 0.7344200000000001,
+          "p50": 2.9146,
+          "p90": 27.891840000000006,
+          "max": 142.9396
+        },
+        "hosp_span_days": {
+          "n": 1279,
+          "p10": 3.3801875,
+          "p50": 12.926956018518519,
+          "p90": 37.22375694444447,
+          "max": 158.12275462962964
+        },
+        "events_full": {
+          "p10": 265.0,
+          "p50": 689.0,
+          "p90": 2140.4000000000005,
+          "mean": 1037.4644253322908,
+          "sum": 1326917
+        },
+        "events_24h": {
+          "p10": 45.0,
+          "p50": 134.0,
+          "p90": 272.4000000000001,
+          "mean": 151.45347928068804,
+          "sum": 193709
+        },
+        "frac_events_discarded_by_clip": {
+          "overall": 0.8540157372314923,
+          "per_admission_median": 0.8188153310104529,
+          "per_admission_p10": 0.4644510969384066,
+          "per_admission_p90": 0.9467291292514898
+        },
+        "cohort_last_event_idx_matches_24h_rule": 1.0,
+        "max_ts_days_in_events": {
+          "n": 1279,
+          "p10": 4.321863425925926,
+          "p50": 14.194965277777778,
+          "p90": 49.04959490740741,
+          "max": 1090.218275462963
+        }
+      },
+      "test": {
+        "n_subjects": 2573,
+        "icu_stay_span_days": {
+          "n": 2573,
+          "p10": 0.71334,
+          "p50": 2.7028,
+          "p90": 25.947120000000005,
+          "max": 444.0451
+        },
+        "hosp_span_days": {
+          "n": 2573,
+          "p10": 3.021724537037037,
+          "p50": 12.568368055555556,
+          "p90": 35.040858796296305,
+          "max": 444.04449074074074
+        },
+        "events_full": {
+          "p10": 276.0,
+          "p50": 695.0,
+          "p90": 2267.8,
+          "mean": 1077.5355616012437,
+          "sum": 2772499
+        },
+        "events_24h": {
+          "p10": 45.19999999999999,
+          "p50": 135.0,
+          "p90": 267.0,
+          "mean": 149.81539059463663,
+          "sum": 385475
+        },
+        "frac_events_discarded_by_clip": {
+          "overall": 0.8609647830350886,
+          "per_admission_median": 0.8179696616102684,
+          "per_admission_p10": 0.45652453856059527,
+          "per_admission_p90": 0.9474135285387266
+        },
+        "cohort_last_event_idx_matches_24h_rule": 1.0,
+        "max_ts_days_in_events": {
+          "n": 2573,
+          "p10": 4.206407407407407,
+          "p50": 13.893113425925925,
+          "p90": 53.915962962962986,
+          "max": 1184.0083796296296
+        }
+      }
+    },
+    "heart_malformations": {
+      "train": {
+        "n_subjects": 8979,
+        "icu_stay_span_days": {
+          "n": 8979,
+          "p10": 0.7243,
+          "p50": 2.8111,
+          "p90": 26.563179999999996,
+          "max": 393.6576
+        },
+        "hosp_span_days": {
+          "n": 8979,
+          "p10": 3.1541550925925925,
+          "p50": 12.170972222222222,
+          "p90": 37.60847222222221,
+          "max": 393.65697916666664
+        },
+        "events_full": {
+          "p10": 275.0,
+          "p50": 687.0,
+          "p90": 2249.2,
+          "mean": 1081.8415191001225,
+          "sum": 9713855
+        },
+        "events_24h": {
+          "p10": 41.0,
+          "p50": 133.0,
+          "p90": 265.0,
+          "mean": 149.68270408731485,
+          "sum": 1344001
+        },
+        "frac_events_discarded_by_clip": {
+          "overall": 0.8616408212805318,
+          "per_admission_median": 0.8177641653905053,
+          "per_admission_p10": 0.48158057723275116,
+          "per_admission_p90": 0.9510744782929843
+        },
+        "cohort_last_event_idx_matches_24h_rule": 1.0,
+        "max_ts_days_in_events": {
+          "n": 8979,
+          "p10": 4.263537037037037,
+          "p50": 13.884976851851851,
+          "p90": 55.116900462962946,
+          "max": 1177.7872453703703
+        }
+      },
+      "val": {
+        "n_subjects": 1280,
+        "icu_stay_span_days": {
+          "n": 1280,
+          "p10": 0.73456,
+          "p50": 2.9156500000000003,
+          "p90": 27.88622000000001,
+          "max": 142.9396
+        },
+        "hosp_span_days": {
+          "n": 1280,
+          "p10": 3.3809328703703705,
+          "p50": 12.927939814814815,
+          "p90": 37.17768865740747,
+          "max": 158.12275462962964
+        },
+        "events_full": {
+          "p10": 264.9,
+          "p50": 689.0,
+          "p90": 2138.7000000000025,
+          "mean": 1036.55234375,
+          "sum": 1326787
+        },
+        "events_24h": {
+          "p10": 45.0,
+          "p50": 134.0,
+          "p90": 272.2000000000003,
+          "mean": 151.159375,
+          "sum": 193484
+        },
+        "frac_events_discarded_by_clip": {
+          "overall": 0.8541710161465255,
+          "per_admission_median": 0.8190414228238969,
+          "per_admission_p10": 0.46427783187276855,
+          "per_admission_p90": 0.9474262052302272
+        },
+        "cohort_last_event_idx_matches_24h_rule": 1.0,
+        "max_ts_days_in_events": {
+          "n": 1280,
+          "p10": 4.324409722222222,
+          "p50": 14.190225694444443,
+          "p90": 49.04449074074075,
+          "max": 1090.218275462963
+        }
+      },
+      "test": {
+        "n_subjects": 2573,
+        "icu_stay_span_days": {
+          "n": 2573,
+          "p10": 0.71334,
+          "p50": 2.7028,
+          "p90": 25.947120000000005,
+          "max": 444.0451
+        },
+        "hosp_span_days": {
+          "n": 2573,
+          "p10": 3.021724537037037,
+          "p50": 12.568368055555556,
+          "p90": 35.040858796296305,
+          "max": 444.04449074074074
+        },
+        "events_full": {
+          "p10": 276.0,
+          "p50": 694.0,
+          "p90": 2268.0,
+          "mean": 1077.273221919938,
+          "sum": 2771824
+        },
+        "events_24h": {
+          "p10": 45.0,
+          "p50": 134.0,
+          "p90": 267.0,
+          "mean": 149.5705402254178,
+          "sum": 384845
+        },
+        "frac_events_discarded_by_clip": {
+          "overall": 0.8611582120654125,
+          "per_admission_median": 0.8184471687098658,
+          "per_admission_p10": 0.45599218940688313,
+          "per_admission_p90": 0.947606023247986
+        },
+        "cohort_last_event_idx_matches_24h_rule": 1.0,
+        "max_ts_days_in_events": {
+          "n": 2573,
+          "p10": 4.206407407407407,
+          "p50": 13.893113425925925,
+          "p90": 53.915962962962986,
+          "max": 1184.0083796296296
+        }
+      }
+    }
+  },
+  "why_24h": {
+    "verdict": "prediction_time_constraint",
+    "stop_before_rebuild": true,
+    "reason": "--obs_window_days=1.0 in build_cohorts_pic is the landmark observation window: features = events with timestamp_days <= 1; mortality excludes deaths within 24h; los_gt7 excludes ICU stays <= 24h and predicts LOS>7 from the first day. Removing the clip without re-deriving cohorts + outcome timing widens the feature window into the outcome period (forward leakage for mortality/los_gt7). Documented as intentional in Project_Documentation (first 24h obs window) and MODEL_NEW_IMPLEMENTATION \u00a712 (widening forwards leaks; needs cohort re-derivation).",
+    "not_a_convenience_default": true
+  }
+}

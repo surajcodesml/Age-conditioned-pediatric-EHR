@@ -1,0 +1,45 @@
+{
+  "seed": 0,
+  "batch_list_hash": "d76cb3efb5bd8218129d9778fbfa209e",
+  "n_batches": 2,
+  "n_examples": 256,
+  "batch_size": 128,
+  "smoke": true,
+  "n_boot": 50,
+  "tau_max": 6.72380256652832,
+  "audit_seed": 0,
+  "arm": "vanilla",
+  "checkpoint": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/model_new/run/vanilla_s0/epoch_008.pt",
+    "epoch": 8,
+    "tau_max": 6.72380256652832,
+    "tau_max_source": "exact max over full train split, N=367296 windows, of log1p(span_days/7); stored with 1 ulp of float32 headroom (float64 value 6.723802006619469)",
+    "age_standardization": {
+      "mean": 63.33601047086648,
+      "sd": 16.574804662346914
+    },
+    "seed": 0
+  },
+  "precision": {
+    "dtype": "fp32",
+    "reason": "delta_bce=1.972e-06 >= 1e-06",
+    "agree": false,
+    "delta_bce": 1.972137511074834e-06,
+    "bce_fp32": 0.010647363099678842,
+    "bce_bf16": 0.010649335237189916
+  },
+  "positive_loss_mass_fraction": 0.7195009211447512,
+  "negative_loss_mass_fraction": 0.28049907885524883,
+  "mean_positives_per_example": 113.796875,
+  "pos_loss_sum": 60080.1875,
+  "neg_loss_sum": 23422.3984375,
+  "grad_split": {
+    "head_grad_norm_from_pos": 12850.124938964844,
+    "head_grad_norm_from_neg": 10418.373260498047,
+    "pos_over_neg": 1.2334099208834208
+  },
+  "verdict": {
+    "pos_mass_lt_5pct": false,
+    "route": "positive mass adequate for full softmax"
+  }
+}

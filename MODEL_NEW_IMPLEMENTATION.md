@@ -94,6 +94,11 @@ model_new/
   train.py             pretraining
   train_finetune.py    fine-tuning
   preflight.py         Phase 10 review checkpoint
+  eval_pretrain.py     offline evaluation + epoch selection over finished pretrain runs
+  eval_finetune.py     the same for fine-tune runs, plus patient bootstrap CIs and
+                       paired per-patient deltas
+  pic_audit.py         PIC shard/vocab/demographic inventory + the M1 lag-geometry
+                       measurement. Trains nothing; ends in a report (see section 12)
   run/                 pretrain.sh, finetune.sh
   tests/               one test per invariant + run_all.py
   INVARIANTS.md
@@ -214,12 +219,23 @@ This connects to the existing note that the PIC CHD shards were clipped to a 24 
 all lags under ~1 day, `τ = log1p(days/7) < 0.13`, hence the 2% sliver. The clipping and the
 `τ_max` freeze compound.
 
+> **Resolved by measurement — see §12.** The counterfactual has now been run on the unclipped
+> PIC event stream: at the full stay the *same* frozen `τ_max` gives 75% occupancy and a Gram
+> condition of ~2e3, against 2.0% and ~1e15 on the shipped 24 h shards. The clipping is
+> responsible, not the shared domain, so options 1 and 2 above address the wrong constraint.
+> The catch is that PIC has **no** pre-index history (0.0000 of admissions), so the window can
+> only be widened forwards, which leaks the outcome for `mortality` and `los_gt7` unless the
+> cohorts are re-derived. §12 has the numbers.
+
 ---
 
 ## 6. Invariants
 
-12 invariant IDs, each mapping to exactly one test, all HARD, all CPU, all under a minute.
-See `INVARIANTS.md` for statements. Run:
+17 invariant IDs, each mapping to exactly one test, all HARD, all CPU, all under a minute.
+The last three (`INV-FT-ARM`, `INV-FT-FROZEN`, `INV-FT-ORDER`) are fine-tune-time and were
+added with the PIC work: the arm is read from the checkpoint rather than asserted by the
+caller, every frozen constant is checked bit-identical after loading, and the data order is
+hashed and compared across arms. See `INVARIANTS.md` for statements. Run:
 
 ```bash
 python -m model_new.tests.run_all      # runs pytest, then prints the ID → test table
@@ -351,8 +367,16 @@ python -m model_new.eval_pretrain --runs model_new/run/vanilla_s0 \
     model_new/run/kernel_s0_072420260946 model_new/run/random_constant_s0_072420261750 \
     model_new/run/additive_s0_072520260143 --primary_rule per_arm_best
 
-# Fine-tune all four arms from ONE shared backbone.
-CKPT=model_new/run/vanilla_s0/epoch_008.pt ./model_new/run/finetune.sh
+# PIC readiness audit. Measures, prints, exits 0. Trains nothing. See section 12.
+python -m model_new.pic_audit
+
+# Fine-tune all four arms. MODE picks DECISION D2; CKPT_MAP overrides it entirely.
+MODE=matched TASK=heart_malformations ./model_new/run/finetune.sh
+MODE=shared  TASK=heart_malformations ./model_new/run/finetune.sh
+
+# Offline fine-tune evaluation. --primary_rule has no default.
+python -m model_new.eval_finetune --primary_rule per_arm_best \
+    --runs model_new/run_finetune_matched_heart_malformations/{vanilla,kernel,random_constant,additive}_s0
 ```
 
 All of the above assume the `ehr` conda environment.
@@ -372,12 +396,17 @@ Each of these exists in exactly one place:
 | Chebyshev evaluation | `basis.chebyshev_basis`; `diagnostics.gram_condition_numbers` imports it rather than inlining |
 | Fourier frequencies | built once per site in `_FourierBase.__init__`, persistent buffers, never rebuilt at load |
 | `w(τ)` statistics | computed once per epoch in `train.py`, emitted once by `diagnostics` |
-| age-band definitions | `diagnostics.AGE_BANDS`, shared by metrics, by the `Δα` decomposition and by `eval_pretrain` |
+| age-band definitions | `diagnostics.AGE_BANDS` (adult) and `diagnostics.PEDIATRIC_AGE_BANDS`, resolved by `diagnostics.resolve_bands` and passed as a `bands=` argument to every stratified function — metrics, the `Δα` decomposition, `eval_pretrain`, `eval_finetune`, `pic_audit`. The band logic is parameterised, never forked |
+| calibration and bootstrap CIs | `diagnostics.reliability_curve` / `bootstrap_ci` / `paired_bootstrap_ci`, used by `eval_finetune` |
+| the fine-tune frozen-constant check | `train_finetune.assert_frozen_constants`, imported by `eval_finetune` |
+| the fine-tune batch-order hash | `train_finetune.FinetuneBatchOrderHash`, used by `train_finetune` and `eval_finetune` |
+| JSON serialisation for hashing | `diagnostics.config_hash`; no other module calls `json.dumps` |
 | average precision | `diagnostics.average_precision_from_counts`, used by both the micro and the per-code histogram |
 | equal-norm headroom probe | `preflight.headroom`; `eval_pretrain` imports it rather than reimplementing it |
 | masking | `encoder.build_pair_mask` / `encoder.build_key_mask`, used by encoder and pooling |
 | optimizer groups | `optim.build_param_groups`, from declared sets |
 | printing | `diagnostics.py` only |
+| frozen linear probe | `probe.py` (extraction + fit); `DKMModel.extract_representations` for representations; output via `diagnostics.print_probe_*` / `write_json` |
 
 ---
 
@@ -393,3 +422,101 @@ Each of these exists in exactly one place:
 6. **Modules must not print.** Return diagnostic tensors; let `diagnostics.py` format them.
 7. If you change an invariant, change `INVARIANTS.md`, its test, and `run_all.INVARIANT_TESTS`
    together — `run_all` fails if they disagree.
+
+---
+
+## 12. The PIC audit — M1 resolved, and two decisions still open
+
+```bash
+python -m model_new.pic_audit          # -> model_new/run/pic_audit/{audit.json,readiness.md}
+```
+
+Trains nothing, exits 0, ~4 minutes on CPU. `readiness.md` is the per-file assessment;
+what follows is only what changes a conclusion in §5b/§5c.
+
+### M1 is the 24 h cohort window, not the frozen `τ_max`
+
+§5c presents three options as though the tension were between MIMIC's and PIC's intrinsic
+time scales. It is not. Recomputing the lag geometry on the **unclipped** PIC event stream,
+same cohort subjects, from `data/processed/pic/train_events.parquet`:
+
+| observation window | events/seq (p50) | τ̃ occupancy | Chebyshev Gram cond | rows with spread < 0.1 |
+|---|---|---|---|---|
+| 1 d (**shipped**) | 133 | **2.0%** | 4.4e15 | 34.8% |
+| 3 d | 279 | 5.3% | 7.4e12 | 0.7% |
+| 7 d | 468 | 10.3% | 1.8e10 | 0.2% |
+| 30 d | 656 | 24.8% | 1.1e7 | 0.1% |
+| full stay | 677 | **75.1%** | **2.1e3** | 0.07% |
+
+Same frozen `τ_max = 6.7238` in every row. At the full stay the basis is in the same regime
+as MIMIC (15.6 measured on the val split, not 15.1). **The shared frozen domain is not the
+problem; `OBS_WINDOW_DAYS = 1.0` is.** All four tasks agree to within a percent
+(ratios 37.8×, 37.7×, 35.6×, 37.7×).
+
+Two things stop that from being a free fix, and both are why D1 is still a decision:
+
+- **PIC has no pre-index history at all.** `fraction_of_admissions_with_any = 0.0000` for
+  every task: one admission per subject, and nothing before its first event. Widening
+  *backwards* — the direction that cannot leak — buys exactly zero.
+- The 37× is bought entirely by extending **forwards**, which leaks the outcome for
+  `mortality` and `los_gt7`. The audit measures it as geometry and explicitly declines to
+  propose it. A legitimate version means **re-deriving the cohorts**, not re-tensorizing:
+  longer window, outcome defined strictly after it.
+
+Also, **quote the occupancy, not the condition number.** §5c's 5.7e16 re-measures as 6.1e14
+on 5.27M pairs. Both are singular to float precision, where the reported value is noise. The
+stable, interpretable figures are 2.0% of `[-1, 1]` occupied and 35% of attention rows with
+τ spread below 0.1.
+
+### Reindexing PIC into the MIMIC vocabulary is not viable
+
+545 of 2,198 PIC codes (24.8%) appear in the MIMIC vocabulary, and 545 of them are `PHE_`
+phecodes — a namespace both corpora share. Every other PIC family (`LAB_`, `DRUG_`,
+`ICD10_`, `EXAM_`, `CHART_`) overlaps by **zero** codes. At the token level the UNK rate
+under reindexing is **99.0–99.3%** on every task and split. The remaining route is the PIC
+BGE table, whose one consequence must be recorded rather than discovered: the checkpoint's
+`embedding_table` buffer is `[30637, 1024]` and cannot be restored into a `[2200, 1024]`
+model, so INV-FROZEN's "restored, never rebuilt" clause does not hold for the table.
+
+### Open
+
+`DECISION D1` (`τ_max` / the cohort window), `DECISION D2` (arm-matched versus
+shared-vanilla backbones — `run/finetune.sh` takes both, so this is a run-time choice) and
+`DECISION D3` (the embedding-table substitution, ~10 lines in `train_finetune.load_backbone`)
+are open. No PIC fine-tune has been run.
+
+---
+
+## 13. Frozen representation probe
+
+`python -m model_new.probe` (or `model_new/run/probe.sh`) measures what a **pretrained**
+encoder contains, separately from fine-tuning. The encoder is loaded, frozen
+(`requires_grad=False`), and never updated. A linear classifier is fit on extracted
+patient vectors; `C` is swept on a shared grid and selected on val by the same metric
+reported on test.
+
+### `h_pool` vs `h_head`
+
+`DKMModel.extract_representations` (evaluation-only; unreachable from `train.py` /
+`train_finetune.py`) returns two vectors:
+
+| name | definition |
+|---|---|
+| `h_pool` | `AttentionPooling` output, before demographic combination and before any arm-specific concatenation |
+| `h_head` | exactly what the prediction head sees, minus the demographic sub-vector |
+
+This asymmetry is intentional. Every arm already receives age via `demo_proj`, so a probe
+after demographic combination measures that pathway in all four arms and says nothing
+about the kernel. Separately:
+
+- `kernel` puts age into the attention kernel → age is in `h_pool` by construction.
+- `additive` concatenates the generator after pooling → that pathway is excluded from
+  `h_pool` (so `additive` ≈ `vanilla` on `h_pool`) but present in `h_head`.
+- `vanilla` / `random_constant` have no real age signal in `h_pool`.
+
+Do not "fix" this by moving the extraction point. Report both representations. The
+asymmetry is recorded in `probe.json` under `notes`.
+
+There is no `return_repr_only` path on `forward` (D9): a training-reachable skip of the
+head left pooling-site age parameters gradient-dead. `INV-PROBE-NODEMO` and
+`INV-PROBE-FROZEN` lock the extraction point and the freeze contract.

@@ -1,0 +1,83 @@
+{
+  "seed": 0,
+  "batch_list_hash": "8ef6ad08227fdd84035c76c0d17eed15",
+  "n_batches": 200,
+  "n_examples": 25600,
+  "batch_size": 128,
+  "smoke": false,
+  "n_boot": 1000,
+  "tau_max": 6.72380256652832,
+  "audit_seed": 0,
+  "arm": "vanilla",
+  "checkpoint": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/model_new/run/vanilla_s0/epoch_008.pt",
+    "epoch": 8,
+    "tau_max": 6.72380256652832,
+    "tau_max_source": "exact max over full train split, N=367296 windows, of log1p(span_days/7); stored with 1 ulp of float32 headroom (float64 value 6.723802006619469)",
+    "age_standardization": {
+      "mean": 63.33601047086648,
+      "sd": 16.574804662346914
+    },
+    "seed": 0
+  },
+  "precision": {
+    "dtype": "fp32",
+    "reason": "delta_bce=1.972e-06 >= 1e-06",
+    "agree": false,
+    "delta_bce": 1.972137511074834e-06,
+    "bce_fp32": 0.010647363099678842,
+    "bce_bf16": 0.010649335237189916
+  },
+  "bce_mean": 0.010009124015771248,
+  "recall": {
+    "recall@5": 0.07636041567770917,
+    "recall@10": 0.13360154345889896,
+    "recall@20": 0.23808102488725125
+  },
+  "by_gap_bin": [
+    {
+      "bin": "<0",
+      "n": 7624,
+      "recall@10": 0.14479125097197562
+    },
+    {
+      "bin": "0-1d",
+      "n": 2734,
+      "recall@10": 0.14059747488053287
+    },
+    {
+      "bin": "1-7d",
+      "n": 1888,
+      "recall@10": 0.1348268023314215
+    },
+    {
+      "bin": "7-30d",
+      "n": 3136,
+      "recall@10": 0.12203068177575692
+    },
+    {
+      "bin": "30-90d",
+      "n": 2682,
+      "recall@10": 0.12589587854279802
+    },
+    {
+      "bin": "90-365d",
+      "n": 3483,
+      "recall@10": 0.12564225745393526
+    },
+    {
+      "bin": ">365d",
+      "n": 4053,
+      "recall@10": 0.12815484061183224
+    }
+  ],
+  "cv_across_bins": 0.04852253702475793,
+  "recall_drop_short_to_long": 0.012442634268700625,
+  "d8_1_ref": {
+    "median_horizon": 9.79478645324707
+  },
+  "verdict": {
+    "flat": true,
+    "route": "horizon-marginalized \u2192 TTE justified"
+  }
+}

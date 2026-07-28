@@ -1,0 +1,177 @@
+{
+  "run_id": "random_constant_s0",
+  "arm": "random_constant",
+  "seed": 0,
+  "pretrain_arm": "random_constant",
+  "arm_source": "checkpoint (INV-FT-ARM); --arm was 'random_constant' and agrees",
+  "git_commit": "5a4c09731200897dada19b69b36eb3073bfb09ed",
+  "git_dirty": true,
+  "timestamp": "2026-07-26T13:25:27",
+  "pretrained_ckpt": "model_new/run_selected/random_constant_s0/best.pt",
+  "model": {
+    "d_model": 256,
+    "n_layers": 1,
+    "use_residual": true,
+    "use_layernorm": true,
+    "use_ffn": true,
+    "ffn_mult": 4,
+    "use_out_proj": false,
+    "n_heads": 1,
+    "s": 5,
+    "tau_max": 6.72380256652832,
+    "fourier": {
+      "M": 16,
+      "p_min": 0.15,
+      "p_max": 6.0,
+      "log_age": true,
+      "age_emb_dim": 32
+    },
+    "age_hidden": 64,
+    "demo_dim": 9,
+    "demo_channels": [
+      "age_years",
+      "sex",
+      "race_WHITE",
+      "race_BLACK",
+      "race_ASIAN",
+      "race_HISPANIC",
+      "race_AMERICAN_INDIAN",
+      "race_OTHER",
+      "race_UNKNOWN"
+    ],
+    "demo_hidden": 64,
+    "race_encoding": "one_hot",
+    "age_standardization": {
+      "mean": 63.33600997924805,
+      "sd": 16.574804306030273,
+      "applies_to": "demographic channel 0 only; age_years stays raw"
+    },
+    "embedding_dim": 1024,
+    "injection": "log_space_additive",
+    "masking": "padding_only",
+    "pooling": "attention",
+    "gen_final_bias": false,
+    "center_delta_alpha": false,
+    "head_in": 320,
+    "head_out": 1,
+    "head_final_bias": 0.0,
+    "task": "classification"
+  },
+  "params": {
+    "backbone": 1578378,
+    "age": 4864,
+    "head": 104651,
+    "frozen_embedding": 2252800,
+    "total_trainable": 1687893,
+    "encoder_trainable": 1579909,
+    "age_share_of_encoder": 0.003078658327789765
+  },
+  "optim": {
+    "lr_backbone": 1e-05,
+    "lr_age": 0.001,
+    "lr_head": 0.001,
+    "n_tensors": {
+      "backbone": 20,
+      "age": 6,
+      "head": 4
+    },
+    "n_params": {
+      "backbone": 1578378,
+      "age": 4864,
+      "head": 104651
+    },
+    "batch_size": 64,
+    "epochs": 10,
+    "optimizer": "Adam"
+  },
+  "data": {
+    "tensorized_dir": "data/tensorized/pic/los_gt7",
+    "split_sizes": {
+      "train": 6135,
+      "val": 894,
+      "test": 1760
+    },
+    "race_encoding": "one_hot"
+  },
+  "tau_max": 6.72380256652832,
+  "tau_max_source": "exact max over full train split, N=367296 windows, of log1p(span_days/7); stored with 1 ulp of float32 headroom (float64 value 6.723802006619469)",
+  "tau_domain_check": {
+    "tau_max_checkpoint": 6.72380256652832,
+    "corpus_tau_max_observed": 0.13352994721084221,
+    "fraction_windows_exceeding": 0.0,
+    "corpus_tau_p50": 0.12807963540617134,
+    "corpus_tau_p99": 0.13348943752507847,
+    "n_sampled": 2000,
+    "min_age": 0.0,
+    "max_age": 17.472457060660506,
+    "median_age": 0.45944512567644163
+  },
+  "state_dict_load": {
+    "missing_keys": [
+      "head.net.0.weight",
+      "head.net.0.bias",
+      "head.net.2.weight",
+      "head.net.2.bias"
+    ],
+    "unexpected_keys": [],
+    "dropped_pretrain_head_keys": [
+      "head.net.0.bias",
+      "head.net.0.weight",
+      "head.net.2.bias",
+      "head.net.2.weight"
+    ],
+    "embedding_table_substituted_not_restored": true,
+    "inv_frozen_note": "INV-FROZEN's 'restored from the checkpoint rather than rebuilt' clause does not hold for embedding_table under DECISION D3 option (b); the table is a different matrix over a different vocabulary."
+  },
+  "frozen_constants": {
+    "tau_max": {
+      "value": 6.72380256652832,
+      "sites": {
+        "encoder_layer0": 6.72380256652832,
+        "pooling": 6.72380256652832
+      },
+      "source": "checkpoint"
+    },
+    "age_standardization": {
+      "mean": 63.33600997924805,
+      "sd": 16.574804306030273,
+      "source": "checkpoint"
+    },
+    "fourier_buffers": {
+      "encoder_layer0": {
+        "frequencies_key": "encoder.blocks.0.attn.age.fourier.frequencies",
+        "periods_key": "encoder.blocks.0.attn.age.fourier.periods",
+        "n": 16
+      },
+      "pooling": {
+        "frequencies_key": "pooling.age.fourier.frequencies",
+        "periods_key": "pooling.age.fourier.periods",
+        "n": 16
+      }
+    },
+    "race_encoding": {
+      "encoding": "one_hot",
+      "channels": [
+        "age_years",
+        "sex",
+        "race_WHITE",
+        "race_BLACK",
+        "race_ASIAN",
+        "race_HISPANIC",
+        "race_AMERICAN_INDIAN",
+        "race_OTHER",
+        "race_UNKNOWN"
+      ],
+      "source": "checkpoint"
+    },
+    "s": {
+      "value": 5,
+      "sites": {
+        "encoder_layer0": 5,
+        "pooling": 5
+      },
+      "source": "checkpoint"
+    }
+  },
+  "band_table": "pediatric"
+}

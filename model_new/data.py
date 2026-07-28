@@ -47,6 +47,7 @@ __all__ = [
     "lag_to_tau", "spans_to_tau", "pairwise_tau", "tau_to_now_from_timestamps",
     "tau_from_timestamps",
     "encode_race", "N_RACE", "RACE_LABELS", "demo_layout",
+    "target_visit_start_time", "select_forecast_input_indices",
     "TensorizedPretrainDataset", "pretrain_collate", "make_collate",
     "corpus_stats", "corpus_stats_cached", "CorpusStats", "sample_empirical_taus",
     "load_vocab",
@@ -169,6 +170,48 @@ def demo_layout(race_encoding: str = "one_hot") -> tuple[int, tuple[str, ...]]:
 
 
 # --------------------------------------------------------------------------- #
+# Future-visit forecasting window (INV-HORIZON)                               #
+# --------------------------------------------------------------------------- #
+def target_visit_start_time(timestamps_days: np.ndarray, start: int, end: int) -> float:
+    """``start_time(V) = min(timestamps in V)``. Empty visits are a hard error."""
+    block = np.asarray(timestamps_days[start:end], dtype=np.float64)
+    if block.size == 0:
+        raise ValueError(f"empty target visit [{start}:{end})")
+    return float(block.min())
+
+
+def select_forecast_input_indices(timestamps_days: np.ndarray, target_time: float,
+                                  max_seq_len: int) -> np.ndarray:
+    """Indices of events with ``timestamp < target_time``, time-ordered, tail-truncated.
+
+    Contract (future-visit forecasting, INV-HORIZON):
+
+    * input  = every event with ``t < start_time(V_{m+1})`` (strict; ties go to the target)
+    * truncation drops the **oldest** events (by time), keeping the window adjacent to the
+      boundary, and never pulls events from across it
+    """
+    ts = np.asarray(timestamps_days, dtype=np.float64)
+    pre = np.flatnonzero(ts < float(target_time))
+    if pre.size == 0:
+        return pre
+    # Chronological order: primary key timestamp, secondary original index (stable).
+    order = np.lexsort((pre.astype(np.int64, copy=False), ts[pre]))
+    pre = pre[order]
+    m = int(max_seq_len)
+    if m > 0 and pre.size > m:
+        pre = pre[-m:]
+    return pre
+
+
+def _horizon_assert_enabled(flag: bool | None) -> bool:
+    """Constructor flag wins when explicit; otherwise env ``MODEL_NEW_CHECK_HORIZON`` (default on)."""
+    if flag is not None:
+        return bool(flag)
+    v = os.environ.get("MODEL_NEW_CHECK_HORIZON", "1").strip().lower()
+    return v not in {"0", "false", "no", "off"}
+
+
+# --------------------------------------------------------------------------- #
 # Dataset                                                                     #
 # --------------------------------------------------------------------------- #
 def load_vocab(path: str | Path) -> dict[str, int]:
@@ -186,19 +229,27 @@ def dataloader_worker_init(_worker_id: int) -> None:
 
 
 class TensorizedPretrainDataset(Dataset):
-    """Visit-level next-code prediction samples from flat mmap-able shards.
+    """Future-visit forecasting samples from flat mmap-able shards.
 
-    One sample per (patient, visit k) with k < n_visits - 1: the input window is every event
-    up to the end of visit k and the target is the set of codes in visit k+1. The target
-    visit therefore lies **outside** the input window, which is why padding-only masking is
-    not leakage (D4).
+    One sample per (patient, target visit ``V_{m+1}``) with at least one prior event:
+
+    * ``input``  = every event with ``timestamp < start_time(V_{m+1})`` (strict)
+    * ``target`` = the code set of ``V_{m+1}``
+
+    Visits remain the hadm-derived blocks stored in the shard; the **window** is a time cut
+    at the target visit's start, not the index end of the previous visit. That is why
+    padding-only masking is not leakage (D4 / INV-HORIZON): no input event is at or after
+    the target boundary. Count truncation keeps the newest ``max_seq_len`` pre-boundary
+    events.
     """
 
     def __init__(self, tensorized_dir: str | Path, code_vocab_path: str | Path,
-                 max_seq_len: int = 1024, shard_cache_size: int = 4) -> None:
+                 max_seq_len: int = 1024, shard_cache_size: int = 4,
+                 assert_horizon: bool | None = None) -> None:
         self.tensorized_dir = Path(tensorized_dir)
         self.max_seq_len = int(max_seq_len)
         self.shard_cache_size = int(shard_cache_size)
+        self.assert_horizon = _horizon_assert_enabled(assert_horizon)
         self.code_vocab = load_vocab(code_vocab_path)
         self.num_codes = len(self.code_vocab)
         self.unk_vocab_index = self.num_codes
@@ -213,13 +264,29 @@ class TensorizedPretrainDataset(Dataset):
             if "visit_offsets" not in npz.files:
                 raise RuntimeError(f"{shard_path} is not the flat schema; re-tensorize.")
             visit_offsets = np.asarray(npz["visit_offsets"])
-            npz.close()
+            event_offsets = np.asarray(npz["event_offsets"])
+            visit_starts = np.asarray(npz["visit_starts"])
+            visit_ends = np.asarray(npz["visit_ends"])
+            timestamps = np.asarray(npz["timestamps_days"])
             n = int(visit_offsets.shape[0]) - 1
             self.n_patients += n
             for pos in range(n):
-                n_visits = int(visit_offsets[pos + 1] - visit_offsets[pos])
-                for v in range(max(0, n_visits - 1)):
-                    self._index.append((shard_id, pos, v))
+                ev0, ev1 = int(event_offsets[pos]), int(event_offsets[pos + 1])
+                v0, v1 = int(visit_offsets[pos]), int(visit_offsets[pos + 1])
+                n_visits = v1 - v0
+                if n_visits < 2 or ev1 <= ev0:
+                    continue
+                ts = timestamps[ev0:ev1]
+                for v in range(n_visits - 1):
+                    s_next = int(visit_starts[v0 + v + 1])
+                    e_next = int(visit_ends[v0 + v + 1])
+                    if e_next <= s_next:
+                        continue
+                    t_tgt = target_visit_start_time(ts, s_next, e_next)
+                    # Valid forecasting example iff there is strict-past context.
+                    if bool(np.any(ts < t_tgt)):
+                        self._index.append((shard_id, pos, v))
+            npz.close()
         self._shard_cache: OrderedDict[int, dict[str, Any]] = OrderedDict()
 
     def __len__(self) -> int:
@@ -248,22 +315,35 @@ class TensorizedPretrainDataset(Dataset):
         shard_id, pos, visit_k = self._index[idx]
         s = self._load_shard(shard_id)
         ev_start = int(s["event_offsets"][pos])
+        ev_end = int(s["event_offsets"][pos + 1])
         vis_start = int(s["visit_offsets"][pos])
 
-        end_curr = int(s["visit_ends"][vis_start + visit_k])
         start_next = int(s["visit_starts"][vis_start + visit_k + 1])
         end_next = int(s["visit_ends"][vis_start + visit_k + 1])
 
-        codes = np.asarray(s["code_indices"][ev_start:ev_start + end_curr], dtype=np.int64)
-        ts = np.asarray(s["timestamps_days"][ev_start:ev_start + end_curr], dtype=np.float32)
-        ages = np.asarray(s["age_days"][ev_start:ev_start + end_curr], dtype=np.float32)
-        if codes.shape[0] > self.max_seq_len:
-            sl = slice(-self.max_seq_len, None)
-            codes, ts, ages = codes[sl], ts[sl], ages[sl]
+        codes_all = np.asarray(s["code_indices"][ev_start:ev_end], dtype=np.int64)
+        ts_all = np.asarray(s["timestamps_days"][ev_start:ev_end], dtype=np.float32)
+        ages_all = np.asarray(s["age_days"][ev_start:ev_end], dtype=np.float32)
+
+        target_time = target_visit_start_time(ts_all, start_next, end_next)
+        sel = select_forecast_input_indices(ts_all, target_time, self.max_seq_len)
+        if sel.size == 0:
+            raise RuntimeError(
+                f"empty forecast input at idx={idx} shard={shard_id} pos={pos} "
+                f"visit_k={visit_k}: index construction should have excluded this row")
+        codes = codes_all[sel]
+        ts = ts_all[sel]
+        ages = ages_all[sel]
+
+        if self.assert_horizon:
+            if not (float(np.max(ts.astype(np.float64))) < float(target_time)):
+                raise AssertionError(
+                    f"INV-HORIZON violated: max(input_ts)={float(np.max(ts))} "
+                    f">= target_time={float(target_time)} "
+                    f"(idx={idx} shard={shard_id} pos={pos} visit_k={visit_k})")
 
         unk = int(s["unk_vocab_index"])
-        nxt = np.asarray(s["code_indices"][ev_start + start_next:ev_start + end_next],
-                         dtype=np.int64)
+        nxt = codes_all[start_next:end_next]
         target = np.zeros(self.num_codes, dtype=np.float32)
         valid = nxt[nxt != unk]
         if valid.size:
@@ -277,6 +357,7 @@ class TensorizedPretrainDataset(Dataset):
             "race": int(s["race"][pos]),
             "unk_vocab_index": unk,
             "target_codes": target,
+            "target_time": float(target_time),
         }
 
     def __del__(self) -> None:
@@ -362,7 +443,18 @@ def _build_demographics(common: dict[str, Any], race_encoding: str) -> torch.Ten
     return torch.from_numpy(demo) * mask.unsqueeze(-1).float()
 
 
-def pretrain_collate(batch: list[dict[str, Any]], *, race_encoding: str = "one_hot") -> dict:
+def pretrain_collate(batch: list[dict[str, Any]], *, race_encoding: str = "one_hot",
+                     assert_horizon: bool | None = None) -> dict:
+    if _horizon_assert_enabled(assert_horizon):
+        for b, item in enumerate(batch):
+            t_tgt = item.get("target_time", None)
+            if t_tgt is None:
+                continue
+            ts = np.asarray(item["timestamps_days"], dtype=np.float64)
+            if ts.size and not (float(ts.max()) < float(t_tgt)):
+                raise AssertionError(
+                    f"INV-HORIZON violated in collate row {b}: "
+                    f"max(input_ts)={float(ts.max())} >= target_time={float(t_tgt)}")
     common = _pad_common(batch)
     out = {k: v for k, v in common.items() if not k.startswith("_")}
     out["demographics"] = _build_demographics(common, race_encoding)
@@ -371,10 +463,11 @@ def pretrain_collate(batch: list[dict[str, Any]], *, race_encoding: str = "one_h
     return out
 
 
-def make_collate(race_encoding: str = "one_hot"):
+def make_collate(race_encoding: str = "one_hot", assert_horizon: bool | None = None):
     """Picklable collate for spawned DataLoader workers."""
     from functools import partial
-    return partial(pretrain_collate, race_encoding=race_encoding)
+    return partial(pretrain_collate, race_encoding=race_encoding,
+                   assert_horizon=assert_horizon)
 
 
 # --------------------------------------------------------------------------- #
@@ -537,19 +630,32 @@ def corpus_stats(dataset: TensorizedPretrainDataset, *, split: str = "train",
                 age_sample_for_median.append(rng.choice(ages, k, replace=False))
 
             # per-window span and last-event age, exactly as __getitem__ builds them
+            # (time cut at target visit start, then drop oldest to max_seq_len).
             v0, v1 = int(vo[pos]), int(vo[pos + 1])
             n_visits = v1 - v0
             if n_visits < 2:
                 continue
-            ends = ve[v0:v0 + n_visits - 1].astype(np.int64)      # windows end at visit k
-            lo = np.maximum(0, ends - dataset.max_seq_len)         # left truncation
-            valid = ends > 0
-            ends, lo = ends[valid], lo[valid]
-            if ends.size == 0:
+            win_spans: list[float] = []
+            win_last_age: list[float] = []
+            win_lens: list[int] = []
+            for k in range(n_visits - 1):
+                s_next = int(vs[v0 + k + 1])
+                e_next = int(ve[v0 + k + 1])
+                if e_next <= s_next:
+                    continue
+                t_tgt = target_visit_start_time(ts, s_next, e_next)
+                sel = select_forecast_input_indices(ts, t_tgt, dataset.max_seq_len)
+                if sel.size == 0:
+                    continue
+                win_ts = ts[sel]
+                win_spans.append(float(win_ts[-1] - win_ts[0]))
+                win_last_age.append(float(ages[sel[-1]]))
+                win_lens.append(int(sel.size))
+            if not win_spans:
                 continue
-            span_days.append(ts[ends - 1] - ts[lo])
-            example_last_age.append(ages[ends - 1])
-            seq_lens.append((ends - lo).astype(np.int64))
+            span_days.append(np.asarray(win_spans, dtype=np.float64))
+            example_last_age.append(np.asarray(win_last_age, dtype=np.float64))
+            seq_lens.append(np.asarray(win_lens, dtype=np.int64))
         getattr(z, "close", lambda: None)()   # real shards are NpzFile; test mocks are dicts
 
     spans = np.concatenate(span_days) if span_days else np.zeros(1)
@@ -659,7 +765,8 @@ def corpus_stats_cached(dataset: TensorizedPretrainDataset, split_dir: Path, *,
 
     key = {"n_examples": len(dataset), "n_patients": dataset.n_patients,
            "sample_windows": int(sample_windows), "seed": int(seed),
-           "max_seq_len": int(max_seq_len), "split": split, "schema": 1}
+           "max_seq_len": int(max_seq_len), "split": split,
+           "schema": 2, "horizon": "strict_time_cut"}
     cache = Path(split_dir) / "corpus_stats.json"
     if cache.exists():
         try:

@@ -1,0 +1,270 @@
+{
+  "horizon": {
+    "live": {
+      "train": {
+        "n_examples": 366911,
+        "n_measured": 366911,
+        "viol": 0.0,
+        "tie": 0.0,
+        "strict_neg": 0.0,
+        "quantiles": {
+          "min": 0.00037038326263427734,
+          "p1": 0.00341796875,
+          "p5": 0.01389312744140625,
+          "p10": 0.029861111077480018,
+          "p25": 0.07777777966111898,
+          "p50": 0.240966796875,
+          "p75": 12.8367919921875,
+          "p90": 94.81804656982422,
+          "p95": 261.8697967529297,
+          "p99": 1317.4970458030707,
+          "max": 5295.469964981079
+        }
+      },
+      "val": {
+        "n_examples": 52178,
+        "n_measured": 52178,
+        "viol": 0.0,
+        "tie": 0.0,
+        "strict_neg": 0.0,
+        "quantiles": {
+          "min": 0.00048828125,
+          "p1": 0.00341796875,
+          "p5": 0.013888888992369175,
+          "p10": 0.02926025390625009,
+          "p25": 0.07843017578125,
+          "p50": 0.240966796875,
+          "p75": 12.952085494995117,
+          "p90": 95.6100692257289,
+          "p95": 257.61861955374417,
+          "p99": 1283.7859692382556,
+          "max": 5166.977996826172
+        }
+      },
+      "test": {
+        "n_examples": 106390,
+        "n_measured": 106390,
+        "viol": 0.0,
+        "tie": 0.0,
+        "strict_neg": 0.0,
+        "quantiles": {
+          "min": 0.00048828125,
+          "p1": 0.002778027057647705,
+          "p5": 0.013888895511627197,
+          "p10": 0.02978515625,
+          "p25": 0.07847223058342934,
+          "p50": 0.2451171875,
+          "p75": 12.98956298828125,
+          "p90": 94.30634765625004,
+          "p95": 258.8498832702628,
+          "p99": 1322.8575773525247,
+          "max": 5341.282063782215
+        }
+      }
+    },
+    "backup": {
+      "train": {
+        "n_examples": 366911,
+        "n_measured": 366911,
+        "viol": 0.0,
+        "tie": 0.0,
+        "strict_neg": 0.0,
+        "quantiles": {
+          "min": 0.00037038326263427734,
+          "p1": 0.00341796875,
+          "p5": 0.01389312744140625,
+          "p10": 0.029861111077480018,
+          "p25": 0.07777777966111898,
+          "p50": 0.240966796875,
+          "p75": 12.8367919921875,
+          "p90": 94.81804656982422,
+          "p95": 261.8697967529297,
+          "p99": 1317.4970458030707,
+          "max": 5295.469964981079
+        }
+      },
+      "val": {
+        "n_examples": 52178,
+        "n_measured": 52178,
+        "viol": 0.0,
+        "tie": 0.0,
+        "strict_neg": 0.0,
+        "quantiles": {
+          "min": 0.00048828125,
+          "p1": 0.00341796875,
+          "p5": 0.013888888992369175,
+          "p10": 0.02926025390625009,
+          "p25": 0.07843017578125,
+          "p50": 0.240966796875,
+          "p75": 12.952085494995117,
+          "p90": 95.6100692257289,
+          "p95": 257.61861955374417,
+          "p99": 1283.7859692382556,
+          "max": 5166.977996826172
+        }
+      },
+      "test": {
+        "n_examples": 106390,
+        "n_measured": 106390,
+        "viol": 0.0,
+        "tie": 0.0,
+        "strict_neg": 0.0,
+        "quantiles": {
+          "min": 0.00048828125,
+          "p1": 0.002778027057647705,
+          "p5": 0.013888895511627197,
+          "p10": 0.02978515625,
+          "p25": 0.07847223058342934,
+          "p50": 0.2451171875,
+          "p75": 12.98956298828125,
+          "p90": 94.30634765625004,
+          "p95": 258.8498832702628,
+          "p99": 1322.8575773525247,
+          "max": 5341.282063782215
+        }
+      }
+    }
+  },
+  "deltas": {
+    "train": {
+      "live_n_examples": 366911,
+      "backup_n_examples_new_construction": 366911,
+      "backup_n_examples_old_construction": 367296,
+      "delta_live_minus_old": -385,
+      "delta_live_minus_backup_new": 0,
+      "live_n_patients": 143802,
+      "backup_n_patients": 143802,
+      "subject_set_equal": true,
+      "n_subjects_live": 143802,
+      "n_subjects_backup": 143802,
+      "n_subjects_with_examples_live": 143575,
+      "n_subjects_with_examples_backup_old": 143802,
+      "n_subjects_with_examples_backup_new": 143575,
+      "n_subjects_zero_examples_after_fix": 227,
+      "live_window_len": {
+        "n_measured": 20000,
+        "median": 316.0,
+        "p10": 34.0,
+        "p90": 1024.0,
+        "frac_at_1024": 0.31965,
+        "mean": 483.29425
+      },
+      "backup_window_len_new_construction": {
+        "n_measured": 20000,
+        "median": 316.0,
+        "p10": 34.0,
+        "p90": 1024.0,
+        "frac_at_1024": 0.3196,
+        "mean": 483.27755
+      },
+      "backup_window_len_old_construction": {
+        "median": 663.0,
+        "p10": 59.0,
+        "p90": 1024.0,
+        "frac_at_1024": 0.418757623279317
+      }
+    },
+    "val": {
+      "live_n_examples": 52178,
+      "backup_n_examples_new_construction": 52178,
+      "backup_n_examples_old_construction": 52227,
+      "delta_live_minus_old": -49,
+      "delta_live_minus_backup_new": 0,
+      "live_n_patients": 20511,
+      "backup_n_patients": 20511,
+      "subject_set_equal": true,
+      "n_subjects_live": 20511,
+      "n_subjects_backup": 20511,
+      "n_subjects_with_examples_live": 20482,
+      "n_subjects_with_examples_backup_old": 20511,
+      "n_subjects_with_examples_backup_new": 20482,
+      "n_subjects_zero_examples_after_fix": 29,
+      "live_window_len": {
+        "n_measured": 20000,
+        "median": 296.0,
+        "p10": 35.0,
+        "p90": 1024.0,
+        "frac_at_1024": 0.30655,
+        "mean": 473.92455
+      },
+      "backup_window_len_new_construction": {
+        "n_measured": 20000,
+        "median": 295.0,
+        "p10": 34.0,
+        "p90": 1024.0,
+        "frac_at_1024": 0.30635,
+        "mean": 472.98665
+      },
+      "backup_window_len_old_construction": {
+        "median": 665.0,
+        "p10": 59.0,
+        "p90": 1024.0,
+        "frac_at_1024": 0.4142684818197484
+      }
+    },
+    "test": {
+      "live_n_examples": 106390,
+      "backup_n_examples_new_construction": 106390,
+      "backup_n_examples_old_construction": 106493,
+      "delta_live_minus_old": -103,
+      "delta_live_minus_backup_new": 0,
+      "live_n_patients": 41174,
+      "backup_n_patients": 41174,
+      "subject_set_equal": true,
+      "n_subjects_live": 41174,
+      "n_subjects_backup": 41174,
+      "n_subjects_with_examples_live": 41105,
+      "n_subjects_with_examples_backup_old": 41174,
+      "n_subjects_with_examples_backup_new": 41105,
+      "n_subjects_zero_examples_after_fix": 69,
+      "live_window_len": {
+        "n_measured": 20000,
+        "median": 304.0,
+        "p10": 34.0,
+        "p90": 1024.0,
+        "frac_at_1024": 0.31935,
+        "mean": 481.28915
+      },
+      "backup_window_len_new_construction": {
+        "n_measured": 20000,
+        "median": 302.0,
+        "p10": 33.0,
+        "p90": 1024.0,
+        "frac_at_1024": 0.3156,
+        "mean": 480.04165
+      },
+      "backup_window_len_old_construction": {
+        "median": 680.0,
+        "p10": 59.0,
+        "p90": 1024.0,
+        "frac_at_1024": 0.42276957170893864
+      }
+    }
+  },
+  "split_membership": {
+    "train": {
+      "parquet_n_subjects": 154418,
+      "live_n_subjects": 143802,
+      "backup_n_subjects": 143802,
+      "live_eq_backup": true,
+      "live_subset_of_parquet": true,
+      "backup_subset_of_parquet": true
+    },
+    "val": {
+      "parquet_n_subjects": 22060,
+      "live_n_subjects": 20511,
+      "backup_n_subjects": 20511,
+      "live_eq_backup": true,
+      "live_subset_of_parquet": true,
+      "backup_subset_of_parquet": true
+    },
+    "test": {
+      "parquet_n_subjects": 44125,
+      "live_n_subjects": 41174,
+      "backup_n_subjects": 41174,
+      "live_eq_backup": true,
+      "live_subset_of_parquet": true,
+      "backup_subset_of_parquet": true
+    }
+  }
+}

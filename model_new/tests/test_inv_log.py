@@ -46,12 +46,16 @@ def test_no_imports_from_legacy_trees():
 
 
 def test_diagnostics_owns_the_json_writers():
-    """One module owns all output: D11."""
+    """One module owns all output: D11.
+
+    Matches ``json.dump(`` (file writers), not ``json.dumps`` (in-memory serialisation
+    used when formatting a line for diagnostics to print).
+    """
     offenders = []
     for path in _py_files():
         if path.name in ("diagnostics.py",) or path.parent.name == "tests":
             continue
-        text = path.read_text()
-        if "json.dump" in text:
-            offenders.append(str(path.relative_to(PKG.parent)))
+        for i, line in enumerate(path.read_text().splitlines(), 1):
+            if "json.dump(" in line and "json.dumps(" not in line:
+                offenders.append(f"{path.relative_to(PKG.parent)}:{i}")
     assert not offenders, f"json.dump outside diagnostics.py: {offenders}"

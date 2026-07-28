@@ -1,0 +1,51 @@
+{
+  "seed": 0,
+  "batch_list_hash": "8ef6ad08227fdd84035c76c0d17eed15",
+  "n_batches": 200,
+  "n_examples": 25600,
+  "batch_size": 128,
+  "smoke": false,
+  "n_boot": 1000,
+  "tau_max": 6.72380256652832,
+  "audit_seed": 0,
+  "arm": "kernel",
+  "checkpoint": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/model_new/run/kernel_s0_072420260946/epoch_006.pt",
+    "epoch": 6,
+    "tau_max": 6.72380256652832,
+    "tau_max_source": "exact max over full train split, N=367296 windows, of log1p(span_days/7); stored with 1 ulp of float32 headroom (float64 value 6.723802006619469)",
+    "age_standardization": {
+      "mean": 63.33601047086648,
+      "sd": 16.574804662346914
+    },
+    "seed": 0
+  },
+  "device": "cuda",
+  "t4_sigma_content": 3.2929,
+  "intervention_ages": {
+    "lo": 25.0,
+    "hi": 75.0
+  },
+  "cos_dh_grad": {
+    "mean": -0.011452782920332538,
+    "std": 0.1474653629002254,
+    "p10": -0.1956497326493263,
+    "p50": -0.009400790557265282,
+    "p90": 0.17265170514583594
+  },
+  "cos_random_control": {
+    "mean": 0.0004463231865838679,
+    "std": 0.06282415324516266,
+    "p50": 0.0005652466788887978
+  },
+  "frac_dh_in_top10_grad_pcs": {
+    "mean": 0.41746450308226685,
+    "p50": 0.4168050896185854,
+    "p90": 0.5396584490257079
+  },
+  "rel_dh_mean": 0.10876765184595577,
+  "verdict": {
+    "near_random_control": true,
+    "route": "kernel writes orthogonally to the objective \u2192 head/objective failure, not attention"
+  }
+}

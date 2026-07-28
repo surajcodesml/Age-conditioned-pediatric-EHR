@@ -1,0 +1,460 @@
+{
+  "decile_viol_old_construction": {
+    "train": {
+      "overall_viol": 0.5946729613173026,
+      "corr_viol_vs_log_nev": -0.1590565780202768,
+      "corr_viol_vs_window_len": -0.0777953125406855,
+      "by_decile": [
+        {
+          "decile": 0,
+          "n_ev_lo": 5.0,
+          "n_ev_hi": 146.0,
+          "n_examples": 37012,
+          "viol_rate": 0.41508159515832704,
+          "frac_at_1024": 0.0
+        },
+        {
+          "decile": 1,
+          "n_ev_lo": 147.0,
+          "n_ev_hi": 294.0,
+          "n_examples": 36578,
+          "viol_rate": 0.6263327683306906,
+          "frac_at_1024": 0.0
+        },
+        {
+          "decile": 2,
+          "n_ev_lo": 295.0,
+          "n_ev_hi": 548.0,
+          "n_examples": 36674,
+          "viol_rate": 0.76272018323608,
+          "frac_at_1024": 0.0
+        },
+        {
+          "decile": 3,
+          "n_ev_lo": 549.0,
+          "n_ev_hi": 993.0,
+          "n_examples": 36661,
+          "viol_rate": 0.8348108344016802,
+          "frac_at_1024": 0.0
+        },
+        {
+          "decile": 4,
+          "n_ev_lo": 994.0,
+          "n_ev_hi": 1733.0,
+          "n_examples": 36750,
+          "viol_rate": 0.8342312925170068,
+          "frac_at_1024": 0.37570068027210884
+        },
+        {
+          "decile": 5,
+          "n_ev_lo": 1734.0,
+          "n_ev_hi": 2894.0,
+          "n_examples": 36735,
+          "viol_rate": 0.7158295903089696,
+          "frac_at_1024": 0.6207703824690349
+        },
+        {
+          "decile": 6,
+          "n_ev_lo": 2895.0,
+          "n_ev_hi": 4782.0,
+          "n_examples": 36729,
+          "viol_rate": 0.5926379699964606,
+          "frac_at_1024": 0.6991750387976803
+        },
+        {
+          "decile": 7,
+          "n_ev_lo": 4784.0,
+          "n_ev_hi": 8207.0,
+          "n_examples": 36700,
+          "viol_rate": 0.48874659400544956,
+          "frac_at_1024": 0.7750136239782016
+        },
+        {
+          "decile": 8,
+          "n_ev_lo": 8209.0,
+          "n_ev_hi": 16834.0,
+          "n_examples": 36727,
+          "viol_rate": 0.374329512347864,
+          "frac_at_1024": 0.8384022653633567
+        },
+        {
+          "decile": 9,
+          "n_ev_lo": 16839.0,
+          "n_ev_hi": 411972.0,
+          "n_examples": 36730,
+          "viol_rate": 0.30397495235502314,
+          "frac_at_1024": 0.8789000816771032
+        }
+      ]
+    },
+    "val": {
+      "overall_viol": 0.5991154000804182,
+      "corr_viol_vs_log_nev": -0.1463559673100987,
+      "corr_viol_vs_window_len": -0.06737672032301271,
+      "by_decile": [
+        {
+          "decile": 0,
+          "n_ev_lo": 5.0,
+          "n_ev_hi": 146.0,
+          "n_examples": 5255,
+          "viol_rate": 0.41522359657469077,
+          "frac_at_1024": 0.0
+        },
+        {
+          "decile": 1,
+          "n_ev_lo": 147.0,
+          "n_ev_hi": 293.0,
+          "n_examples": 5201,
+          "viol_rate": 0.6287252451451644,
+          "frac_at_1024": 0.0
+        },
+        {
+          "decile": 2,
+          "n_ev_lo": 294.0,
+          "n_ev_hi": 536.0,
+          "n_examples": 5213,
+          "viol_rate": 0.7548436600805678,
+          "frac_at_1024": 0.0
+        },
+        {
+          "decile": 3,
+          "n_ev_lo": 537.0,
+          "n_ev_hi": 995.0,
+          "n_examples": 5225,
+          "viol_rate": 0.8300478468899521,
+          "frac_at_1024": 0.0
+        },
+        {
+          "decile": 4,
+          "n_ev_lo": 996.0,
+          "n_ev_hi": 1681.0,
+          "n_examples": 5223,
+          "viol_rate": 0.842619184376795,
+          "frac_at_1024": 0.34271491479992344
+        },
+        {
+          "decile": 5,
+          "n_ev_lo": 1683.0,
+          "n_ev_hi": 2824.0,
+          "n_examples": 5223,
+          "viol_rate": 0.7189354776948114,
+          "frac_at_1024": 0.6279915757227647
+        },
+        {
+          "decile": 6,
+          "n_ev_lo": 2825.0,
+          "n_ev_hi": 4622.0,
+          "n_examples": 5219,
+          "viol_rate": 0.5826786740754933,
+          "frac_at_1024": 0.6993676949607205
+        },
+        {
+          "decile": 7,
+          "n_ev_lo": 4624.0,
+          "n_ev_hi": 7575.0,
+          "n_examples": 5222,
+          "viol_rate": 0.49617004978935275,
+          "frac_at_1024": 0.7914592110302566
+        },
+        {
+          "decile": 8,
+          "n_ev_lo": 7580.0,
+          "n_ev_hi": 15179.0,
+          "n_examples": 5227,
+          "viol_rate": 0.41457815190357755,
+          "frac_at_1024": 0.8203558446527645
+        },
+        {
+          "decile": 9,
+          "n_ev_lo": 15188.0,
+          "n_ev_hi": 373101.0,
+          "n_examples": 5219,
+          "viol_rate": 0.3086798237210194,
+          "frac_at_1024": 0.8612761065338187
+        }
+      ]
+    },
+    "test": {
+      "overall_viol": 0.5909684204595608,
+      "corr_viol_vs_log_nev": -0.15767720154398857,
+      "corr_viol_vs_window_len": -0.07590755300889908,
+      "by_decile": [
+        {
+          "decile": 0,
+          "n_ev_lo": 5.0,
+          "n_ev_hi": 146.0,
+          "n_examples": 10746,
+          "viol_rate": 0.41271170668155593,
+          "frac_at_1024": 0.0
+        },
+        {
+          "decile": 1,
+          "n_ev_lo": 147.0,
+          "n_ev_hi": 297.0,
+          "n_examples": 10566,
+          "viol_rate": 0.6232254400908575,
+          "frac_at_1024": 0.0
+        },
+        {
+          "decile": 2,
+          "n_ev_lo": 298.0,
+          "n_ev_hi": 557.0,
+          "n_examples": 10653,
+          "viol_rate": 0.762038862292312,
+          "frac_at_1024": 0.0
+        },
+        {
+          "decile": 3,
+          "n_ev_lo": 558.0,
+          "n_ev_hi": 1024.0,
+          "n_examples": 10642,
+          "viol_rate": 0.8302010900206728,
+          "frac_at_1024": 0.0
+        },
+        {
+          "decile": 4,
+          "n_ev_lo": 1025.0,
+          "n_ev_hi": 1785.0,
+          "n_examples": 10644,
+          "viol_rate": 0.829575347613679,
+          "frac_at_1024": 0.4029500187899286
+        },
+        {
+          "decile": 5,
+          "n_ev_lo": 1786.0,
+          "n_ev_hi": 2946.0,
+          "n_examples": 10648,
+          "viol_rate": 0.7095229151014275,
+          "frac_at_1024": 0.6182381667918858
+        },
+        {
+          "decile": 6,
+          "n_ev_lo": 2947.0,
+          "n_ev_hi": 4758.0,
+          "n_examples": 10692,
+          "viol_rate": 0.583707444818556,
+          "frac_at_1024": 0.7090347923681257
+        },
+        {
+          "decile": 7,
+          "n_ev_lo": 4759.0,
+          "n_ev_hi": 8026.0,
+          "n_examples": 10608,
+          "viol_rate": 0.4820889894419306,
+          "frac_at_1024": 0.7790346907993967
+        },
+        {
+          "decile": 8,
+          "n_ev_lo": 8027.0,
+          "n_ev_hi": 16365.0,
+          "n_examples": 10651,
+          "viol_rate": 0.3805276499859168,
+          "frac_at_1024": 0.8413294526335555
+        },
+        {
+          "decile": 9,
+          "n_ev_lo": 16367.0,
+          "n_ev_hi": 447648.0,
+          "n_examples": 10643,
+          "viol_rate": 0.29766043408813303,
+          "frac_at_1024": 0.8779479470074227
+        }
+      ]
+    }
+  },
+  "corpus_stats_cmp": {
+    "tau_max": {
+      "old": 6.72380256652832,
+      "new": 6.7045674324035645,
+      "delta": -0.01923513412475586
+    },
+    "age_mean": {
+      "old": 63.33601047086648,
+      "new": 63.33601047086567
+    },
+    "age_sd": {
+      "old": 16.574804662346914,
+      "new": 16.574804662350303
+    },
+    "n_events": {
+      "old": 405519425,
+      "new": 405519425
+    },
+    "n_patients": {
+      "old": 143802,
+      "new": 143802
+    },
+    "n_examples": {
+      "old": 367296,
+      "new": 366911
+    },
+    "spread_pad_median": {
+      "old": 4.463072833466257,
+      "new": 3.70785738215442
+    },
+    "frac_rows_spread_below_0p1": {
+      "old": 0.015360409566768398,
+      "new": 0.021795160574377352
+    }
+  },
+  "spread": {
+    "old_median": 4.463072833466257,
+    "new_median": 3.70785738215442,
+    "old_frac_lt_0p1": 0.015360409566768398,
+    "new_frac_lt_0p1": 0.021795160574377352,
+    "spread_padding_only_new": {
+      "0.01": 0.004454350349380279,
+      "0.05": 0.4160551106758767,
+      "0.25": 2.2804369786320917,
+      "0.5": 3.70785738215442,
+      "0.75": 4.835542274229664,
+      "0.95": 5.793971918533385,
+      "0.99": 6.22782474608447
+    }
+  },
+  "pic_gram": {
+    "mortality": {
+      "n_lag_samples": 5286523,
+      "tau_max_new": 6.7045674324035645,
+      "chebyshev_no_constant_new_tmax": 2450015667156318.0,
+      "chebyshev_no_constant_old_tmax": 686361460706107.9,
+      "occupancy_frac_domain": 1.0
+    },
+    "los_gt7": {
+      "n_lag_samples": 5342703,
+      "tau_max_new": 6.7045674324035645,
+      "chebyshev_no_constant_new_tmax": 1388807909078510.2,
+      "chebyshev_no_constant_old_tmax": 2273349059955489.0,
+      "occupancy_frac_domain": 1.0
+    },
+    "pneumonia": {
+      "n_lag_samples": 5259586,
+      "tau_max_new": 6.7045674324035645,
+      "chebyshev_no_constant_new_tmax": 5225866429996877.0,
+      "chebyshev_no_constant_old_tmax": 2310888126803936.0,
+      "occupancy_frac_domain": 1.0
+    },
+    "heart_malformations": {
+      "n_lag_samples": 5265844,
+      "tau_max_new": 6.7045674324035645,
+      "chebyshev_no_constant_new_tmax": 830893539156325.9,
+      "chebyshev_no_constant_old_tmax": 778997991225879.8,
+      "occupancy_frac_domain": 1.0
+    }
+  },
+  "pic_formatting": {
+    "mortality": {
+      "train": {
+        "n_live": 8843,
+        "n_back": 8843,
+        "subjects_equal": true,
+        "label_sum_live": 544.0,
+        "label_sum_back": 544.0,
+        "label_sum_equal": true
+      },
+      "val": {
+        "n_live": 1266,
+        "n_back": 1266,
+        "subjects_equal": true,
+        "label_sum_live": 79.0,
+        "label_sum_back": 79.0,
+        "label_sum_equal": true
+      },
+      "test": {
+        "n_live": 2538,
+        "n_back": 2538,
+        "subjects_equal": true,
+        "label_sum_live": 137.0,
+        "label_sum_back": 137.0,
+        "label_sum_equal": true
+      }
+    },
+    "los_gt7": {
+      "train": {
+        "n_live": 6135,
+        "n_back": 6135,
+        "subjects_equal": true,
+        "label_sum_live": 2714.0,
+        "label_sum_back": 2714.0,
+        "label_sum_equal": true
+      },
+      "val": {
+        "n_live": 894,
+        "n_back": 894,
+        "subjects_equal": true,
+        "label_sum_live": 402.0,
+        "label_sum_back": 402.0,
+        "label_sum_equal": true
+      },
+      "test": {
+        "n_live": 1760,
+        "n_back": 1760,
+        "subjects_equal": true,
+        "label_sum_live": 762.0,
+        "label_sum_back": 762.0,
+        "label_sum_equal": true
+      }
+    },
+    "pneumonia": {
+      "train": {
+        "n_live": 8978,
+        "n_back": 8978,
+        "subjects_equal": true,
+        "label_sum_live": 656.0,
+        "label_sum_back": 656.0,
+        "label_sum_equal": true
+      },
+      "val": {
+        "n_live": 1279,
+        "n_back": 1279,
+        "subjects_equal": true,
+        "label_sum_live": 105.0,
+        "label_sum_back": 105.0,
+        "label_sum_equal": true
+      },
+      "test": {
+        "n_live": 2573,
+        "n_back": 2573,
+        "subjects_equal": true,
+        "label_sum_live": 173.0,
+        "label_sum_back": 173.0,
+        "label_sum_equal": true
+      }
+    },
+    "heart_malformations": {
+      "train": {
+        "n_live": 8979,
+        "n_back": 8979,
+        "subjects_equal": true,
+        "label_sum_live": 1630.0,
+        "label_sum_back": 1630.0,
+        "label_sum_equal": true
+      },
+      "val": {
+        "n_live": 1280,
+        "n_back": 1280,
+        "subjects_equal": true,
+        "label_sum_live": 223.0,
+        "label_sum_back": 223.0,
+        "label_sum_equal": true
+      },
+      "test": {
+        "n_live": 2573,
+        "n_back": 2573,
+        "subjects_equal": true,
+        "label_sum_live": 493.0,
+        "label_sum_back": 493.0,
+        "label_sum_equal": true
+      }
+    }
+  },
+  "determinism_8192_subset": {
+    "n_buckets_total": 8192,
+    "n_buckets_subset": 64,
+    "workers_a": 1,
+    "workers_b": 14,
+    "byte_identical": true,
+    "problems": []
+  },
+  "tau_max_new": 6.7045674324035645
+}

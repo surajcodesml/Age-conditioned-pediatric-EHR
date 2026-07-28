@@ -1,0 +1,238 @@
+{
+  "batch_list_hash": "8ef6ad08227fdd84035c76c0d17eed15",
+  "seed": 0,
+  "smoke": false,
+  "d2": {
+    "seed": 0,
+    "arm": "kernel",
+    "run_dir": "/home/suraj/Git/Age-conditioned-pediatric-EHR/model_new/run/kernel_s0_072420260946",
+    "epochs": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "sites": {
+      "encoder_layer0": {
+        "pairwise": [
+          {
+            "from_epoch": 3,
+            "to_epoch": 4,
+            "pearson_r": 0.9464221972447558
+          },
+          {
+            "from_epoch": 4,
+            "to_epoch": 5,
+            "pearson_r": 0.9362947143662197
+          },
+          {
+            "from_epoch": 5,
+            "to_epoch": 6,
+            "pearson_r": 0.9697927711585003
+          },
+          {
+            "from_epoch": 6,
+            "to_epoch": 7,
+            "pearson_r": 0.9735069288250833
+          },
+          {
+            "from_epoch": 7,
+            "to_epoch": 8,
+            "pearson_r": 0.9685230460609653
+          }
+        ],
+        "mean_consecutive_r": 0.9589079315311049,
+        "unidentified": false
+      },
+      "pooling": {
+        "pairwise": [
+          {
+            "from_epoch": 3,
+            "to_epoch": 4,
+            "pearson_r": 0.9497035995953048
+          },
+          {
+            "from_epoch": 4,
+            "to_epoch": 5,
+            "pearson_r": 0.9623748329076328
+          },
+          {
+            "from_epoch": 5,
+            "to_epoch": 6,
+            "pearson_r": 0.9694655533927967
+          },
+          {
+            "from_epoch": 6,
+            "to_epoch": 7,
+            "pearson_r": 0.9505201468575606
+          },
+          {
+            "from_epoch": 7,
+            "to_epoch": 8,
+            "pearson_r": 0.9756153812914329
+          }
+        ],
+        "mean_consecutive_r": 0.9615359028089456,
+        "unidentified": false
+      }
+    },
+    "mean_consecutive_r_across_sites": 0.9602219171700253,
+    "verdict": {
+      "route": "\u0394\u03b1 trajectory stable across epochs 3\u21928"
+    },
+    "batch_list_hash": "8ef6ad08227fdd84035c76c0d17eed15"
+  },
+  "d5": {
+    "seed": 0,
+    "primary_endpoint": {
+      "dataset": "PIC heart_malformations",
+      "task": "binary classification: congenital heart malformation",
+      "metric": "AUPRC",
+      "comparison": "kernel vs random_constant is the identifying comparison (exactly parameter-matched); vanilla is the floor; additive is an alternative delivery site with a different architecture",
+      "age_bands": [
+        "<1",
+        "1-5",
+        "6-11",
+        "12-17",
+        "18-40",
+        "40-65",
+        "65+"
+      ],
+      "declared_before_run": true
+    },
+    "per_arm": {
+      "vanilla": {
+        "selection_val_bce": {
+          "epoch": 8,
+          "val_loss": 0.0099038340523839,
+          "recall@5": 0.07900190353393555,
+          "recall@10": 0.13814394176006317,
+          "recall@20": 0.24411404132843018
+        },
+        "selection_recall@10": {
+          "epoch": 9,
+          "val_loss": 0.010020738299936056,
+          "recall@5": 0.08004310727119446,
+          "recall@10": 0.1405077874660492,
+          "recall@20": 0.24611836671829224
+        },
+        "same_epoch": false
+      },
+      "random_constant": {
+        "selection_val_bce": {
+          "epoch": 8,
+          "val_loss": 0.009875381123274565,
+          "recall@5": 0.07746380567550659,
+          "recall@10": 0.13651345670223236,
+          "recall@20": 0.24211277067661285
+        },
+        "selection_recall@10": {
+          "epoch": 9,
+          "val_loss": 0.009962617037817836,
+          "recall@5": 0.07910952717065811,
+          "recall@10": 0.13896390795707703,
+          "recall@20": 0.24539874494075775
+        },
+        "same_epoch": false
+      },
+      "additive": {
+        "selection_val_bce": {
+          "epoch": 6,
+          "val_loss": 0.009869814915582538,
+          "recall@5": 0.07605962455272675,
+          "recall@10": 0.13399527966976166,
+          "recall@20": 0.24033187329769135
+        },
+        "selection_recall@10": {
+          "epoch": 10,
+          "val_loss": 0.010028890082612634,
+          "recall@5": 0.07684359699487686,
+          "recall@10": 0.13555637001991272,
+          "recall@20": 0.24110542237758636
+        },
+        "same_epoch": false
+      },
+      "kernel": {
+        "selection_val_bce": {
+          "epoch": 6,
+          "val_loss": 0.009836759101599455,
+          "recall@5": 0.07529644668102264,
+          "recall@10": 0.13390885293483734,
+          "recall@20": 0.2398703396320343
+        },
+        "selection_recall@10": {
+          "epoch": 8,
+          "val_loss": 0.009908635979518294,
+          "recall@5": 0.08038020879030228,
+          "recall@10": 0.13985297083854675,
+          "recall@20": 0.24557971954345703
+        },
+        "same_epoch": false
+      }
+    },
+    "t1_table_val_bce_selection": {
+      "vanilla": {
+        "epoch": 8,
+        "val_loss": 0.0099038340523839,
+        "recall@5": 0.07900190353393555,
+        "recall@10": 0.13814394176006317,
+        "recall@20": 0.24411404132843018
+      },
+      "random_constant": {
+        "epoch": 8,
+        "val_loss": 0.009875381123274565,
+        "recall@5": 0.07746380567550659,
+        "recall@10": 0.13651345670223236,
+        "recall@20": 0.24211277067661285
+      },
+      "additive": {
+        "epoch": 6,
+        "val_loss": 0.009869814915582538,
+        "recall@5": 0.07605962455272675,
+        "recall@10": 0.13399527966976166,
+        "recall@20": 0.24033187329769135
+      },
+      "kernel": {
+        "epoch": 6,
+        "val_loss": 0.009836759101599455,
+        "recall@5": 0.07529644668102264,
+        "recall@10": 0.13390885293483734,
+        "recall@20": 0.2398703396320343
+      }
+    },
+    "t1_table_recall@10_selection": {
+      "vanilla": {
+        "epoch": 9,
+        "val_loss": 0.010020738299936056,
+        "recall@5": 0.08004310727119446,
+        "recall@10": 0.1405077874660492,
+        "recall@20": 0.24611836671829224
+      },
+      "random_constant": {
+        "epoch": 9,
+        "val_loss": 0.009962617037817836,
+        "recall@5": 0.07910952717065811,
+        "recall@10": 0.13896390795707703,
+        "recall@20": 0.24539874494075775
+      },
+      "additive": {
+        "epoch": 10,
+        "val_loss": 0.010028890082612634,
+        "recall@5": 0.07684359699487686,
+        "recall@10": 0.13555637001991272,
+        "recall@20": 0.24110542237758636
+      },
+      "kernel": {
+        "epoch": 8,
+        "val_loss": 0.009908635979518294,
+        "recall@5": 0.08038020879030228,
+        "recall@10": 0.13985297083854675,
+        "recall@20": 0.24557971954345703
+      }
+    },
+    "any_epoch_disagreement": true,
+    "batch_list_hash": "8ef6ad08227fdd84035c76c0d17eed15"
+  }
+}

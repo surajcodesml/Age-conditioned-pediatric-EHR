@@ -1,0 +1,67 @@
+{
+  "seed": 0,
+  "batch_list_hash": "d76cb3efb5bd8218129d9778fbfa209e",
+  "n_batches": 2,
+  "n_examples": 256,
+  "batch_size": 128,
+  "smoke": true,
+  "n_boot": 50,
+  "tau_max": 6.72380256652832,
+  "audit_seed": 0,
+  "baselines": {
+    "persistence": {
+      "recall@5": 0.04058411939240614,
+      "recall@10": 0.08315111831325339,
+      "recall@20": 0.16032483593880897
+    },
+    "cooccurrence": {
+      "recall@5": 0.0004067835334353731,
+      "recall@10": 0.0005804911857012485,
+      "recall@20": 0.0019119410089842859
+    },
+    "global_prior": {
+      "recall@5": 0.05334175324787793,
+      "recall@10": 0.10523707524771453,
+      "recall@20": 0.18122802485595457
+    }
+  },
+  "deltas_vs_persistence": {
+    "cooccurrence_minus_persistence_recall@10": {
+      "point": -0.08257062712755214,
+      "ci": {
+        "lo": -0.09148523565093596,
+        "hi": -0.07227987344303262,
+        "excludes_zero": true,
+        "degenerate": false
+      },
+      "covers_zero": false
+    },
+    "global_prior_minus_persistence_recall@10": {
+      "point": 0.022085956934461137,
+      "ci": {
+        "lo": 0.012637974182445133,
+        "hi": 0.02990123377345432,
+        "excludes_zero": true,
+        "degenerate": false
+      },
+      "covers_zero": false
+    }
+  },
+  "handcheck": {
+    "n": 10,
+    "recall@10_python": 0.060832702368497846,
+    "recall@10_duckdb": 0.060832702368497846,
+    "match": true
+  },
+  "arm_reference": {
+    "vanilla_recall@10": 0.1381,
+    "kernel_recall@10": 0.1339,
+    "band": "0.134\u20130.138"
+  },
+  "verdict": {
+    "persistence_or_cooc_near_arm_recall@10": false,
+    "route": "baselines below arms \u2192 backbone has headroom over recurrence"
+  },
+  "n_train_windows_for_stats": 2000,
+  "n_cooc_pairs": 5977363
+}

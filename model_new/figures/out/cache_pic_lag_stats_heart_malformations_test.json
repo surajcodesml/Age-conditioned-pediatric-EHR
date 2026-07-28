@@ -1,0 +1,46 @@
+{
+  "name": "PIC",
+  "task": "heart_malformations",
+  "split": "test",
+  "tau_percentiles": {
+    "0.05": 0.0,
+    "0.5": 0.030125304512087683,
+    "0.95": 0.1109120422095199
+  },
+  "age_histogram": {
+    "edges": [
+      0.0,
+      1.0,
+      6.0,
+      12.0,
+      18.0,
+      40.0,
+      65.0,
+      200.0
+    ],
+    "counts": [
+      64311,
+      34411,
+      13713,
+      5744,
+      0,
+      0,
+      0
+    ],
+    "fractions": [
+      0.5441829766709821,
+      0.29117694345018996,
+      0.11603584393166298,
+      0.04860423594716489,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "n_tau_samples": 11015515,
+  "n_age_samples": 118179,
+  "sample_windows": 800,
+  "seed": 0,
+  "source": "sampled+cached",
+  "tau_samples_for_density": null
+}

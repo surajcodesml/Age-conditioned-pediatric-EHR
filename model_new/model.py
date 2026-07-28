@@ -9,8 +9,10 @@
       5. head: Linear -> GELU -> Linear -> |V|, final bias -7.0
 
 No ``time_params_predictor`` (D10: pretraining is code BCE only). No ``return_repr_only``
-(D9: the fine-tune head operates on the pooled ``h``, so pooling-site age parameters are
-not gradient-dead).
+reachable from training (D9: the fine-tune head operates on the pooled ``h``, so
+pooling-site age parameters are not gradient-dead). Representation extraction for the
+frozen linear probe lives in :meth:`extract_representations`, which is evaluation-only and
+is never called from ``train.py`` / ``train_finetune.py``.
 
 Age reaches the model by exactly two routes and both are explicit:
 
@@ -467,6 +469,43 @@ class DKMModel(nn.Module):
             out.update({"pool_attn": pool_attn, "pool_log_w": pool_log_w,
                         "age_delta": age_delta, "e": e})
         return out
+
+    @torch.no_grad()
+    def extract_representations(self, batch: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
+        """Read-only patient representations for the frozen linear probe.
+
+        Returns two vectors per patient (see the probe asymmetry note):
+
+        * ``h_pool`` -- ``AttentionPooling`` output, before demographic combination and
+          before any arm-specific concatenation. Primary probe input.
+        * ``h_head`` -- exactly what the prediction head sees, minus the demographic
+          sub-vector. For ``additive`` this is ``concat(h_pool, age_delta)``; for the
+          other arms it equals ``h_pool``.
+
+        Does not run the prediction head. Must not be called from ``train.py`` or
+        ``train_finetune.py`` (D9 / INV-PROBE-FROZEN): a training path that skipped the
+        head would leave pooling-site age parameters gradient-dead.
+        """
+        self._check_batch(batch)
+        code_indices = batch["code_indices"]
+        attention_mask = batch["attention_mask"]
+        age_years = batch["age_years"]
+
+        tau, tau_to_now = tau_from_timestamps(
+            batch["timestamps_days"], attention_mask, batch.get("lengths"))
+        x = self.embedding_table[code_indices]
+        e = self.encoder(x, tau, attention_mask, age_years)
+
+        last = self.pooling.last_valid_index(attention_mask)
+        rows = torch.arange(code_indices.shape[0], device=code_indices.device)
+        age_last = age_years[rows, last]
+
+        h_pool = self.pooling(e, tau_to_now, attention_mask, age_last)
+        if self.additive_age is not None:
+            h_head = torch.cat([h_pool, self.additive_age(age_last)], dim=-1)
+        else:
+            h_head = h_pool
+        return {"h_pool": h_pool, "h_head": h_head, "age_last": age_last}
 
 
 def _smoke() -> None:

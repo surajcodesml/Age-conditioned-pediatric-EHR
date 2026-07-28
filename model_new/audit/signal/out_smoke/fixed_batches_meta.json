@@ -1,0 +1,11 @@
+{
+  "batch_list_hash": "d76cb3efb5bd8218129d9778fbfa209e",
+  "n_batches": 2,
+  "n_examples": 256,
+  "batch_size": 128,
+  "seed": 0,
+  "store_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/model_new/audit/signal/out_smoke/fixed_batches.pt",
+  "gap_days_median": 22.816734313964844,
+  "age_median": 65.2463607788086,
+  "tau_max": 6.72380256652832
+}

@@ -33,6 +33,13 @@ INVARIANT_TESTS: list[tuple[str, str]] = [
     ("INV-NAN", "test_inv_nan.py"),
     ("INV-STATS-SINGLE", "test_inv_stats_single.py"),
     ("INV-AGESTD", "test_inv_agestd.py"),
+    ("INV-FT-ARM", "test_inv_ft_arm.py"),
+    ("INV-FT-FROZEN", "test_inv_ft_frozen.py"),
+    ("INV-FT-ORDER", "test_inv_ft_order.py"),
+    ("INV-PROBE-NODEMO", "test_inv_probe_nodemo.py"),
+    ("INV-PROBE-FROZEN", "test_inv_probe_frozen.py"),
+    ("INV-HORIZON", "test_inv_horizon.py"),
+    ("INV-HEATMAP-ZERO", "test_inv_heatmap_zero.py"),
 ]
 
 SUPPORTING_TESTS: list[tuple[str, str]] = [
@@ -41,6 +48,7 @@ SUPPORTING_TESTS: list[tuple[str, str]] = [
     ("(logging)", "test_no_stray_logging.py"),
     ("(tau-gpu)", "test_tau_equivalence.py"),
     ("(auprc)", "test_auprc_histogram.py"),
+    ("(age-bands)", "test_age_bands.py"),
 ]
 
 

@@ -54,6 +54,20 @@ def forced_alpha_pair(s: int, scale: float = SHAPE_SCALE) -> tuple[torch.Tensor,
     return -a, a
 
 
+def _logits_of(out: dict) -> torch.Tensor:
+    """The head's output, whichever task the model was built for.
+
+    ``task='pretrain'`` emits ``code_logits [B, |V|]`` and ``task='classification'``
+    emits ``logits [B]``. The probe is the same measurement either way -- how far two
+    maximally different kernel shapes move the head -- so it reads whichever key is
+    present rather than existing twice (section 10).
+    """
+    for key in ("code_logits", "logits"):
+        if key in out:
+            return out[key]
+    raise KeyError(f"model output has neither 'code_logits' nor 'logits': {sorted(out)}")
+
+
 @torch.no_grad()
 def headroom(model: DKMModel, batches: list[dict], s: int) -> dict:
     """max|Dlogit| between two forced kernel shapes, absolute and relative to logit sd."""
@@ -64,7 +78,7 @@ def headroom(model: DKMModel, batches: list[dict], s: int) -> dict:
     def run(alpha: torch.Tensor) -> list[torch.Tensor]:
         for _, site in sites:
             site.alpha_base.copy_(alpha.to(site.alpha_base.device))
-        return [model(b)["code_logits"].float().cpu() for b in batches]
+        return [_logits_of(model(b)).float().cpu() for b in batches]
 
     a_logits, b_logits = run(sharp), run(flat)
     for (_, site), old in zip(sites, saved):

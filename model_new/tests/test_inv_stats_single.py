@@ -22,12 +22,14 @@ class _TinyDataset:
 
     def __init__(self):
         # patient 0: 3 events over 14 days, ages 40.0/40.0/40.04; 2 visits -> 1 window
-        # patient 1: 2 events same day, age 5.0; 2 visits -> 1 window
+        #   visit0 t=0,7; visit1 t=14 -> input is t<14 = {0,7}, span 7d
+        # patient 1: 2 events on consecutive days, age 5.0; 2 visits -> 1 window
+        #   visit0 t=0; visit1 t=1 -> input is t<1 = {0}, span 0d
         self._pat = [
             dict(ts=np.array([0.0, 7.0, 14.0], np.float32),
                  age=np.array([40.0, 40.0, 40.04], np.float32) * 365.25,
                  vs=np.array([0, 2], np.int32), ve=np.array([2, 3], np.int32)),
-            dict(ts=np.array([0.0, 0.0], np.float32),
+            dict(ts=np.array([0.0, 1.0], np.float32),
                  age=np.array([5.0, 5.0], np.float32) * 365.25,
                  vs=np.array([0, 1], np.int32), ve=np.array([1, 2], np.int32)),
         ]
@@ -104,8 +106,8 @@ def test_tau_max_is_in_the_exact_group(monkeypatch):
     _patch_npz(monkeypatch, ds)
     st = corpus_stats(ds, split="tiny", sample_windows=2, seed=0)
     assert "exact max over full" in st.tau_max_source
-    # patient 0 has 2 visits; the only window (k=0) ends at visit_ends[0]=2, so it spans
-    # events t=0..7 = 7 days -> tau = log1p(7/7) = log1p(1). Stored with float32 headroom.
+    # patient 0 has 2 visits; the only window targets visit1 at t=14, so input is
+    # events with t<14 (t=0 and t=7) -> span 7 days -> tau = log1p(7/7) = log1p(1).
     import math
     assert st.tau_max >= math.log1p(7.0 / 7.0)
-    assert st.tau_max < math.log1p(14.0 / 7.0)   # the later event is outside every window
+    assert st.tau_max < math.log1p(14.0 / 7.0)   # the target-visit event is outside input

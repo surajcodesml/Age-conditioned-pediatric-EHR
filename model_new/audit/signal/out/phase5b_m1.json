@@ -1,0 +1,300 @@
+{
+  "occupancy_definition_section6": "WRONG: fraction of pairwise tau samples with tau <= tau_max (always ~1.0 when max lag << adult tau_max). NOT the M1 occupancy = (tau_tilde_max - tau_tilde_min) / 2 on [-1,1].",
+  "tau_max_new": 6.70457,
+  "rbf_spec": {
+    "centers_days": [
+      0.25,
+      1.0,
+      7.0,
+      30.0,
+      182.5,
+      365.0
+    ],
+    "centers_tau": [
+      0.0350913198112701,
+      0.13353139262452263,
+      0.6931471805599453,
+      1.6650077635889111,
+      3.298478875467168,
+      3.972983705217833
+    ],
+    "sigma_tau": [
+      0.07875205825060203,
+      0.26322234429947006,
+      0.6125905483857554,
+      1.042132677962889,
+      0.923190376651569,
+      0.5396038638005323
+    ],
+    "sigma_rule": "0.8 * adjacent spacing in tau (endpoint: one neighbor; interior: mean of two)"
+  },
+  "pic_domain": {
+    "mortality": {
+      "n_lags": 5286523,
+      "tau_min": 0.0,
+      "tau_max_obs": 0.13353139262452263,
+      "tau_tilde_min": -1.0,
+      "tau_tilde_max": -0.9601670524360182,
+      "tau_tilde_min_clamped": -1.0,
+      "tau_tilde_max_clamped": -0.9601670524360182,
+      "frac_of_minus1_1_covered": 0.019916473781990907,
+      "clamp_rate": 0.0,
+      "section6_wrong_occupancy_frac_tau_le_tmax": 1.0,
+      "chebyshev_T1_T5_cond": 1495315765117316.5,
+      "rbf6_cond": 3.4282587177639317e+30
+    },
+    "los_gt7": {
+      "n_lags": 5342703,
+      "tau_min": 0.0,
+      "tau_max_obs": 0.1335256035066419,
+      "tau_tilde_min": -1.0,
+      "tau_tilde_max": -0.9601687793529959,
+      "tau_tilde_min_clamped": -1.0,
+      "tau_tilde_max_clamped": -0.9601687793529959,
+      "frac_of_minus1_1_covered": 0.01991561032350203,
+      "clamp_rate": 0.0,
+      "section6_wrong_occupancy_frac_tau_le_tmax": 1.0,
+      "chebyshev_T1_T5_cond": 2482791351090542.5,
+      "rbf6_cond": 3.598682057918768e+30
+    },
+    "pneumonia": {
+      "n_lags": 5259586,
+      "tau_min": 0.0,
+      "tau_max_obs": 0.13353139262452263,
+      "tau_tilde_min": -1.0,
+      "tau_tilde_max": -0.9601670524360182,
+      "tau_tilde_min_clamped": -1.0,
+      "tau_tilde_max_clamped": -0.9601670524360182,
+      "frac_of_minus1_1_covered": 0.019916473781990907,
+      "clamp_rate": 0.0,
+      "section6_wrong_occupancy_frac_tau_le_tmax": 1.0,
+      "chebyshev_T1_T5_cond": 1661982249908179.0,
+      "rbf6_cond": 3.372769624292841e+30
+    },
+    "heart_malformations": {
+      "n_lags": 5265844,
+      "tau_min": 0.0,
+      "tau_max_obs": 0.13353139262452263,
+      "tau_tilde_min": -1.0,
+      "tau_tilde_max": -0.9601670524360182,
+      "tau_tilde_min_clamped": -1.0,
+      "tau_tilde_max_clamped": -0.9601670524360182,
+      "frac_of_minus1_1_covered": 0.019916473781990907,
+      "clamp_rate": 0.0,
+      "section6_wrong_occupancy_frac_tau_le_tmax": 1.0,
+      "chebyshev_T1_T5_cond": 1.5073865592312272e+16,
+      "rbf6_cond": 3.692153658316111e+30
+    }
+  },
+  "mimic_domain": {
+    "n_lags": 4868875,
+    "tau_min": 0.0,
+    "tau_max_obs": 6.627902042080037,
+    "tau_tilde_min": -1.0,
+    "tau_tilde_max": 0.9771296420441689,
+    "tau_tilde_min_clamped": -1.0,
+    "tau_tilde_max_clamped": 0.9771296420441689,
+    "frac_of_minus1_1_covered": 0.9885648210220844,
+    "clamp_rate": 0.0,
+    "section6_wrong_occupancy_frac_tau_le_tmax": 1.0,
+    "chebyshev_T1_T5_cond": 23.567710215619634,
+    "rbf6_cond": 103.07414091942086
+  },
+  "reconcile": {
+    "preflight_recorded": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/finetune/heart_malformations/train",
+      "n_pairs": 1059261,
+      "tt_min": -1.0,
+      "tt_max": -0.9602934689993425,
+      "occupancy_frac_domain": 0.01985326550032873,
+      "cheb_no_T0": 5.732678675319792e+16
+    },
+    "by_path": {
+      "data/finetune/heart_malformations/train": {
+        "exists": true,
+        "n_examples": 8979,
+        "n400_old_tmax": {
+          "path": "data/finetune/heart_malformations/train",
+          "n_windows": 400,
+          "n_pairs": 1059261,
+          "tau_max": 6.7238,
+          "tt_min": -1.0,
+          "tt_max": -0.9602934538430415,
+          "occupancy": 0.019853273078479228,
+          "cheb_no_T0": 1.7184586007339046e+16,
+          "cheb_with_T0": 9566483270993066.0
+        },
+        "n400_new_tmax": {
+          "path": "data/finetune/heart_malformations/train",
+          "n_windows": 400,
+          "n_pairs": 1059261,
+          "tau_max": 6.70457,
+          "tt_min": -1.0,
+          "tt_max": -0.9601795678096945,
+          "occupancy": 0.019910216095152755,
+          "cheb_no_T0": 3716863231065244.5,
+          "cheb_with_T0": 1.021815959363757e+16
+        },
+        "n2000_new_tmax": {
+          "path": "data/finetune/heart_malformations/train",
+          "n_windows": 2000,
+          "n_pairs": 5270229,
+          "tau_max": 6.70457,
+          "tt_min": -1.0,
+          "tt_max": -0.9601679147819853,
+          "occupancy": 0.019916042609007367,
+          "cheb_no_T0": 1621800712221673.8,
+          "cheb_with_T0": 7760044706047092.0
+        },
+        "n400_old_tmax_float32_diff": {
+          "n_pairs": 1059261,
+          "cheb_no_T0": 3338220034610351.0
+        }
+      },
+      "data/tensorized/pic/heart_malformations/train": {
+        "exists": true,
+        "n_examples": 8979,
+        "n400_old_tmax": {
+          "path": "data/tensorized/pic/heart_malformations/train",
+          "n_windows": 400,
+          "n_pairs": 1060834,
+          "tau_max": 6.7238,
+          "tt_min": -1.0,
+          "tt_max": -0.9602809742632075,
+          "occupancy": 0.019859512868396267,
+          "cheb_no_T0": 2568745520776062.5,
+          "cheb_with_T0": 3211470014790426.0
+        },
+        "n400_new_tmax": {
+          "path": "data/tensorized/pic/heart_malformations/train",
+          "n_windows": 400,
+          "n_pairs": 1060834,
+          "tau_max": 6.70457,
+          "tt_min": -1.0,
+          "tt_max": -0.9601670524360182,
+          "occupancy": 0.019916473781990907,
+          "cheb_no_T0": 1516893782925702.8,
+          "cheb_with_T0": 2697025573731193.5
+        },
+        "n2000_new_tmax": {
+          "path": "data/tensorized/pic/heart_malformations/train",
+          "n_windows": 2000,
+          "n_pairs": 5265844,
+          "tau_max": 6.70457,
+          "tt_min": -1.0,
+          "tt_max": -0.9601670524360182,
+          "occupancy": 0.019916473781990907,
+          "cheb_no_T0": 1.5073865592312272e+16,
+          "cheb_with_T0": 1368638262006154.2
+        },
+        "n400_old_tmax_float32_diff": {
+          "n_pairs": 1060834,
+          "cheb_no_T0": 5766750176506091.0
+        }
+      },
+      "data/tensorized/pic_pre_horizon/heart_malformations/train": {
+        "exists": true,
+        "n_examples": 8979,
+        "n400_old_tmax": {
+          "path": "data/tensorized/pic_pre_horizon/heart_malformations/train",
+          "n_windows": 400,
+          "n_pairs": 1059261,
+          "tau_max": 6.7238,
+          "tt_min": -1.0,
+          "tt_max": -0.9602934538430415,
+          "occupancy": 0.019853273078479228,
+          "cheb_no_T0": 1.7184586007339046e+16,
+          "cheb_with_T0": 9566483270993066.0
+        },
+        "n400_new_tmax": {
+          "path": "data/tensorized/pic_pre_horizon/heart_malformations/train",
+          "n_windows": 400,
+          "n_pairs": 1059261,
+          "tau_max": 6.70457,
+          "tt_min": -1.0,
+          "tt_max": -0.9601795678096945,
+          "occupancy": 0.019910216095152755,
+          "cheb_no_T0": 3716863231065244.5,
+          "cheb_with_T0": 1.021815959363757e+16
+        },
+        "n2000_new_tmax": {
+          "path": "data/tensorized/pic_pre_horizon/heart_malformations/train",
+          "n_windows": 2000,
+          "n_pairs": 5270229,
+          "tau_max": 6.70457,
+          "tt_min": -1.0,
+          "tt_max": -0.9601679147819853,
+          "occupancy": 0.019916042609007367,
+          "cheb_no_T0": 1621800712221673.8,
+          "cheb_with_T0": 7760044706047092.0
+        },
+        "n400_old_tmax_float32_diff": {
+          "n_pairs": 1059261,
+          "cheb_no_T0": 3338220034610351.0
+        }
+      }
+    },
+    "sensitivity_same_pool": [
+      {
+        "n": 50000,
+        "no_T0_new_tmax": 1.9280905621051764e+16,
+        "no_T0_old_tmax": 6.2611556220870216e+16,
+        "with_T0_new_tmax": 2.000346648160562e+16
+      },
+      {
+        "n": 200000,
+        "no_T0_new_tmax": 4848963931588821.0,
+        "no_T0_old_tmax": 4038869972770619.0,
+        "with_T0_new_tmax": 5856364082255337.0
+      },
+      {
+        "n": 500000,
+        "no_T0_new_tmax": 3896764919515491.0,
+        "no_T0_old_tmax": 3.955101939465964e+16,
+        "with_T0_new_tmax": 6198234256398031.0
+      },
+      {
+        "n": 1000000,
+        "no_T0_new_tmax": 1255590632273765.8,
+        "no_T0_old_tmax": 3851972839141404.5,
+        "with_T0_new_tmax": 2236350583742565.8
+      },
+      {
+        "n": 5265844,
+        "no_T0_new_tmax": 1.5073865592312272e+16,
+        "no_T0_old_tmax": 2835696733090186.0,
+        "with_T0_new_tmax": 1368638262006154.2
+      }
+    ],
+    "float32_design_cond_no_T0": 34182935.60098344,
+    "s6_no_T0": 2701819529222351.5
+  },
+  "gram_table": {
+    "MIMIC_train": {
+      "chebyshev_T1_T5": 23.567710215619634,
+      "rbf6_logtime": 103.07414091942086,
+      "n_lags": 4868875
+    },
+    "PIC_mortality": {
+      "chebyshev_T1_T5": 1495315765117316.5,
+      "rbf6_logtime": 3.4282587177639317e+30,
+      "n_lags": 5286523
+    },
+    "PIC_los_gt7": {
+      "chebyshev_T1_T5": 2482791351090542.5,
+      "rbf6_logtime": 3.598682057918768e+30,
+      "n_lags": 5342703
+    },
+    "PIC_pneumonia": {
+      "chebyshev_T1_T5": 1661982249908179.0,
+      "rbf6_logtime": 3.372769624292841e+30,
+      "n_lags": 5259586
+    },
+    "PIC_heart_malformations": {
+      "chebyshev_T1_T5": 1.5073865592312272e+16,
+      "rbf6_logtime": 3.692153658316111e+30,
+      "n_lags": 5265844
+    }
+  },
+  "violation_root_cause": "TensorizedPretrainDataset.__getitem__ ended the input window at visit_ends[k] (index into the visit-sorted event array) instead of selecting events with t < start(V_{k+1}), so later-timed events that still belonged to an earlier null-hadm visit index remained visible past the target admission start."
+}

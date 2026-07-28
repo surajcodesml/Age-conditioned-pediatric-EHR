@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>PIC Fine-tune Metrics</title>
+<style>
+  :root {
+    --bg: #f7f6f3; --fg: #1a1a1a; --muted: #5c5c5c; --line: #ddd8cf;
+    --card: #fff; --accent: #1f4e46; --best: #e8f3ef; --warn: #f8efe3;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --ui: "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px 24px 64px; background: var(--bg); color: var(--fg);
+    font-family: var(--ui); line-height: 1.45;
+  }
+  main { max-width: 1100px; margin: 0 auto; }
+  h1 { font-family: var(--sans); font-weight: 600; font-size: 2rem; margin: 0 0 8px; letter-spacing: -0.02em; }
+  h2 { font-family: var(--sans); font-size: 1.35rem; margin: 36px 0 12px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+  h3 { font-size: 0.95rem; margin: 0 0 10px; color: var(--accent); }
+  .sub { color: var(--muted); margin: 0 0 20px; max-width: 70ch; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
+  .stat { background: var(--card); border: 1px solid var(--line); padding: 14px 16px; }
+  .stat .v { font-family: var(--mono); font-size: 1.4rem; font-weight: 600; color: var(--accent); }
+  .stat .l { color: var(--muted); font-size: 0.8rem; margin-top: 4px; }
+  .note { background: #eef4f2; border: 1px solid #c9ddd7; padding: 12px 14px; margin: 16px 0 24px; font-size: 0.92rem; }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); font-size: 0.86rem; margin: 8px 0 16px; }
+  th, td { padding: 7px 9px; border-bottom: 1px solid var(--line); text-align: left; }
+  th { background: #f0eee8; font-weight: 600; position: sticky; top: 0; z-index: 1; }
+  td.num, th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  td.strong { font-weight: 700; color: var(--accent); }
+  tr.best { background: var(--best); }
+  tr.warn { background: var(--warn); }
+  details { margin: 8px 0; background: var(--card); border: 1px solid var(--line); }
+  summary { cursor: pointer; padding: 10px 12px; font-weight: 600; }
+  details table { border: none; margin: 0; }
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .chart-card { background: var(--card); border: 1px solid var(--line); padding: 14px; }
+  .bar-row { display: grid; grid-template-columns: 130px 1fr 56px; gap: 8px; align-items: center; margin: 6px 0; }
+  .bar-lab { font-size: 0.8rem; }
+  .bar-track { height: 10px; background: #ece8e0; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--accent); }
+  .bar-val { font-family: var(--mono); font-size: 0.8rem; text-align: right; }
+  .dl { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 8px; }
+  .dl a { color: var(--accent); font-size: 0.9rem; }
+  footer { margin-top: 40px; color: var(--muted); font-size: 0.8rem; }
+  @media (max-width: 800px) {
+    .stats, .charts { grid-template-columns: 1fr 1fr; }
+    .bar-row { grid-template-columns: 100px 1fr 48px; }
+  }
+  @media print {
+    body { background: #fff; padding: 12px; }
+    details { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>PIC fine-tune metrics</h1>
+  <p class="sub">
+    Export of the Cursor canvas. Source: <code>model_new/run/pic/&lt;task&gt;/&lt;arm&gt;_s0/</code>.
+    Metrics at <strong>best.pt</strong> (max validation AUPRC). 4 tasks × 4 arms, seed 0, pediatric age bands.
+  </p>
+
+  <div class="dl">
+    <a href="metrics_overall.csv">metrics_overall.csv</a>
+    <a href="metrics_by_band.csv">metrics_by_band.csv</a>
+    <a href="metrics_diagnostics.csv">metrics_diagnostics.csv</a>
+    <a href="metrics_last_epoch.csv">metrics_last_epoch.csv</a>
+    <a href="metrics_summary.json">metrics_summary.json</a>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="v">16</div><div class="l">Completed runs</div></div>
+    <div class="stat"><div class="v">1</div><div class="l">Early-stopped</div></div>
+    <div class="stat"><div class="v">0.9544</div><div class="l">Best test AUPRC · CHD (kernel)</div></div>
+    <div class="stat"><div class="v">0.8521</div><div class="l">Best test AUPRC · pneumonia (random_constant)</div></div>
+  </div>
+
+  <div class="note">
+    <strong>Selection rule.</strong> Each overall row is the checkpoint in <code>best.pt</code>
+    (highest val AUPRC). Highlighted rows are best test AUPRC within task.
+    † = early stop. Adolescent bands with 0 positives show — for AUROC/AUPRC.
+  </div>
+
+  <h2>Cohort sizes</h2>
+  <table>
+    <thead><tr><th>Task</th><th class="num">Val n</th><th class="num">Val prev</th><th class="num">Test n</th><th class="num">Test prev</th></tr></thead>
+    <tbody><tr><td>Heart malformations</td><td class='num'>1280</td><td class='num'>0.1742</td><td class='num'>2573</td><td class='num'>0.1916</td></tr><tr><td>LOS &gt; 7 days</td><td class='num'>894</td><td class='num'>0.4497</td><td class='num'>1760</td><td class='num'>0.4330</td></tr><tr><td>Mortality</td><td class='num'>1266</td><td class='num'>0.0624</td><td class='num'>2538</td><td class='num'>0.0540</td></tr><tr><td>Pneumonia</td><td class='num'>1279</td><td class='num'>0.0821</td><td class='num'>2573</td><td class='num'>0.0672</td></tr></tbody>
+  </table>
+
+  <h2>Overall classification (best.pt)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Task</th><th>Arm</th><th class="num">Best ep</th><th class="num">Epochs</th>
+        <th class="num">Train loss</th><th class="num">Val loss</th><th class="num">Val AUROC</th><th class="num">Val AUPRC</th>
+        <th class="num">Test loss</th><th class="num">Test AUROC</th><th class="num">Test AUPRC</th><th class="num">Wall (min)</th>
+      </tr>
+    </thead>
+    <tbody><tr class="">
+    <td>Heart malformations</td><td>vanilla</td>
+    <td class="num">10</td>
+    <td class="num">10</td>
+    <td class="num">0.0964</td>
+    <td class="num">0.1457</td>
+    <td class="num">0.9780</td>
+    <td class="num">0.9383</td>
+    <td class="num">0.1630</td>
+    <td class="num">0.9755</td>
+    <td class="num strong">0.9445</td>
+    <td class="num">3.47</td>
+  </tr><tr class="best">
+    <td>Heart malformations</td><td>kernel</td>
+    <td class="num">8</td>
+    <td class="num">10</td>
+    <td class="num">0.0563</td>
+    <td class="num">0.1154</td>
+    <td class="num">0.9823</td>
+    <td class="num">0.9618</td>
+    <td class="num">0.1532</td>
+    <td class="num">0.9790</td>
+    <td class="num strong">0.9544</td>
+    <td class="num">3.53</td>
+  </tr><tr class="">
+    <td>Heart malformations</td><td>random_constant</td>
+    <td class="num">9</td>
+    <td class="num">10</td>
+    <td class="num">0.0819</td>
+    <td class="num">0.1342</td>
+    <td class="num">0.9857</td>
+    <td class="num">0.9558</td>
+    <td class="num">0.1495</td>
+    <td class="num">0.9788</td>
+    <td class="num strong">0.9513</td>
+    <td class="num">3.53</td>
+  </tr><tr class="">
+    <td>Heart malformations</td><td>additive</td>
+    <td class="num">9</td>
+    <td class="num">10</td>
+    <td class="num">0.0832</td>
+    <td class="num">0.1411</td>
+    <td class="num">0.9810</td>
+    <td class="num">0.9426</td>
+    <td class="num">0.1488</td>
+    <td class="num">0.9796</td>
+    <td class="num strong">0.9444</td>
+    <td class="num">3.49</td>
+  </tr><tr class="best">
+    <td>LOS &gt; 7 days</td><td>vanilla</td>
+    <td class="num">10</td>
+    <td class="num">10</td>
+    <td class="num">0.4796</td>
+    <td class="num">0.5388</td>
+    <td class="num">0.8133</td>
+    <td class="num">0.7838</td>
+    <td class="num">0.5329</td>
+    <td class="num">0.8183</td>
+    <td class="num strong">0.7808</td>
+    <td class="num">2.54</td>
+  </tr><tr class="">
+    <td>LOS &gt; 7 days</td><td>kernel</td>
+    <td class="num">5</td>
+    <td class="num">10</td>
+    <td class="num">0.4926</td>
+    <td class="num">0.5377</td>
+    <td class="num">0.7973</td>
+    <td class="num">0.7717</td>
+    <td class="num">0.5289</td>
+    <td class="num">0.8059</td>
+    <td class="num strong">0.7727</td>
+    <td class="num">2.58</td>
+  </tr><tr class="">
+    <td>LOS &gt; 7 days</td><td>random_constant</td>
+    <td class="num">10</td>
+    <td class="num">10</td>
+    <td class="num">0.4692</td>
+    <td class="num">0.5435</td>
+    <td class="num">0.8084</td>
+    <td class="num">0.7759</td>
+    <td class="num">0.5321</td>
+    <td class="num">0.8161</td>
+    <td class="num strong">0.7804</td>
+    <td class="num">2.58</td>
+  </tr><tr class="">
+    <td>LOS &gt; 7 days</td><td>additive</td>
+    <td class="num">9</td>
+    <td class="num">10</td>
+    <td class="num">0.4666</td>
+    <td class="num">0.5243</td>
+    <td class="num">0.8183</td>
+    <td class="num">0.7855</td>
+    <td class="num">0.5317</td>
+    <td class="num">0.8111</td>
+    <td class="num strong">0.7767</td>
+    <td class="num">2.55</td>
+  </tr><tr class="best">
+    <td>Mortality</td><td>vanilla</td>
+    <td class="num">7</td>
+    <td class="num">10</td>
+    <td class="num">0.1746</td>
+    <td class="num">0.1954</td>
+    <td class="num">0.8047</td>
+    <td class="num">0.2928</td>
+    <td class="num">0.1716</td>
+    <td class="num">0.8311</td>
+    <td class="num strong">0.2310</td>
+    <td class="num">3.42</td>
+  </tr><tr class="">
+    <td>Mortality</td><td>kernel</td>
+    <td class="num">7</td>
+    <td class="num">10</td>
+    <td class="num">0.1680</td>
+    <td class="num">0.1870</td>
+    <td class="num">0.8331</td>
+    <td class="num">0.3237</td>
+    <td class="num">0.1870</td>
+    <td class="num">0.8118</td>
+    <td class="num strong">0.2196</td>
+    <td class="num">3.46</td>
+  </tr><tr class="">
+    <td>Mortality</td><td>random_constant</td>
+    <td class="num">2</td>
+    <td class="num">8†</td>
+    <td class="num">0.1964</td>
+    <td class="num">0.1994</td>
+    <td class="num">0.7919</td>
+    <td class="num">0.2603</td>
+    <td class="num">0.1819</td>
+    <td class="num">0.8020</td>
+    <td class="num strong">0.2056</td>
+    <td class="num">2.76</td>
+  </tr><tr class="">
+    <td>Mortality</td><td>additive</td>
+    <td class="num">8</td>
+    <td class="num">10</td>
+    <td class="num">0.1642</td>
+    <td class="num">0.1997</td>
+    <td class="num">0.8264</td>
+    <td class="num">0.3221</td>
+    <td class="num">0.1706</td>
+    <td class="num">0.8358</td>
+    <td class="num strong">0.2284</td>
+    <td class="num">3.43</td>
+  </tr><tr class="">
+    <td>Pneumonia</td><td>vanilla</td>
+    <td class="num">10</td>
+    <td class="num">10</td>
+    <td class="num">0.0984</td>
+    <td class="num">0.1419</td>
+    <td class="num">0.9462</td>
+    <td class="num">0.7285</td>
+    <td class="num">0.1289</td>
+    <td class="num">0.9566</td>
+    <td class="num strong">0.7148</td>
+    <td class="num">3.48</td>
+  </tr><tr class="">
+    <td>Pneumonia</td><td>kernel</td>
+    <td class="num">10</td>
+    <td class="num">10</td>
+    <td class="num">0.0445</td>
+    <td class="num">0.1064</td>
+    <td class="num">0.9775</td>
+    <td class="num">0.8700</td>
+    <td class="num">0.1152</td>
+    <td class="num">0.9800</td>
+    <td class="num strong">0.8211</td>
+    <td class="num">3.52</td>
+  </tr><tr class="best">
+    <td>Pneumonia</td><td>random_constant</td>
+    <td class="num">10</td>
+    <td class="num">10</td>
+    <td class="num">0.0489</td>
+    <td class="num">0.1023</td>
+    <td class="num">0.9776</td>
+    <td class="num">0.8829</td>
+    <td class="num">0.0928</td>
+    <td class="num">0.9804</td>
+    <td class="num strong">0.8521</td>
+    <td class="num">3.52</td>
+  </tr><tr class="">
+    <td>Pneumonia</td><td>additive</td>
+    <td class="num">10</td>
+    <td class="num">10</td>
+    <td class="num">0.0627</td>
+    <td class="num">0.1246</td>
+    <td class="num">0.9596</td>
+    <td class="num">0.8159</td>
+    <td class="num">0.0963</td>
+    <td class="num">0.9713</td>
+    <td class="num strong">0.8250</td>
+    <td class="num">3.49</td>
+  </tr></tbody>
+  </table>
+
+  <h2>Test AUPRC by arm</h2>
+  <div class="charts"><div class='chart-card'><h3>Heart malformations</h3><div class="bar-row"><span class="bar-lab">vanilla</span>
+      <div class="bar-track"><div class="bar-fill" style="width:94.45%"></div></div>
+      <span class="bar-val">0.9445</span></div><div class="bar-row"><span class="bar-lab">kernel</span>
+      <div class="bar-track"><div class="bar-fill" style="width:95.44%"></div></div>
+      <span class="bar-val">0.9544</span></div><div class="bar-row"><span class="bar-lab">random_constant</span>
+      <div class="bar-track"><div class="bar-fill" style="width:95.13%"></div></div>
+      <span class="bar-val">0.9513</span></div><div class="bar-row"><span class="bar-lab">additive</span>
+      <div class="bar-track"><div class="bar-fill" style="width:94.44%"></div></div>
+      <span class="bar-val">0.9444</span></div></div><div class='chart-card'><h3>LOS &gt; 7 days</h3><div class="bar-row"><span class="bar-lab">vanilla</span>
+      <div class="bar-track"><div class="bar-fill" style="width:78.08%"></div></div>
+      <span class="bar-val">0.7808</span></div><div class="bar-row"><span class="bar-lab">kernel</span>
+      <div class="bar-track"><div class="bar-fill" style="width:77.27%"></div></div>
+      <span class="bar-val">0.7727</span></div><div class="bar-row"><span class="bar-lab">random_constant</span>
+      <div class="bar-track"><div class="bar-fill" style="width:78.04%"></div></div>
+      <span class="bar-val">0.7804</span></div><div class="bar-row"><span class="bar-lab">additive</span>
+      <div class="bar-track"><div class="bar-fill" style="width:77.67%"></div></div>
+      <span class="bar-val">0.7767</span></div></div><div class='chart-card'><h3>Mortality</h3><div class="bar-row"><span class="bar-lab">vanilla</span>
+      <div class="bar-track"><div class="bar-fill" style="width:23.10%"></div></div>
+      <span class="bar-val">0.2310</span></div><div class="bar-row"><span class="bar-lab">kernel</span>
+      <div class="bar-track"><div class="bar-fill" style="width:21.96%"></div></div>
+      <span class="bar-val">0.2196</span></div><div class="bar-row"><span class="bar-lab">random_constant</span>
+      <div class="bar-track"><div class="bar-fill" style="width:20.56%"></div></div>
+      <span class="bar-val">0.2056</span></div><div class="bar-row"><span class="bar-lab">additive</span>
+      <div class="bar-track"><div class="bar-fill" style="width:22.84%"></div></div>
+      <span class="bar-val">0.2284</span></div></div><div class='chart-card'><h3>Pneumonia</h3><div class="bar-row"><span class="bar-lab">vanilla</span>
+      <div class="bar-track"><div class="bar-fill" style="width:71.48%"></div></div>
+      <span class="bar-val">0.7148</span></div><div class="bar-row"><span class="bar-lab">kernel</span>
+      <div class="bar-track"><div class="bar-fill" style="width:82.11%"></div></div>
+      <span class="bar-val">0.8211</span></div><div class="bar-row"><span class="bar-lab">random_constant</span>
+      <div class="bar-track"><div class="bar-fill" style="width:85.21%"></div></div>
+      <span class="bar-val">0.8521</span></div><div class="bar-row"><span class="bar-lab">additive</span>
+      <div class="bar-track"><div class="bar-fill" style="width:82.50%"></div></div>
+      <span class="bar-val">0.8250</span></div></div></div>
+
+  <h2>Age-band stratified metrics</h2>
+  <p class="sub">Expand a task/split. Warning rows have zero positives.</p>
+  
+    <details open>
+      <summary>Heart malformations — val</summary>
+      <table>
+        <thead><tr><th>Arm</th><th>Band</th><th>n</th><th>pos</th><th>Prev</th><th>AUROC</th><th>AUPRC</th></tr></thead>
+        <tbody><tr class=''><td>vanilla</td><td>neonate</td><td class='num'>315</td><td class='num'>36</td><td class='num'>0.114</td><td class='num'>0.9014</td><td class='num'>0.6149</td></tr><tr class=''><td>vanilla</td><td>infant</td><td class='num'>408</td><td class='num'>79</td><td class='num'>0.194</td><td class='num'>0.9886</td><td class='num'>0.9641</td></tr><tr class=''><td>vanilla</td><td>toddler</td><td class='num'>223</td><td class='num'>56</td><td class='num'>0.251</td><td class='num'>0.9852</td><td class='num'>0.9838</td></tr><tr class=''><td>vanilla</td><td>preschool</td><td class='num'>152</td><td class='num'>37</td><td class='num'>0.243</td><td class='num'>0.9976</td><td class='num'>0.9942</td></tr><tr class=''><td>vanilla</td><td>school</td><td class='num'>134</td><td class='num'>15</td><td class='num'>0.112</td><td class='num'>0.9748</td><td class='num'>0.8930</td></tr><tr class='warn'><td>vanilla</td><td>adolescent</td><td class='num'>48</td><td class='num'>0</td><td class='num'>0.000</td><td class='num'>—</td><td class='num'>—</td></tr><tr class=''><td>kernel</td><td>neonate</td><td class='num'>315</td><td class='num'>36</td><td class='num'>0.114</td><td class='num'>0.9466</td><td class='num'>0.8005</td></tr><tr class=''><td>kernel</td><td>infant</td><td class='num'>408</td><td class='num'>79</td><td class='num'>0.194</td><td class='num'>0.9972</td><td class='num'>0.9879</td></tr><tr class=''><td>kernel</td><td>toddler</td><td class='num'>223</td><td class='num'>56</td><td class='num'>0.251</td><td class='num'>0.9818</td><td class='num'>0.9763</td></tr><tr class=''><td>kernel</td><td>preschool</td><td class='num'>152</td><td class='num'>37</td><td class='num'>0.243</td><td class='num'>0.9998</td><td class='num'>0.9993</td></tr><tr class=''><td>kernel</td><td>school</td><td class='num'>134</td><td class='num'>15</td><td class='num'>0.112</td><td class='num'>0.9697</td><td class='num'>0.8947</td></tr><tr class='warn'><td>kernel</td><td>adolescent</td><td class='num'>48</td><td class='num'>0</td><td class='num'>0.000</td><td class='num'>—</td><td class='num'>—</td></tr><tr class=''><td>random_constant</td><td>neonate</td><td class='num'>315</td><td class='num'>36</td><td class='num'>0.114</td><td class='num'>0.9268</td><td class='num'>0.6844</td></tr><tr class=''><td>random_constant</td><td>infant</td><td class='num'>408</td><td class='num'>79</td><td class='num'>0.194</td><td class='num'>0.9961</td><td class='num'>0.9835</td></tr><tr class=''><td>random_constant</td><td>toddler</td><td class='num'>223</td><td class='num'>56</td><td class='num'>0.251</td><td class='num'>0.9941</td><td class='num'>0.9866</td></tr><tr class=''><td>random_constant</td><td>preschool</td><td class='num'>152</td><td class='num'>37</td><td class='num'>0.243</td><td class='num'>0.9932</td><td class='num'>0.9876</td></tr><tr class=''><td>random_constant</td><td>school</td><td class='num'>134</td><td class='num'>15</td><td class='num'>0.112</td><td class='num'>0.9798</td><td class='num'>0.9287</td></tr><tr class='warn'><td>random_constant</td><td>adolescent</td><td class='num'>48</td><td class='num'>0</td><td class='num'>0.000</td><td class='num'>—</td><td class='num'>—</td></tr><tr class=''><td>additive</td><td>neonate</td><td class='num'>315</td><td class='num'>36</td><td class='num'>0.114</td><td class='num'>0.9285</td><td class='num'>0.6618</td></tr><tr class=''><td>additive</td><td>infant</td><td class='num'>408</td><td class='num'>79</td><td class='num'>0.194</td><td class='num'>0.9881</td><td class='num'>0.9589</td></tr><tr class=''><td>additive</td><td>toddler</td><td class='num'>223</td><td class='num'>56</td><td class='num'>0.251</td><td class='num'>0.9855</td><td class='num'>0.9788</td></tr><tr class=''><td>additive</td><td>preschool</td><td class='num'>152</td><td class='num'>37</td><td class='num'>0.243</td><td class='num'>0.9948</td><td class='num'>0.9899</td></tr><tr class=''><td>additive</td><td>school</td><td class='num'>134</td><td class='num'>15</td><td class='num'>0.112</td><td class='num'>0.9888</td><td class='num'>0.9386</td></tr><tr class='warn'><td>additive</td><td>adolescent</td><td class='num'>48</td><td class='num'>0</td><td class='num'>0.000</td><td class='num'>—</td><td class='num'>—</td></tr></tbody>
+      </table>
+    </details>
+    <details >
+      <summary>Heart malformations — test</summary>
+      <table>
+        <thead><tr><th>Arm</th><th>Band</th><th>n</th><th>pos</th><th>Prev</th><th>AUROC</th><th>AUPRC</th></tr></thead>
+        <tbody><tr class=''><td>vanilla</td><td>neonate</td><td class='num'>606</td><td class='num'>75</td><td class='num'>0.124</td><td class='num'>0.8891</td><td class='num'>0.6213</td></tr><tr class=''><td>vanilla</td><td>infant</td><td class='num'>834</td><td class='num'>195</td><td class='num'>0.234</td><td class='num'>0.9870</td><td class='num'>0.9679</td></tr><tr class=''><td>vanilla</td><td>toddler</td><td class='num'>453</td><td class='num'>114</td><td class='num'>0.252</td><td class='num'>0.9973</td><td class='num'>0.9934</td></tr><tr class=''><td>vanilla</td><td>preschool</td><td class='num'>286</td><td class='num'>62</td><td class='num'>0.217</td><td class='num'>0.9996</td><td class='num'>0.9985</td></tr><tr class=''><td>vanilla</td><td>school</td><td class='num'>286</td><td class='num'>39</td><td class='num'>0.136</td><td class='num'>0.9379</td><td class='num'>0.9170</td></tr><tr class=''><td>vanilla</td><td>adolescent</td><td class='num'>108</td><td class='num'>8</td><td class='num'>0.074</td><td class='num'>0.9712</td><td class='num'>0.8229</td></tr><tr class=''><td>kernel</td><td>neonate</td><td class='num'>606</td><td class='num'>75</td><td class='num'>0.124</td><td class='num'>0.9238</td><td class='num'>0.7954</td></tr><tr class=''><td>kernel</td><td>infant</td><td class='num'>834</td><td class='num'>195</td><td class='num'>0.234</td><td class='num'>0.9747</td><td class='num'>0.9474</td></tr><tr class=''><td>kernel</td><td>toddler</td><td class='num'>453</td><td class='num'>114</td><td class='num'>0.252</td><td class='num'>0.9996</td><td class='num'>0.9990</td></tr><tr class=''><td>kernel</td><td>preschool</td><td class='num'>286</td><td class='num'>62</td><td class='num'>0.217</td><td class='num'>0.9997</td><td class='num'>0.9990</td></tr><tr class=''><td>kernel</td><td>school</td><td class='num'>286</td><td class='num'>39</td><td class='num'>0.136</td><td class='num'>0.9843</td><td class='num'>0.9607</td></tr><tr class=''><td>kernel</td><td>adolescent</td><td class='num'>108</td><td class='num'>8</td><td class='num'>0.074</td><td class='num'>0.9875</td><td class='num'>0.7481</td></tr><tr class=''><td>random_constant</td><td>neonate</td><td class='num'>606</td><td class='num'>75</td><td class='num'>0.124</td><td class='num'>0.9015</td><td class='num'>0.6134</td></tr><tr class=''><td>random_constant</td><td>infant</td><td class='num'>834</td><td class='num'>195</td><td class='num'>0.234</td><td class='num'>0.9899</td><td class='num'>0.9800</td></tr><tr class=''><td>random_constant</td><td>toddler</td><td class='num'>453</td><td class='num'>114</td><td class='num'>0.252</td><td class='num'>0.9992</td><td class='num'>0.9980</td></tr><tr class=''><td>random_constant</td><td>preschool</td><td class='num'>286</td><td class='num'>62</td><td class='num'>0.217</td><td class='num'>0.9992</td><td class='num'>0.9975</td></tr><tr class=''><td>random_constant</td><td>school</td><td class='num'>286</td><td class='num'>39</td><td class='num'>0.136</td><td class='num'>0.9568</td><td class='num'>0.9331</td></tr><tr class=''><td>random_constant</td><td>adolescent</td><td class='num'>108</td><td class='num'>8</td><td class='num'>0.074</td><td class='num'>0.9875</td><td class='num'>0.8911</td></tr><tr class=''><td>additive</td><td>neonate</td><td class='num'>606</td><td class='num'>75</td><td class='num'>0.124</td><td class='num'>0.9196</td><td class='num'>0.6172</td></tr><tr class=''><td>additive</td><td>infant</td><td class='num'>834</td><td class='num'>195</td><td class='num'>0.234</td><td class='num'>0.9849</td><td class='num'>0.9543</td></tr><tr class=''><td>additive</td><td>toddler</td><td class='num'>453</td><td class='num'>114</td><td class='num'>0.252</td><td class='num'>0.9982</td><td class='num'>0.9961</td></tr><tr class=''><td>additive</td><td>preschool</td><td class='num'>286</td><td class='num'>62</td><td class='num'>0.217</td><td class='num'>0.9993</td><td class='num'>0.9973</td></tr><tr class=''><td>additive</td><td>school</td><td class='num'>286</td><td class='num'>39</td><td class='num'>0.136</td><td class='num'>0.9413</td><td class='num'>0.9041</td></tr><tr class=''><td>additive</td><td>adolescent</td><td class='num'>108</td><td class='num'>8</td><td class='num'>0.074</td><td class='num'>0.9850</td><td class='num'>0.8785</td></tr></tbody>
+      </table>
+    </details>
+    <details >
+      <summary>LOS &gt; 7 days — val</summary>
+      <table>
+        <thead><tr><th>Arm</th><th>Band</th><th>n</th><th>pos</th><th>Prev</th><th>AUROC</th><th>AUPRC</th></tr></thead>
+        <tbody><tr class=''><td>vanilla</td><td>neonate</td><td class='num'>276</td><td class='num'>192</td><td class='num'>0.696</td><td class='num'>0.8145</td><td class='num'>0.8893</td></tr><tr class=''><td>vanilla</td><td>infant</td><td class='num'>279</td><td class='num'>103</td><td class='num'>0.369</td><td class='num'>0.7599</td><td class='num'>0.6716</td></tr><tr class=''><td>vanilla</td><td>toddler</td><td class='num'>140</td><td class='num'>45</td><td class='num'>0.321</td><td class='num'>0.7881</td><td class='num'>0.5878</td></tr><tr class=''><td>vanilla</td><td>preschool</td><td class='num'>93</td><td class='num'>22</td><td class='num'>0.237</td><td class='num'>0.6997</td><td class='num'>0.4331</td></tr><tr class=''><td>vanilla</td><td>school</td><td class='num'>77</td><td class='num'>27</td><td class='num'>0.351</td><td class='num'>0.7319</td><td class='num'>0.5383</td></tr><tr class=''><td>vanilla</td><td>adolescent</td><td class='num'>29</td><td class='num'>13</td><td class='num'>0.448</td><td class='num'>0.6779</td><td class='num'>0.6211</td></tr><tr class=''><td>kernel</td><td>neonate</td><td class='num'>276</td><td class='num'>192</td><td class='num'>0.696</td><td class='num'>0.7997</td><td class='num'>0.8875</td></tr><tr class=''><td>kernel</td><td>infant</td><td class='num'>279</td><td class='num'>103</td><td class='num'>0.369</td><td class='num'>0.7488</td><td class='num'>0.6732</td></tr><tr class=''><td>kernel</td><td>toddler</td><td class='num'>140</td><td class='num'>45</td><td class='num'>0.321</td><td class='num'>0.7441</td><td class='num'>0.4852</td></tr><tr class=''><td>kernel</td><td>preschool</td><td class='num'>93</td><td class='num'>22</td><td class='num'>0.237</td><td class='num'>0.6818</td><td class='num'>0.3550</td></tr><tr class=''><td>kernel</td><td>school</td><td class='num'>77</td><td class='num'>27</td><td class='num'>0.351</td><td class='num'>0.6674</td><td class='num'>0.5614</td></tr><tr class=''><td>kernel</td><td>adolescent</td><td class='num'>29</td><td class='num'>13</td><td class='num'>0.448</td><td class='num'>0.7692</td><td class='num'>0.7520</td></tr><tr class=''><td>random_constant</td><td>neonate</td><td class='num'>276</td><td class='num'>192</td><td class='num'>0.696</td><td class='num'>0.8059</td><td class='num'>0.8810</td></tr><tr class=''><td>random_constant</td><td>infant</td><td class='num'>279</td><td class='num'>103</td><td class='num'>0.369</td><td class='num'>0.7480</td><td class='num'>0.6553</td></tr><tr class=''><td>random_constant</td><td>toddler</td><td class='num'>140</td><td class='num'>45</td><td class='num'>0.321</td><td class='num'>0.7876</td><td class='num'>0.5747</td></tr><tr class=''><td>random_constant</td><td>preschool</td><td class='num'>93</td><td class='num'>22</td><td class='num'>0.237</td><td class='num'>0.7177</td><td class='num'>0.3769</td></tr><tr class=''><td>random_constant</td><td>school</td><td class='num'>77</td><td class='num'>27</td><td class='num'>0.351</td><td class='num'>0.7348</td><td class='num'>0.5720</td></tr><tr class=''><td>random_constant</td><td>adolescent</td><td class='num'>29</td><td class='num'>13</td><td class='num'>0.448</td><td class='num'>0.7308</td><td class='num'>0.7075</td></tr><tr class=''><td>additive</td><td>neonate</td><td class='num'>276</td><td class='num'>192</td><td class='num'>0.696</td><td class='num'>0.8084</td><td class='num'>0.8870</td></tr><tr class=''><td>additive</td><td>infant</td><td class='num'>279</td><td class='num'>103</td><td class='num'>0.369</td><td class='num'>0.7538</td><td class='num'>0.6615</td></tr><tr class=''><td>additive</td><td>toddler</td><td class='num'>140</td><td class='num'>45</td><td class='num'>0.321</td><td class='num'>0.7892</td><td class='num'>0.5822</td></tr><tr class=''><td>additive</td><td>preschool</td><td class='num'>93</td><td class='num'>22</td><td class='num'>0.237</td><td class='num'>0.7759</td><td class='num'>0.4309</td></tr><tr class=''><td>additive</td><td>school</td><td class='num'>77</td><td class='num'>27</td><td class='num'>0.351</td><td class='num'>0.7370</td><td class='num'>0.5490</td></tr><tr class=''><td>additive</td><td>adolescent</td><td class='num'>29</td><td class='num'>13</td><td class='num'>0.448</td><td class='num'>0.7933</td><td class='num'>0.7922</td></tr></tbody>
+      </table>
+    </details>
+    <details >
+      <summary>LOS &gt; 7 days — test</summary>
+      <table>
+        <thead><tr><th>Arm</th><th>Band</th><th>n</th><th>pos</th><th>Prev</th><th>AUROC</th><th>AUPRC</th></tr></thead>
+        <tbody><tr class=''><td>vanilla</td><td>neonate</td><td class='num'>529</td><td class='num'>341</td><td class='num'>0.645</td><td class='num'>0.8315</td><td class='num'>0.8997</td></tr><tr class=''><td>vanilla</td><td>infant</td><td class='num'>559</td><td class='num'>201</td><td class='num'>0.360</td><td class='num'>0.7998</td><td class='num'>0.7040</td></tr><tr class=''><td>vanilla</td><td>toddler</td><td class='num'>268</td><td class='num'>83</td><td class='num'>0.310</td><td class='num'>0.7942</td><td class='num'>0.6051</td></tr><tr class=''><td>vanilla</td><td>preschool</td><td class='num'>153</td><td class='num'>51</td><td class='num'>0.333</td><td class='num'>0.7812</td><td class='num'>0.6250</td></tr><tr class=''><td>vanilla</td><td>school</td><td class='num'>185</td><td class='num'>64</td><td class='num'>0.346</td><td class='num'>0.7182</td><td class='num'>0.5437</td></tr><tr class=''><td>vanilla</td><td>adolescent</td><td class='num'>66</td><td class='num'>22</td><td class='num'>0.333</td><td class='num'>0.7025</td><td class='num'>0.5751</td></tr><tr class=''><td>kernel</td><td>neonate</td><td class='num'>529</td><td class='num'>341</td><td class='num'>0.645</td><td class='num'>0.8145</td><td class='num'>0.8875</td></tr><tr class=''><td>kernel</td><td>infant</td><td class='num'>559</td><td class='num'>201</td><td class='num'>0.360</td><td class='num'>0.7765</td><td class='num'>0.6916</td></tr><tr class=''><td>kernel</td><td>toddler</td><td class='num'>268</td><td class='num'>83</td><td class='num'>0.310</td><td class='num'>0.7700</td><td class='num'>0.5514</td></tr><tr class=''><td>kernel</td><td>preschool</td><td class='num'>153</td><td class='num'>51</td><td class='num'>0.333</td><td class='num'>0.8097</td><td class='num'>0.6139</td></tr><tr class=''><td>kernel</td><td>school</td><td class='num'>185</td><td class='num'>64</td><td class='num'>0.346</td><td class='num'>0.7444</td><td class='num'>0.5964</td></tr><tr class=''><td>kernel</td><td>adolescent</td><td class='num'>66</td><td class='num'>22</td><td class='num'>0.333</td><td class='num'>0.5981</td><td class='num'>0.3760</td></tr><tr class=''><td>random_constant</td><td>neonate</td><td class='num'>529</td><td class='num'>341</td><td class='num'>0.645</td><td class='num'>0.8275</td><td class='num'>0.8908</td></tr><tr class=''><td>random_constant</td><td>infant</td><td class='num'>559</td><td class='num'>201</td><td class='num'>0.360</td><td class='num'>0.7918</td><td class='num'>0.7081</td></tr><tr class=''><td>random_constant</td><td>toddler</td><td class='num'>268</td><td class='num'>83</td><td class='num'>0.310</td><td class='num'>0.7807</td><td class='num'>0.5814</td></tr><tr class=''><td>random_constant</td><td>preschool</td><td class='num'>153</td><td class='num'>51</td><td class='num'>0.333</td><td class='num'>0.7724</td><td class='num'>0.5846</td></tr><tr class=''><td>random_constant</td><td>school</td><td class='num'>185</td><td class='num'>64</td><td class='num'>0.346</td><td class='num'>0.7389</td><td class='num'>0.5621</td></tr><tr class=''><td>random_constant</td><td>adolescent</td><td class='num'>66</td><td class='num'>22</td><td class='num'>0.333</td><td class='num'>0.6436</td><td class='num'>0.4203</td></tr><tr class=''><td>additive</td><td>neonate</td><td class='num'>529</td><td class='num'>341</td><td class='num'>0.645</td><td class='num'>0.8222</td><td class='num'>0.8951</td></tr><tr class=''><td>additive</td><td>infant</td><td class='num'>559</td><td class='num'>201</td><td class='num'>0.360</td><td class='num'>0.7827</td><td class='num'>0.6890</td></tr><tr class=''><td>additive</td><td>toddler</td><td class='num'>268</td><td class='num'>83</td><td class='num'>0.310</td><td class='num'>0.7972</td><td class='num'>0.5946</td></tr><tr class=''><td>additive</td><td>preschool</td><td class='num'>153</td><td class='num'>51</td><td class='num'>0.333</td><td class='num'>0.8008</td><td class='num'>0.6288</td></tr><tr class=''><td>additive</td><td>school</td><td class='num'>185</td><td class='num'>64</td><td class='num'>0.346</td><td class='num'>0.7166</td><td class='num'>0.5525</td></tr><tr class=''><td>additive</td><td>adolescent</td><td class='num'>66</td><td class='num'>22</td><td class='num'>0.333</td><td class='num'>0.6188</td><td class='num'>0.4596</td></tr></tbody>
+      </table>
+    </details>
+    <details >
+      <summary>Mortality — val</summary>
+      <table>
+        <thead><tr><th>Arm</th><th>Band</th><th>n</th><th>pos</th><th>Prev</th><th>AUROC</th><th>AUPRC</th></tr></thead>
+        <tbody><tr class=''><td>vanilla</td><td>neonate</td><td class='num'>312</td><td class='num'>20</td><td class='num'>0.064</td><td class='num'>0.7185</td><td class='num'>0.2757</td></tr><tr class=''><td>vanilla</td><td>infant</td><td class='num'>403</td><td class='num'>31</td><td class='num'>0.077</td><td class='num'>0.8045</td><td class='num'>0.3881</td></tr><tr class=''><td>vanilla</td><td>toddler</td><td class='num'>220</td><td class='num'>10</td><td class='num'>0.045</td><td class='num'>0.8010</td><td class='num'>0.1223</td></tr><tr class=''><td>vanilla</td><td>preschool</td><td class='num'>150</td><td class='num'>4</td><td class='num'>0.027</td><td class='num'>0.9315</td><td class='num'>0.2366</td></tr><tr class=''><td>vanilla</td><td>school</td><td class='num'>133</td><td class='num'>10</td><td class='num'>0.075</td><td class='num'>0.8862</td><td class='num'>0.4386</td></tr><tr class=''><td>vanilla</td><td>adolescent</td><td class='num'>48</td><td class='num'>4</td><td class='num'>0.083</td><td class='num'>0.8807</td><td class='num'>0.4798</td></tr><tr class=''><td>kernel</td><td>neonate</td><td class='num'>312</td><td class='num'>20</td><td class='num'>0.064</td><td class='num'>0.7899</td><td class='num'>0.2468</td></tr><tr class=''><td>kernel</td><td>infant</td><td class='num'>403</td><td class='num'>31</td><td class='num'>0.077</td><td class='num'>0.8404</td><td class='num'>0.4732</td></tr><tr class=''><td>kernel</td><td>toddler</td><td class='num'>220</td><td class='num'>10</td><td class='num'>0.045</td><td class='num'>0.8324</td><td class='num'>0.1647</td></tr><tr class=''><td>kernel</td><td>preschool</td><td class='num'>150</td><td class='num'>4</td><td class='num'>0.027</td><td class='num'>0.9452</td><td class='num'>0.2299</td></tr><tr class=''><td>kernel</td><td>school</td><td class='num'>133</td><td class='num'>10</td><td class='num'>0.075</td><td class='num'>0.8211</td><td class='num'>0.3632</td></tr><tr class=''><td>kernel</td><td>adolescent</td><td class='num'>48</td><td class='num'>4</td><td class='num'>0.083</td><td class='num'>0.8523</td><td class='num'>0.3139</td></tr><tr class=''><td>random_constant</td><td>neonate</td><td class='num'>312</td><td class='num'>20</td><td class='num'>0.064</td><td class='num'>0.7527</td><td class='num'>0.2201</td></tr><tr class=''><td>random_constant</td><td>infant</td><td class='num'>403</td><td class='num'>31</td><td class='num'>0.077</td><td class='num'>0.7769</td><td class='num'>0.3398</td></tr><tr class=''><td>random_constant</td><td>toddler</td><td class='num'>220</td><td class='num'>10</td><td class='num'>0.045</td><td class='num'>0.7533</td><td class='num'>0.0979</td></tr><tr class=''><td>random_constant</td><td>preschool</td><td class='num'>150</td><td class='num'>4</td><td class='num'>0.027</td><td class='num'>0.9469</td><td class='num'>0.3483</td></tr><tr class=''><td>random_constant</td><td>school</td><td class='num'>133</td><td class='num'>10</td><td class='num'>0.075</td><td class='num'>0.8927</td><td class='num'>0.4015</td></tr><tr class=''><td>random_constant</td><td>adolescent</td><td class='num'>48</td><td class='num'>4</td><td class='num'>0.083</td><td class='num'>0.7614</td><td class='num'>0.2435</td></tr><tr class=''><td>additive</td><td>neonate</td><td class='num'>312</td><td class='num'>20</td><td class='num'>0.064</td><td class='num'>0.7401</td><td class='num'>0.3285</td></tr><tr class=''><td>additive</td><td>infant</td><td class='num'>403</td><td class='num'>31</td><td class='num'>0.077</td><td class='num'>0.8263</td><td class='num'>0.3373</td></tr><tr class=''><td>additive</td><td>toddler</td><td class='num'>220</td><td class='num'>10</td><td class='num'>0.045</td><td class='num'>0.8148</td><td class='num'>0.1346</td></tr><tr class=''><td>additive</td><td>preschool</td><td class='num'>150</td><td class='num'>4</td><td class='num'>0.027</td><td class='num'>0.9486</td><td class='num'>0.3305</td></tr><tr class=''><td>additive</td><td>school</td><td class='num'>133</td><td class='num'>10</td><td class='num'>0.075</td><td class='num'>0.9057</td><td class='num'>0.5970</td></tr><tr class=''><td>additive</td><td>adolescent</td><td class='num'>48</td><td class='num'>4</td><td class='num'>0.083</td><td class='num'>0.9091</td><td class='num'>0.5152</td></tr></tbody>
+      </table>
+    </details>
+    <details >
+      <summary>Mortality — test</summary>
+      <table>
+        <thead><tr><th>Arm</th><th>Band</th><th>n</th><th>pos</th><th>Prev</th><th>AUROC</th><th>AUPRC</th></tr></thead>
+        <tbody><tr class=''><td>vanilla</td><td>neonate</td><td class='num'>597</td><td class='num'>38</td><td class='num'>0.064</td><td class='num'>0.7853</td><td class='num'>0.2479</td></tr><tr class=''><td>vanilla</td><td>infant</td><td class='num'>821</td><td class='num'>52</td><td class='num'>0.063</td><td class='num'>0.8240</td><td class='num'>0.2071</td></tr><tr class=''><td>vanilla</td><td>toddler</td><td class='num'>447</td><td class='num'>18</td><td class='num'>0.040</td><td class='num'>0.8863</td><td class='num'>0.3609</td></tr><tr class=''><td>vanilla</td><td>preschool</td><td class='num'>284</td><td class='num'>8</td><td class='num'>0.028</td><td class='num'>0.9130</td><td class='num'>0.3003</td></tr><tr class=''><td>vanilla</td><td>school</td><td class='num'>282</td><td class='num'>17</td><td class='num'>0.060</td><td class='num'>0.7938</td><td class='num'>0.2377</td></tr><tr class=''><td>vanilla</td><td>adolescent</td><td class='num'>107</td><td class='num'>4</td><td class='num'>0.037</td><td class='num'>0.9078</td><td class='num'>0.5775</td></tr><tr class=''><td>kernel</td><td>neonate</td><td class='num'>597</td><td class='num'>38</td><td class='num'>0.064</td><td class='num'>0.7807</td><td class='num'>0.2598</td></tr><tr class=''><td>kernel</td><td>infant</td><td class='num'>821</td><td class='num'>52</td><td class='num'>0.063</td><td class='num'>0.8139</td><td class='num'>0.2273</td></tr><tr class=''><td>kernel</td><td>toddler</td><td class='num'>447</td><td class='num'>18</td><td class='num'>0.040</td><td class='num'>0.8411</td><td class='num'>0.2288</td></tr><tr class=''><td>kernel</td><td>preschool</td><td class='num'>284</td><td class='num'>8</td><td class='num'>0.028</td><td class='num'>0.9484</td><td class='num'>0.4861</td></tr><tr class=''><td>kernel</td><td>school</td><td class='num'>282</td><td class='num'>17</td><td class='num'>0.060</td><td class='num'>0.7441</td><td class='num'>0.2394</td></tr><tr class=''><td>kernel</td><td>adolescent</td><td class='num'>107</td><td class='num'>4</td><td class='num'>0.037</td><td class='num'>0.7549</td><td class='num'>0.1125</td></tr><tr class=''><td>random_constant</td><td>neonate</td><td class='num'>597</td><td class='num'>38</td><td class='num'>0.064</td><td class='num'>0.8149</td><td class='num'>0.2981</td></tr><tr class=''><td>random_constant</td><td>infant</td><td class='num'>821</td><td class='num'>52</td><td class='num'>0.063</td><td class='num'>0.7808</td><td class='num'>0.1656</td></tr><tr class=''><td>random_constant</td><td>toddler</td><td class='num'>447</td><td class='num'>18</td><td class='num'>0.040</td><td class='num'>0.8749</td><td class='num'>0.2743</td></tr><tr class=''><td>random_constant</td><td>preschool</td><td class='num'>284</td><td class='num'>8</td><td class='num'>0.028</td><td class='num'>0.9026</td><td class='num'>0.5309</td></tr><tr class=''><td>random_constant</td><td>school</td><td class='num'>282</td><td class='num'>17</td><td class='num'>0.060</td><td class='num'>0.7199</td><td class='num'>0.2599</td></tr><tr class=''><td>random_constant</td><td>adolescent</td><td class='num'>107</td><td class='num'>4</td><td class='num'>0.037</td><td class='num'>0.8422</td><td class='num'>0.1575</td></tr><tr class=''><td>additive</td><td>neonate</td><td class='num'>597</td><td class='num'>38</td><td class='num'>0.064</td><td class='num'>0.7833</td><td class='num'>0.2533</td></tr><tr class=''><td>additive</td><td>infant</td><td class='num'>821</td><td class='num'>52</td><td class='num'>0.063</td><td class='num'>0.8256</td><td class='num'>0.2165</td></tr><tr class=''><td>additive</td><td>toddler</td><td class='num'>447</td><td class='num'>18</td><td class='num'>0.040</td><td class='num'>0.8990</td><td class='num'>0.2491</td></tr><tr class=''><td>additive</td><td>preschool</td><td class='num'>284</td><td class='num'>8</td><td class='num'>0.028</td><td class='num'>0.8995</td><td class='num'>0.3361</td></tr><tr class=''><td>additive</td><td>school</td><td class='num'>282</td><td class='num'>17</td><td class='num'>0.060</td><td class='num'>0.8093</td><td class='num'>0.2900</td></tr><tr class=''><td>additive</td><td>adolescent</td><td class='num'>107</td><td class='num'>4</td><td class='num'>0.037</td><td class='num'>0.8932</td><td class='num'>0.3881</td></tr></tbody>
+      </table>
+    </details>
+    <details >
+      <summary>Pneumonia — val</summary>
+      <table>
+        <thead><tr><th>Arm</th><th>Band</th><th>n</th><th>pos</th><th>Prev</th><th>AUROC</th><th>AUPRC</th></tr></thead>
+        <tbody><tr class=''><td>vanilla</td><td>neonate</td><td class='num'>315</td><td class='num'>5</td><td class='num'>0.016</td><td class='num'>0.8303</td><td class='num'>0.0686</td></tr><tr class=''><td>vanilla</td><td>infant</td><td class='num'>407</td><td class='num'>63</td><td class='num'>0.155</td><td class='num'>0.9468</td><td class='num'>0.8264</td></tr><tr class=''><td>vanilla</td><td>toddler</td><td class='num'>223</td><td class='num'>16</td><td class='num'>0.072</td><td class='num'>0.9502</td><td class='num'>0.6652</td></tr><tr class=''><td>vanilla</td><td>preschool</td><td class='num'>152</td><td class='num'>10</td><td class='num'>0.066</td><td class='num'>0.9803</td><td class='num'>0.7852</td></tr><tr class=''><td>vanilla</td><td>school</td><td class='num'>134</td><td class='num'>8</td><td class='num'>0.060</td><td class='num'>0.9722</td><td class='num'>0.7787</td></tr><tr class=''><td>vanilla</td><td>adolescent</td><td class='num'>48</td><td class='num'>3</td><td class='num'>0.062</td><td class='num'>0.9259</td><td class='num'>0.3889</td></tr><tr class=''><td>kernel</td><td>neonate</td><td class='num'>315</td><td class='num'>5</td><td class='num'>0.016</td><td class='num'>0.9871</td><td class='num'>0.5788</td></tr><tr class=''><td>kernel</td><td>infant</td><td class='num'>407</td><td class='num'>63</td><td class='num'>0.155</td><td class='num'>0.9886</td><td class='num'>0.9512</td></tr><tr class=''><td>kernel</td><td>toddler</td><td class='num'>223</td><td class='num'>16</td><td class='num'>0.072</td><td class='num'>0.9411</td><td class='num'>0.7404</td></tr><tr class=''><td>kernel</td><td>preschool</td><td class='num'>152</td><td class='num'>10</td><td class='num'>0.066</td><td class='num'>0.9789</td><td class='num'>0.8598</td></tr><tr class=''><td>kernel</td><td>school</td><td class='num'>134</td><td class='num'>8</td><td class='num'>0.060</td><td class='num'>0.9692</td><td class='num'>0.7829</td></tr><tr class=''><td>kernel</td><td>adolescent</td><td class='num'>48</td><td class='num'>3</td><td class='num'>0.062</td><td class='num'>0.8963</td><td class='num'>0.3547</td></tr><tr class=''><td>random_constant</td><td>neonate</td><td class='num'>315</td><td class='num'>5</td><td class='num'>0.016</td><td class='num'>0.9697</td><td class='num'>0.6311</td></tr><tr class=''><td>random_constant</td><td>infant</td><td class='num'>407</td><td class='num'>63</td><td class='num'>0.155</td><td class='num'>0.9803</td><td class='num'>0.9275</td></tr><tr class=''><td>random_constant</td><td>toddler</td><td class='num'>223</td><td class='num'>16</td><td class='num'>0.072</td><td class='num'>0.9632</td><td class='num'>0.8153</td></tr><tr class=''><td>random_constant</td><td>preschool</td><td class='num'>152</td><td class='num'>10</td><td class='num'>0.066</td><td class='num'>1.0000</td><td class='num'>1.0000</td></tr><tr class=''><td>random_constant</td><td>school</td><td class='num'>134</td><td class='num'>8</td><td class='num'>0.060</td><td class='num'>0.9633</td><td class='num'>0.8705</td></tr><tr class=''><td>random_constant</td><td>adolescent</td><td class='num'>48</td><td class='num'>3</td><td class='num'>0.062</td><td class='num'>0.9778</td><td class='num'>0.7556</td></tr><tr class=''><td>additive</td><td>neonate</td><td class='num'>315</td><td class='num'>5</td><td class='num'>0.016</td><td class='num'>0.8871</td><td class='num'>0.1888</td></tr><tr class=''><td>additive</td><td>infant</td><td class='num'>407</td><td class='num'>63</td><td class='num'>0.155</td><td class='num'>0.9608</td><td class='num'>0.8940</td></tr><tr class=''><td>additive</td><td>toddler</td><td class='num'>223</td><td class='num'>16</td><td class='num'>0.072</td><td class='num'>0.9466</td><td class='num'>0.7249</td></tr><tr class=''><td>additive</td><td>preschool</td><td class='num'>152</td><td class='num'>10</td><td class='num'>0.066</td><td class='num'>0.9718</td><td class='num'>0.7490</td></tr><tr class=''><td>additive</td><td>school</td><td class='num'>134</td><td class='num'>8</td><td class='num'>0.060</td><td class='num'>0.9861</td><td class='num'>0.8651</td></tr><tr class=''><td>additive</td><td>adolescent</td><td class='num'>48</td><td class='num'>3</td><td class='num'>0.062</td><td class='num'>0.9481</td><td class='num'>0.6095</td></tr></tbody>
+      </table>
+    </details>
+    <details >
+      <summary>Pneumonia — test</summary>
+      <table>
+        <thead><tr><th>Arm</th><th>Band</th><th>n</th><th>pos</th><th>Prev</th><th>AUROC</th><th>AUPRC</th></tr></thead>
+        <tbody><tr class=''><td>vanilla</td><td>neonate</td><td class='num'>606</td><td class='num'>4</td><td class='num'>0.007</td><td class='num'>0.8920</td><td class='num'>0.0619</td></tr><tr class=''><td>vanilla</td><td>infant</td><td class='num'>834</td><td class='num'>121</td><td class='num'>0.145</td><td class='num'>0.9548</td><td class='num'>0.7808</td></tr><tr class=''><td>vanilla</td><td>toddler</td><td class='num'>453</td><td class='num'>23</td><td class='num'>0.051</td><td class='num'>0.9619</td><td class='num'>0.7148</td></tr><tr class=''><td>vanilla</td><td>preschool</td><td class='num'>286</td><td class='num'>11</td><td class='num'>0.038</td><td class='num'>0.9686</td><td class='num'>0.7250</td></tr><tr class=''><td>vanilla</td><td>school</td><td class='num'>286</td><td class='num'>11</td><td class='num'>0.038</td><td class='num'>0.9061</td><td class='num'>0.6492</td></tr><tr class=''><td>vanilla</td><td>adolescent</td><td class='num'>108</td><td class='num'>3</td><td class='num'>0.028</td><td class='num'>0.9556</td><td class='num'>0.5214</td></tr><tr class=''><td>kernel</td><td>neonate</td><td class='num'>606</td><td class='num'>4</td><td class='num'>0.007</td><td class='num'>0.9821</td><td class='num'>0.4653</td></tr><tr class=''><td>kernel</td><td>infant</td><td class='num'>834</td><td class='num'>121</td><td class='num'>0.145</td><td class='num'>0.9847</td><td class='num'>0.8991</td></tr><tr class=''><td>kernel</td><td>toddler</td><td class='num'>453</td><td class='num'>23</td><td class='num'>0.051</td><td class='num'>0.9462</td><td class='num'>0.6594</td></tr><tr class=''><td>kernel</td><td>preschool</td><td class='num'>286</td><td class='num'>11</td><td class='num'>0.038</td><td class='num'>0.9921</td><td class='num'>0.8629</td></tr><tr class=''><td>kernel</td><td>school</td><td class='num'>286</td><td class='num'>11</td><td class='num'>0.038</td><td class='num'>0.9428</td><td class='num'>0.5531</td></tr><tr class=''><td>kernel</td><td>adolescent</td><td class='num'>108</td><td class='num'>3</td><td class='num'>0.028</td><td class='num'>0.8857</td><td class='num'>0.4143</td></tr><tr class=''><td>random_constant</td><td>neonate</td><td class='num'>606</td><td class='num'>4</td><td class='num'>0.007</td><td class='num'>0.9605</td><td class='num'>0.1142</td></tr><tr class=''><td>random_constant</td><td>infant</td><td class='num'>834</td><td class='num'>121</td><td class='num'>0.145</td><td class='num'>0.9887</td><td class='num'>0.9569</td></tr><tr class=''><td>random_constant</td><td>toddler</td><td class='num'>453</td><td class='num'>23</td><td class='num'>0.051</td><td class='num'>0.9820</td><td class='num'>0.8079</td></tr><tr class=''><td>random_constant</td><td>preschool</td><td class='num'>286</td><td class='num'>11</td><td class='num'>0.038</td><td class='num'>0.9904</td><td class='num'>0.7819</td></tr><tr class=''><td>random_constant</td><td>school</td><td class='num'>286</td><td class='num'>11</td><td class='num'>0.038</td><td class='num'>0.8926</td><td class='num'>0.6256</td></tr><tr class=''><td>random_constant</td><td>adolescent</td><td class='num'>108</td><td class='num'>3</td><td class='num'>0.028</td><td class='num'>0.9905</td><td class='num'>0.8333</td></tr><tr class=''><td>additive</td><td>neonate</td><td class='num'>606</td><td class='num'>4</td><td class='num'>0.007</td><td class='num'>0.9186</td><td class='num'>0.0898</td></tr><tr class=''><td>additive</td><td>infant</td><td class='num'>834</td><td class='num'>121</td><td class='num'>0.145</td><td class='num'>0.9745</td><td class='num'>0.8990</td></tr><tr class=''><td>additive</td><td>toddler</td><td class='num'>453</td><td class='num'>23</td><td class='num'>0.051</td><td class='num'>0.9694</td><td class='num'>0.7029</td></tr><tr class=''><td>additive</td><td>preschool</td><td class='num'>286</td><td class='num'>11</td><td class='num'>0.038</td><td class='num'>0.9226</td><td class='num'>0.6976</td></tr><tr class=''><td>additive</td><td>school</td><td class='num'>286</td><td class='num'>11</td><td class='num'>0.038</td><td class='num'>0.9560</td><td class='num'>0.5398</td></tr><tr class=''><td>additive</td><td>adolescent</td><td class='num'>108</td><td class='num'>3</td><td class='num'>0.028</td><td class='num'>0.9587</td><td class='num'>0.5714</td></tr></tbody>
+      </table>
+    </details>
+
+  <h2>Mechanism diagnostics (at best.pt)</h2>
+  <p class="sub">From train.json alpha / clamp_rate / param_drift. |d-alpha| and vary ≈ 0 for vanilla/additive.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Task</th><th>Arm</th>
+        <th class="num">Enc α L1</th><th class="num">Enc |Δα|</th><th class="num">Enc vary</th><th class="num">Enc clamp</th>
+        <th class="num">Pool α L1</th><th class="num">Pool |Δα|</th><th class="num">Pool vary</th><th class="num">Pool clamp</th>
+        <th class="num">Drift BB</th><th class="num">Drift age</th><th class="num">Drift head</th>
+      </tr>
+    </thead>
+    <tbody><tr>
+    <td>Heart malformations</td><td>vanilla</td>
+    <td class='num'>1.6293</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.2838</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0185</td>
+    <td class='num'>—</td>
+    <td class='num'>0.7867</td>
+  </tr><tr>
+    <td>Heart malformations</td><td>kernel</td>
+    <td class='num'>0.3664</td>
+    <td class='num'>14.7945</td>
+    <td class='num'>14.5230</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.2608</td>
+    <td class='num'>8.7422</td>
+    <td class='num'>7.0726</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0137</td>
+    <td class='num'>0.2201</td>
+    <td class='num'>0.7235</td>
+  </tr><tr>
+    <td>Heart malformations</td><td>random_constant</td>
+    <td class='num'>0.4425</td>
+    <td class='num'>3.8570</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.2868</td>
+    <td class='num'>12.6337</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0159</td>
+    <td class='num'>0.5672</td>
+    <td class='num'>0.7114</td>
+  </tr><tr>
+    <td>Heart malformations</td><td>additive</td>
+    <td class='num'>1.4557</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.5426</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0167</td>
+    <td class='num'>0.1954</td>
+    <td class='num'>0.7818</td>
+  </tr><tr>
+    <td>LOS &gt; 7 days</td><td>vanilla</td>
+    <td class='num'>1.6228</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.2817</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0122</td>
+    <td class='num'>—</td>
+    <td class='num'>0.4967</td>
+  </tr><tr>
+    <td>LOS &gt; 7 days</td><td>kernel</td>
+    <td class='num'>0.3655</td>
+    <td class='num'>5.1087</td>
+    <td class='num'>6.4676</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.2577</td>
+    <td class='num'>7.2069</td>
+    <td class='num'>4.9963</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0076</td>
+    <td class='num'>0.1268</td>
+    <td class='num'>0.3612</td>
+  </tr><tr>
+    <td>LOS &gt; 7 days</td><td>random_constant</td>
+    <td class='num'>0.4429</td>
+    <td class='num'>0.6702</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.2905</td>
+    <td class='num'>1.4281</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0117</td>
+    <td class='num'>0.0983</td>
+    <td class='num'>0.5113</td>
+  </tr><tr>
+    <td>LOS &gt; 7 days</td><td>additive</td>
+    <td class='num'>1.4539</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.5415</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0116</td>
+    <td class='num'>0.1248</td>
+    <td class='num'>0.5108</td>
+  </tr><tr>
+    <td>Mortality</td><td>vanilla</td>
+    <td class='num'>1.6182</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.2813</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0115</td>
+    <td class='num'>—</td>
+    <td class='num'>0.5302</td>
+  </tr><tr>
+    <td>Mortality</td><td>kernel</td>
+    <td class='num'>0.3675</td>
+    <td class='num'>4.9151</td>
+    <td class='num'>6.1266</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.2625</td>
+    <td class='num'>4.0869</td>
+    <td class='num'>4.9015</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0103</td>
+    <td class='num'>0.1234</td>
+    <td class='num'>0.5378</td>
+  </tr><tr>
+    <td>Mortality</td><td>random_constant</td>
+    <td class='num'>0.4415</td>
+    <td class='num'>0.5909</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.2945</td>
+    <td class='num'>1.0735</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0046</td>
+    <td class='num'>0.0349</td>
+    <td class='num'>0.2752</td>
+  </tr><tr>
+    <td>Mortality</td><td>additive</td>
+    <td class='num'>1.4528</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.5412</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0119</td>
+    <td class='num'>0.1326</td>
+    <td class='num'>0.5747</td>
+  </tr><tr>
+    <td>Pneumonia</td><td>vanilla</td>
+    <td class='num'>1.6309</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.2895</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0180</td>
+    <td class='num'>—</td>
+    <td class='num'>0.6817</td>
+  </tr><tr>
+    <td>Pneumonia</td><td>kernel</td>
+    <td class='num'>0.3627</td>
+    <td class='num'>10.1590</td>
+    <td class='num'>8.6885</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.2571</td>
+    <td class='num'>8.9101</td>
+    <td class='num'>6.3613</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0161</td>
+    <td class='num'>0.2108</td>
+    <td class='num'>0.7565</td>
+  </tr><tr>
+    <td>Pneumonia</td><td>random_constant</td>
+    <td class='num'>0.4375</td>
+    <td class='num'>4.7248</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.2860</td>
+    <td class='num'>35.3906</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0185</td>
+    <td class='num'>0.6337</td>
+    <td class='num'>0.7155</td>
+  </tr><tr>
+    <td>Pneumonia</td><td>additive</td>
+    <td class='num'>1.4551</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.5449</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.0000</td>
+    <td class='num'>0.000</td>
+    <td class='num'>0.0181</td>
+    <td class='num'>0.1569</td>
+    <td class='num'>0.7692</td>
+  </tr></tbody>
+  </table>
+
+  <h2>Last-epoch snapshot</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Task</th><th>Arm</th><th class="num">Epoch</th><th class="num">Train loss</th>
+        <th class="num">Val AUROC</th><th class="num">Val AUPRC</th>
+        <th class="num">Test AUROC</th><th class="num">Test AUPRC</th>
+      </tr>
+    </thead>
+    <tbody><tr>
+    <td>Heart malformations</td><td>vanilla</td>
+    <td class='num'>10</td>
+    <td class='num'>0.0964</td>
+    <td class='num'>0.9780</td>
+    <td class='num'>0.9383</td>
+    <td class='num'>0.9755</td>
+    <td class='num'>0.9445</td>
+  </tr><tr>
+    <td>Heart malformations</td><td>kernel</td>
+    <td class='num'>10</td>
+    <td class='num'>0.0431</td>
+    <td class='num'>0.9852</td>
+    <td class='num'>0.9566</td>
+    <td class='num'>0.9822</td>
+    <td class='num'>0.9556</td>
+  </tr><tr>
+    <td>Heart malformations</td><td>random_constant</td>
+    <td class='num'>10</td>
+    <td class='num'>0.0741</td>
+    <td class='num'>0.9836</td>
+    <td class='num'>0.9524</td>
+    <td class='num'>0.9767</td>
+    <td class='num'>0.9506</td>
+  </tr><tr>
+    <td>Heart malformations</td><td>additive</td>
+    <td class='num'>10</td>
+    <td class='num'>0.0745</td>
+    <td class='num'>0.9805</td>
+    <td class='num'>0.9425</td>
+    <td class='num'>0.9771</td>
+    <td class='num'>0.9419</td>
+  </tr><tr>
+    <td>LOS &gt; 7 days</td><td>vanilla</td>
+    <td class='num'>10</td>
+    <td class='num'>0.4796</td>
+    <td class='num'>0.8133</td>
+    <td class='num'>0.7838</td>
+    <td class='num'>0.8183</td>
+    <td class='num'>0.7808</td>
+  </tr><tr>
+    <td>LOS &gt; 7 days</td><td>kernel</td>
+    <td class='num'>10</td>
+    <td class='num'>0.4507</td>
+    <td class='num'>0.7927</td>
+    <td class='num'>0.7657</td>
+    <td class='num'>0.8098</td>
+    <td class='num'>0.7705</td>
+  </tr><tr>
+    <td>LOS &gt; 7 days</td><td>random_constant</td>
+    <td class='num'>10</td>
+    <td class='num'>0.4692</td>
+    <td class='num'>0.8084</td>
+    <td class='num'>0.7759</td>
+    <td class='num'>0.8161</td>
+    <td class='num'>0.7804</td>
+  </tr><tr>
+    <td>LOS &gt; 7 days</td><td>additive</td>
+    <td class='num'>10</td>
+    <td class='num'>0.4648</td>
+    <td class='num'>0.8147</td>
+    <td class='num'>0.7821</td>
+    <td class='num'>0.8158</td>
+    <td class='num'>0.7806</td>
+  </tr><tr>
+    <td>Mortality</td><td>vanilla</td>
+    <td class='num'>10</td>
+    <td class='num'>0.1627</td>
+    <td class='num'>0.8008</td>
+    <td class='num'>0.2718</td>
+    <td class='num'>0.8257</td>
+    <td class='num'>0.2341</td>
+  </tr><tr>
+    <td>Mortality</td><td>kernel</td>
+    <td class='num'>10</td>
+    <td class='num'>0.1538</td>
+    <td class='num'>0.8229</td>
+    <td class='num'>0.3123</td>
+    <td class='num'>0.7865</td>
+    <td class='num'>0.1948</td>
+  </tr><tr>
+    <td>Mortality</td><td>random_constant</td>
+    <td class='num'>8</td>
+    <td class='num'>0.1686</td>
+    <td class='num'>0.8070</td>
+    <td class='num'>0.2144</td>
+    <td class='num'>0.8201</td>
+    <td class='num'>0.2154</td>
+  </tr><tr>
+    <td>Mortality</td><td>additive</td>
+    <td class='num'>10</td>
+    <td class='num'>0.1551</td>
+    <td class='num'>0.8123</td>
+    <td class='num'>0.3043</td>
+    <td class='num'>0.8202</td>
+    <td class='num'>0.2244</td>
+  </tr><tr>
+    <td>Pneumonia</td><td>vanilla</td>
+    <td class='num'>10</td>
+    <td class='num'>0.0984</td>
+    <td class='num'>0.9462</td>
+    <td class='num'>0.7285</td>
+    <td class='num'>0.9566</td>
+    <td class='num'>0.7148</td>
+  </tr><tr>
+    <td>Pneumonia</td><td>kernel</td>
+    <td class='num'>10</td>
+    <td class='num'>0.0445</td>
+    <td class='num'>0.9775</td>
+    <td class='num'>0.8700</td>
+    <td class='num'>0.9800</td>
+    <td class='num'>0.8211</td>
+  </tr><tr>
+    <td>Pneumonia</td><td>random_constant</td>
+    <td class='num'>10</td>
+    <td class='num'>0.0489</td>
+    <td class='num'>0.9776</td>
+    <td class='num'>0.8829</td>
+    <td class='num'>0.9804</td>
+    <td class='num'>0.8521</td>
+  </tr><tr>
+    <td>Pneumonia</td><td>additive</td>
+    <td class='num'>10</td>
+    <td class='num'>0.0627</td>
+    <td class='num'>0.9596</td>
+    <td class='num'>0.8159</td>
+    <td class='num'>0.9713</td>
+    <td class='num'>0.8250</td>
+  </tr></tbody>
+  </table>
+
+  <footer>
+    Generated from model_new/run/pic train.json / best.pt. Companion CSVs and JSON sit alongside this HTML.
+  </footer>
+</main>
+</body>
+</html>

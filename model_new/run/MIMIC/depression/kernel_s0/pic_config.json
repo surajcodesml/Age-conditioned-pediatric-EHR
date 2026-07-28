@@ -1,0 +1,139 @@
+{
+  "written_before_first_step": true,
+  "timestamp": "2026-07-27T14:29:58",
+  "task": "depression",
+  "arm": "kernel",
+  "pretrain_arm": "kernel",
+  "arm_source": "checkpoint (INV-FT-ARM); --arm was 'kernel' and agrees",
+  "backbone_design": "arm_matched",
+  "source_checkpoint": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/model_new/run/kernel_s0_072420260946/epoch_008.pt",
+    "config_hash": "b469e31eb1e97f2acd053addd14bb280",
+    "pretrain_run_id": "kernel_s0_072420260946",
+    "epoch": 8
+  },
+  "tau_max": {
+    "value": 6.72380256652832,
+    "source": "exact max over full train split, N=367296 windows, of log1p(span_days/7); stored with 1 ulp of float32 headroom (float64 value 6.723802006619469)",
+    "frozen_in_checkpoint": true
+  },
+  "vocabulary_and_embeddings": {
+    "embedding_path": "data/processed/bge_embeddings.pt",
+    "num_codes": 30635,
+    "embedding_dim": 1024,
+    "choice": "mimic_bge_table",
+    "embedding_table_substituted_not_restored": false,
+    "note": "DECISION D3. Recorded, not inferred: if --vocab_choice is null the run did not declare which transfer route it used."
+  },
+  "race_encoding": {
+    "encoding": "one_hot",
+    "channels": [
+      "age_years",
+      "sex",
+      "race_WHITE",
+      "race_BLACK",
+      "race_ASIAN",
+      "race_HISPANIC",
+      "race_AMERICAN_INDIAN",
+      "race_OTHER",
+      "race_UNKNOWN"
+    ],
+    "source": "checkpoint"
+  },
+  "age_standardization": {
+    "mean": 63.33600997924805,
+    "sd": 16.574804306030273,
+    "source": "checkpoint"
+  },
+  "band_table": {
+    "name": "adult",
+    "bands": {
+      "<1": [
+        0.0,
+        1.0
+      ],
+      "1-5": [
+        1.0,
+        6.0
+      ],
+      "6-11": [
+        6.0,
+        12.0
+      ],
+      "12-17": [
+        12.0,
+        18.0
+      ],
+      "18-40": [
+        18.0,
+        40.0
+      ],
+      "40-65": [
+        40.0,
+        65.0
+      ],
+      "65+": [
+        65.0,
+        null
+      ]
+    }
+  },
+  "optimizer_groups": {
+    "lrs": {
+      "lr_backbone": 1e-05,
+      "lr_age": 0.001,
+      "lr_head": 0.001
+    },
+    "n_tensors": {
+      "backbone": 20,
+      "age": 6,
+      "head": 4
+    },
+    "n_params": {
+      "backbone": 1578378,
+      "age": 4864,
+      "head": 104651
+    }
+  },
+  "primary_task": "depression",
+  "primary_endpoint": "val_auprc",
+  "primary_declared_before_run": true,
+  "data_order": {
+    "task": "depression",
+    "hashes": {
+      "train": {
+        "hash": "d7dfc4dc3218fe3d9b188080381f2dad",
+        "n_examples": 118194,
+        "seed": 0,
+        "epochs": 10,
+        "definition": "blake2b-128 over torch.randperm(n, generator=Generator(seed)) replayed once per epoch"
+      },
+      "val": {
+        "hash": "5a8ceec157de48bfc4077d5622688bf7",
+        "n_batches": 265,
+        "n_rows": 16914,
+        "definition": "blake2b-128 over (lengths, code_indices, labels) of every batch in order, shuffle=False"
+      },
+      "test": {
+        "hash": "96304188d5eb605fde73c153e0cc6d68",
+        "n_batches": 525,
+        "n_rows": 33553,
+        "definition": "blake2b-128 over (lengths, code_indices, labels) of every batch in order, shuffle=False"
+      }
+    }
+  },
+  "data_order_siblings_checked": {
+    "n_siblings_checked": 1,
+    "siblings": {
+      "vanilla": "vanilla_s0"
+    }
+  },
+  "deviations_from_pretrain": [
+    "backbone selection: MODE=matched, checkpoint model_new/run_selected/kernel_s0/best.pt",
+    "DECISION D3: vocab_choice=mimic_bge_table, embedding_path=data/processed/bge_embeddings.pt",
+    "task head: |V|-way code BCE -> a single logit (binary classification)",
+    "lr_backbone 1e-05 (pretraining used 0.0002)",
+    "batch_size 64 (pretraining used 64)",
+    "corpus: depression at data/finetune/depression_tensorized (pretraining used data/processed/tensorized_flat)"
+  ]
+}
