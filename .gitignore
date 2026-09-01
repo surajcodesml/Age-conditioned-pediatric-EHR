@@ -62,3 +62,6 @@ __pycache__/
 
 # Synthea generated outputs (regenerate locally with synthea/generate_synthea.sh)
 synthea/output/
+
+# Age-signal benchmark CSVs/parquets (scripts/docs in synthea/sep1-exp/ stay tracked)
+synthea/sep1-exp/output/

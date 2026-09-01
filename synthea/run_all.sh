@@ -1,76 +1,115 @@
 #!/usr/bin/env bash
-# STEP 6: runnable comparison of age-conditioned vs vanilla TALE-EHR backbones on
-# the Synthea disease-onset tasks. SEQUENTIAL nested loop (one run at a time):
-#     for CKPT in vanilla age:
-#       for TASK in <tasks>:
-#         finetune the same auto-detecting classifier, tagged run_dir by ckpt+task
-# Then collect every history.json and print the task x ckpt x band summary table.
+# Fine-tune all four model_new pretrained arms on Synthea disease-onset tasks.
 #
-# Prerequisite: synthea/run_pipeline.sh has built the cohorts + tensorized shards
-# under data/synthea/finetune/.
+# Outputs: model_new/run/synthea/{arm}_{task}_{timestamp}/
+#
+# Prerequisite: synthea/run_pipeline.sh has built cohorts + tensors under
+#   data/synthea/finetune/tensorized/{obesity,t2d,osa,asthma}/
+#
+# Usage:
+#   ./synthea/run_all.sh
+#   EPOCHS=5 TASKS="obesity t2d" ./synthea/run_all.sh
+#   ARMS="vanilla kernel" ./synthea/run_all.sh
 set -euo pipefail
 
-source /home/suraj/miniconda3/etc/profile.d/conda.sh
-conda activate ehr
+cd "$(dirname "$0")/.."
 
-REPO="/home/suraj/Git/Age-conditioned-pediatric-EHR"
-cd "${REPO}"
-
-PROC="data/synthea/processed"
-FT="data/synthea/finetune"
-VOCAB="${PROC}/code_vocab.json"
-EMB="${PROC}/bge_embeddings.pt"
-RUNS_ROOT="${REPO}/checkpoints/synthea_compare"
-
-SEED=42
+TIMESTAMP="${TIMESTAMP:-$(date +%m%d%Y%H%M)}"
+TASKS="${TASKS:-obesity t2d osa asthma}"
+ARMS="${ARMS:-vanilla kernel random_constant additive}"
+SEED="${SEED:-0}"
 EPOCHS="${EPOCHS:-5}"
-BATCH_SIZE="${BATCH_SIZE:-128}"
-TASKS=(obesity t2d osa asthma)
+BATCH="${BATCH:-64}"
+BAND_TABLE="${BAND_TABLE:-pediatric}"
 
-run_one() {
-  local ckpt_name="$1" ckpt_path="$2" task="$3"
-  local run_dir="${RUNS_ROOT}/${task}_${ckpt_name}"
-  echo "######################################################################"
-  echo "# RUN  ckpt=${ckpt_name}  task=${task}"
-  echo "#   pretrained_ckpt = ${ckpt_path}"
-  echo "#   cohort_dir      = ${FT}/cohorts/${task}"
-  echo "#   tensorized_dir  = ${FT}/tensorized/${task}"
-  echo "#   run_dir         = ${run_dir}"
-  echo "######################################################################"
-  python synthea/train_synthea.py \
-    --disease "${task}" \
-    --pretrained_ckpt "${ckpt_path}" \
-    --cohort_dir "${FT}/cohorts/${task}" \
-    --tensorized_dir "${FT}/tensorized/${task}" \
-    --vocab_path "${VOCAB}" \
-    --embedding_path "${EMB}" \
-    --seed "${SEED}" \
-    --epochs "${EPOCHS}" \
-    --batch_size "${BATCH_SIZE}" \
-    --run_dir "${run_dir}"
-}
+TASK_ROOT="data/synthea/finetune/tensorized"
+EMBEDDINGS="data/synthea/processed/bge_embeddings.pt"
+RUN_ROOT="model_new/run/synthea"
 
-main() {
-  mkdir -p "${RUNS_ROOT}"
-  # Nested loop: ckpt (outer) x task (inner), strictly sequential, one at a time.
-  for CKPT_NAME in vanilla age; do
-    if [ "${CKPT_NAME}" = "vanilla" ]; then CKPT_PATH="${VANILLA_CKPT}"; else CKPT_PATH="${AGE_CKPT}"; fi
-    for TASK in "${TASKS[@]}"; do
-      run_one "${CKPT_NAME}" "${CKPT_PATH}" "${TASK}"
-    done
+# Matched-mode: each arm fine-tunes from its own pretrained backbone.
+declare -A CKPT=(
+  [vanilla]="model_new/run/vanilla_s0/epoch_008.pt"
+  [kernel]="model_new/run/kernel_s0_072420260946/epoch_008.pt"
+  [random_constant]="model_new/run/random_constant_s0_072420261750/epoch_008.pt"
+  [additive]="model_new/run/additive_s0_072520260143/epoch_008.pt"
+)
+
+FAILED=()
+
+echo "=============================================================="
+echo "[synthea finetune] timestamp=${TIMESTAMP}"
+echo "[synthea finetune] arms=${ARMS}"
+echo "[synthea finetune] tasks=${TASKS}"
+echo "[synthea finetune] run_root=${RUN_ROOT}/{arm}_{task}_${TIMESTAMP}/"
+echo "=============================================================="
+
+for arm in $ARMS; do
+  ckpt="${CKPT[$arm]:-}"
+  if [ -z "$ckpt" ]; then
+    echo "=== ${arm}: unknown arm (no CKPT entry), skipping"
+    FAILED+=("${arm} (unknown)")
+    continue
+  fi
+  if [ ! -e "$ckpt" ]; then
+    echo "=== ${arm}: missing checkpoint ${ckpt}, skipping"
+    FAILED+=("${arm} (no ckpt)")
+    continue
+  fi
+
+  for task in $TASKS; do
+    task_dir="${TASK_ROOT}/${task}"
+    name="${arm}_${task}_${TIMESTAMP}"
+    dir="${RUN_ROOT}/${name}"
+
+    if [ ! -d "$task_dir" ]; then
+      echo "=== ${name}: missing task dir ${task_dir}, skipping"
+      FAILED+=("${name} (no task dir)")
+      continue
+    fi
+
+    mkdir -p "$dir"
+    echo "=== ${name} <- ${ckpt}"
+
+    set +e
+    HIP_VISIBLE_DEVICES=0 CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=1 \
+      conda run --no-capture-output -n ehr python -m model_new.train_finetune \
+        --arm "$arm" \
+        --seed "$SEED" \
+        --run_name "$name" \
+        --run_root "$RUN_ROOT" \
+        --pretrained_ckpt "$ckpt" \
+        --tensorized_dir "$task_dir" \
+        --embedding_path "$EMBEDDINGS" \
+        --epochs "$EPOCHS" \
+        --batch_size "$BATCH" \
+        --num_workers 8 \
+        --lr_backbone 1e-5 --lr_age 1e-3 --lr_head 1e-3 \
+        --device cuda \
+        --band_table "$BAND_TABLE" \
+        --task_name "$task" \
+        --primary_task "$task" \
+        --primary_endpoint val_auprc \
+        --vocab_choice synthea_bge_table \
+        --deviation "Synthea pediatric synthetic finetune; backbone=${ckpt}" \
+        --deviation "DECISION D3: vocab_choice=synthea_bge_table, embedding_path=${EMBEDDINGS}" \
+        > "${dir}/train.log" 2>&1
+    rc=$?
+    set -e
+
+    if [ $rc -ne 0 ]; then
+      echo "    FAILED (rc=${rc}) — see ${dir}/train.log"
+      FAILED+=("${name}")
+      continue
+    fi
+    echo "    done: ${dir}/{config.json,pic_config.json,train.json,best.pt,epoch_*.pt}"
   done
+done
 
-  echo "######################################################################"
-  echo "# SUMMARY: task x ckpt x developmental band"
-  echo "######################################################################"
-  python synthea/summarize_runs.py --runs_root "${RUNS_ROOT}" --tasks "${TASKS[@]}"
-}
+if [ ${#FAILED[@]} -gt 0 ]; then
+  echo
+  echo "FAILED RUNS: ${FAILED[*]}"
+  exit 1
+fi
 
-# ---------------------------------------------------------------------------
-# Pretrained backbone checkpoints (paths provided with the task).
-# Edit these two lines to point at different backbones.
-# ---------------------------------------------------------------------------
-VANILLA_CKPT="${REPO}/checkpoints/run_20260427_152603/best_pretrain.pt"
-AGE_CKPT="${REPO}/checkpoints/age_real_202605112156/epoch_010.pt"
-
-main
+echo
+echo "All runs finished under ${RUN_ROOT}/ (*_${TIMESTAMP})"

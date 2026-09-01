@@ -1,0 +1,91 @@
+{
+  "experiment": "age_signal_benchmark",
+  "description": "Semi-synthetic pediatric EHR benchmark: stock Synthea background + post-hoc SIGNAL_A/B and S0/S1/S2 labels.",
+  "engine_dir": "/home/suraj/Git/synthea",
+  "repo_root": "/home/suraj/Git/Age-conditioned-pediatric-EHR",
+  "properties_file": "synthea/sep1-exp/age_benchmark.properties",
+  "output_root": "output",
+  "geography": "Massachusetts",
+  "reference_date": "20260101",
+  "end_date": "20260101",
+  "n_per_stratum": {
+    "pilot": 40,
+    "full": 2500
+  },
+  "strata": [
+    {
+      "name": "infant",
+      "age_flag": "0-0",
+      "seed": 202601011,
+      "group": "<1",
+      "note": "Synthea targetAge is integer-cast; 0-0 yields age in [0, 1) years at the reference date."
+    },
+    {
+      "name": "early_childhood",
+      "age_flag": "1-6",
+      "seed": 202601012,
+      "group": "1-5",
+      "note": "age_flag max is exclusive after integer cast, so 1-6 yields target ages 1..5 (1.0 to <6.0 years)."
+    },
+    {
+      "name": "school_age",
+      "age_flag": "6-12",
+      "seed": 202601013,
+      "group": "6-11",
+      "note": "6-12 yields target ages 6..11 (6.0 to <12.0 years)."
+    },
+    {
+      "name": "adolescent",
+      "age_flag": "12-18",
+      "seed": 202601014,
+      "group": "12-17",
+      "note": "12-18 yields target ages 12..17 (12.0 to <18.0 years)."
+    }
+  ],
+  "only_alive_patients": true,
+  "years_of_history": 0,
+  "csv_tables": [
+    "patients",
+    "encounters",
+    "conditions",
+    "medications",
+    "procedures",
+    "observations",
+    "immunizations"
+  ],
+  "signal_probability": 0.5,
+  "signal_seed": 20260101,
+  "signal_time_rule": "uniform_preindex_event_timestamp",
+  "signal_time_rule_detail": "Independently for A and B, if the patient is assigned the signal, sample one existing event timestamp uniformly from timestamps strictly before index_date. If none exist, place the signal at the midpoint of [birthdate, index_date). At most one A and one B per patient.",
+  "label_seed": 20260102,
+  "split_seed": 42,
+  "split_fractions": {
+    "train": 0.7,
+    "val": 0.15,
+    "test": 0.15
+  },
+  "target_prevalence": 0.22,
+  "noise_std": 0.25,
+  "coefficients": {
+    "beta_A": 1.0,
+    "beta_B": -1.0,
+    "beta_age": 0.6,
+    "interaction_strength": 1.0,
+    "g_center_years": 8.5,
+    "g_scale_years": 2.5
+  },
+  "age_groups": [
+    {"name": "<1", "min_inclusive": 0.0, "max_exclusive": 1.0},
+    {"name": "1-5", "min_inclusive": 1.0, "max_exclusive": 6.0},
+    {"name": "6-11", "min_inclusive": 6.0, "max_exclusive": 12.0},
+    {"name": "12-17", "min_inclusive": 12.0, "max_exclusive": 18.0}
+  ],
+  "do_not_load_custom_modules": true,
+  "notes": [
+    "Stock Synthea modules only. Custom peds_obesity/t2d/osa/asthma modules are NOT loaded.",
+    "Does not write to synthea/output or data/synthea (prior 0-25 custom-module cohort is left untouched).",
+    "All experiment artifacts live under synthea/sep1-exp/; generated CSVs/parquets are under synthea/sep1-exp/output/.",
+    "Index date is the fixed Synthea reference date for every living patient.",
+    "Intercepts for S0/S1/S2 are calibrated at build time to the target prevalence; event/age/interaction coefficients are never searched."
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "written_before_first_step": true,
+  "timestamp": "2026-08-11T12:52:19",
+  "task": "asthma",
+  "arm": "kernel",
+  "pretrain_arm": "kernel",
+  "arm_source": "checkpoint (INV-FT-ARM); --arm was 'kernel' and agrees",
+  "backbone_design": "arm_matched",
+  "source_checkpoint": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/model_new/run/kernel_s0_072420260946/epoch_008.pt",
+    "config_hash": "b469e31eb1e97f2acd053addd14bb280",
+    "pretrain_run_id": "kernel_s0_072420260946",
+    "epoch": 8
+  },
+  "tau_max": {
+    "value": 6.72380256652832,
+    "source": "exact max over full train split, N=367296 windows, of log1p(span_days/7); stored with 1 ulp of float32 headroom (float64 value 6.723802006619469)",
+    "frozen_in_checkpoint": true
+  },
+  "vocabulary_and_embeddings": {
+    "embedding_path": "data/synthea/processed/bge_embeddings.pt",
+    "num_codes": 1014,
+    "embedding_dim": 1024,
+    "choice": "synthea_bge_table",
+    "embedding_table_substituted_not_restored": true,
+    "note": "DECISION D3. Recorded, not inferred: if --vocab_choice is null the run did not declare which transfer route it used."
+  },
+  "race_encoding": {
+    "encoding": "one_hot",
+    "channels": [
+      "age_years",
+      "sex",
+      "race_WHITE",
+      "race_BLACK",
+      "race_ASIAN",
+      "race_HISPANIC",
+      "race_AMERICAN_INDIAN",
+      "race_OTHER",
+      "race_UNKNOWN"
+    ],
+    "source": "checkpoint"
+  },
+  "age_standardization": {
+    "mean": 63.33600997924805,
+    "sd": 16.574804306030273,
+    "source": "checkpoint"
+  },
+  "band_table": {
+    "name": "pediatric",
+    "bands": {
+      "neonate": [
+        0.0,
+        0.07665982203969883
+      ],
+      "infant": [
+        0.07665982203969883,
+        1.0
+      ],
+      "toddler": [
+        1.0,
+        3.0
+      ],
+      "preschool": [
+        3.0,
+        6.0
+      ],
+      "school": [
+        6.0,
+        12.0
+      ],
+      "adolescent": [
+        12.0,
+        18.0
+      ],
+      "18+": [
+        18.0,
+        null
+      ]
+    }
+  },
+  "optimizer_groups": {
+    "lrs": {
+      "lr_backbone": 1e-05,
+      "lr_age": 0.001,
+      "lr_head": 0.001
+    },
+    "n_tensors": {
+      "backbone": 20,
+      "age": 6,
+      "head": 4
+    },
+    "n_params": {
+      "backbone": 1578378,
+      "age": 4864,
+      "head": 104651
+    }
+  },
+  "primary_task": "asthma",
+  "primary_endpoint": "val_auprc",
+  "primary_declared_before_run": true,
+  "data_order": {
+    "task": "asthma",
+    "hashes": {
+      "train": {
+        "hash": "06ee0e9af2d9389494007af986d0b6b2",
+        "n_examples": 31199,
+        "seed": 0,
+        "epochs": 5,
+        "definition": "blake2b-128 over torch.randperm(n, generator=Generator(seed)) replayed once per epoch"
+      },
+      "val": {
+        "hash": "fe60ba806e0a4dff13726b6dfe7a1946",
+        "n_batches": 71,
+        "n_rows": 4510,
+        "definition": "blake2b-128 over (lengths, code_indices, labels) of every batch in order, shuffle=False"
+      },
+      "test": {
+        "hash": "b687cf46c4e94da3b629a28300983895",
+        "n_batches": 139,
+        "n_rows": 8861,
+        "definition": "blake2b-128 over (lengths, code_indices, labels) of every batch in order, shuffle=False"
+      }
+    }
+  },
+  "data_order_siblings_checked": {
+    "n_siblings_checked": 1,
+    "siblings": {
+      "vanilla": "vanilla_asthma_081120261139"
+    }
+  },
+  "deviations_from_pretrain": [
+    "Synthea pediatric synthetic finetune; backbone=model_new/run/kernel_s0_072420260946/epoch_008.pt",
+    "DECISION D3: vocab_choice=synthea_bge_table, embedding_path=data/synthea/processed/bge_embeddings.pt",
+    "DECISION D3 option (b): embedding_table substituted from --embedding_path; not restored from the pretrain checkpoint (shape mismatch)",
+    "task head: |V|-way code BCE -> a single logit (binary classification)",
+    "lr_backbone 1e-05 (pretraining used 0.0002)",
+    "batch_size 64 (pretraining used 64)",
+    "corpus: asthma at data/synthea/finetune/tensorized/asthma (pretraining used data/processed/tensorized_flat)"
+  ]
+}
