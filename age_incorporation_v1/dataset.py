@@ -18,7 +18,7 @@ import torch
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader, Dataset
 
-from config import AGE_GROUPS, LABEL_COL, PAD, UNK, Config
+from config import AGE_GROUPS, DEFAULT_S4_DATA_DIR, LABEL_COL, PAD, UNK, Config
 
 
 def time_norm_days(days_before_index: np.ndarray, age_scale_years: float) -> np.ndarray:
@@ -242,6 +242,174 @@ class SyntheaBenchmark:
         age_scale = self.cfg.age_scale_years
         for row in sub.itertuples(index=False):
             pid = str(row.patient_id)
+            packed = self._rows[pid]
+            code_ids.append(packed["code_ids"])
+            type_ids.append(packed["type_ids"])
+            time_norm.append(packed["time_norm"])
+            age_event.append(packed["age_event_norm"])
+            index_age.append(float(np.clip(row.age_at_index / age_scale, 0.0, 1.0)))
+            labels.append(float(getattr(row, label_col)))
+            group = str(row.developmental_age_group)
+            groups.append(group if group in AGE_GROUPS else group)
+            pids.append(pid)
+        return PatientSequenceDataset(
+            code_ids=code_ids,
+            type_ids=type_ids,
+            time_norm=time_norm,
+            age_event_norm=age_event,
+            index_age_norm=np.asarray(index_age, dtype=np.float32),
+            labels=np.asarray(labels, dtype=np.float32),
+            age_groups=groups,
+            patient_ids=pids,
+        )
+
+    def make_loader(self, split: str, task: str, shuffle: bool) -> DataLoader:
+        ds = self.make_dataset(split, task)
+        return DataLoader(
+            ds,
+            batch_size=self.cfg.batch_size,
+            shuffle=shuffle,
+            num_workers=self.cfg.num_workers,
+            collate_fn=collate_batch,
+            drop_last=False,
+        )
+
+
+class S4Benchmark:
+    """Loads S4 augmented tables from s4_data/ with the existing vocab/truncation logic.
+
+    Only eligible patients (those with y_S4 not NaN) are included.
+    Reuses the same vocab built from original training events so that
+    TEMP_POS, TEMP_NEG, TEMP_QUERY get UNK-mapped if not in train vocab,
+    or get their own indices if they appear in train events.
+    """
+
+    def __init__(self, cfg: Config, s4_data_dir: Path | None = None) -> None:
+        self.cfg = cfg
+        s4_dir = Path(s4_data_dir) if s4_data_dir else DEFAULT_S4_DATA_DIR
+        patients_path = s4_dir / "patients.parquet"
+        events_path = s4_dir / "events.parquet"
+        if not patients_path.exists() or not events_path.exists():
+            raise FileNotFoundError(
+                f"S4 data not found in {s4_dir}. Run build_s4.py first."
+            )
+        patients = pd.read_parquet(patients_path)
+        # Only eligible patients (those with y_S4)
+        patients = patients[patients["y_S4"].notna()].copy()
+        patients["y_S4"] = patients["y_S4"].astype(int)
+        self.patients = patients
+
+        events = pd.read_parquet(events_path)
+        # Only events for eligible patients
+        elig_pids = set(patients["patient_id"])
+        events = events[events["patient_id"].isin(elig_pids)].copy()
+
+        pre = events["time_before_index_days"] > 0
+        self.n_dropped_non_preindex = int((~pre).sum())
+        events = events.loc[pre].copy()
+        events = events.sort_values(["patient_id", "event_timestamp"], kind="mergesort")
+
+        train_ids = set(patients.loc[patients["split"] == "train", "patient_id"])
+        train_events = events.loc[events["patient_id"].isin(train_ids)]
+        self.code_vocab = build_vocab(train_events["event_code"])
+        self.type_vocab = build_vocab(train_events["event_type"])
+
+        events["code_id"] = encode(events["event_code"], self.code_vocab)
+        events["type_id"] = encode(events["event_type"], self.type_vocab)
+        events["time_n"] = time_norm_days(
+            events["time_before_index_days"].to_numpy(), cfg.age_scale_years
+        )
+        events["age_n"] = age_norm_years(
+            events["age_at_event"].to_numpy(), cfg.age_scale_years
+        )
+
+        self.truncation = self._truncate_and_pack(events)
+        self.split_counts = {
+            s: int((self.patients["split"] == s).sum()) for s in ("train", "val", "test")
+        }
+
+    def _truncate_and_pack(self, events: pd.DataFrame) -> TruncationStats:
+        max_len = self.cfg.max_seq_len
+        self._rows: dict[str, dict[str, np.ndarray]] = {}
+        n_over = 0
+        max_raw = 0
+        n_sig = n_sig_kept = 0
+        n_a = n_a_lost = 0
+        n_b = n_b_lost = 0
+        # Track TEMP_* signals too
+        n_temp = n_temp_kept = 0
+
+        for pid, g in events.groupby("patient_id", sort=False):
+            raw_len = len(g)
+            max_raw = max(max_raw, raw_len)
+            if raw_len > max_len:
+                n_over += 1
+            codes_raw = g["event_code"].to_numpy()
+            is_a = codes_raw == "SIGNAL_A"
+            is_b = codes_raw == "SIGNAL_B"
+            is_temp = np.isin(codes_raw, ["TEMP_POS", "TEMP_NEG", "TEMP_QUERY"])
+            n_a_here = int(is_a.sum())
+            n_b_here = int(is_b.sum())
+            n_temp_here = int(is_temp.sum())
+            n_a += n_a_here
+            n_b += n_b_here
+            n_sig += n_a_here + n_b_here
+            n_temp += n_temp_here
+
+            kept = g.tail(max_len)
+            kept_codes = kept["event_code"].to_numpy()
+            kept_a = int((kept_codes == "SIGNAL_A").sum())
+            kept_b = int((kept_codes == "SIGNAL_B").sum())
+            kept_temp = int(np.isin(kept_codes, ["TEMP_POS", "TEMP_NEG", "TEMP_QUERY"]).sum())
+            n_sig_kept += kept_a + kept_b
+            n_a_lost += n_a_here - kept_a
+            n_b_lost += n_b_here - kept_b
+            n_temp_kept += kept_temp
+
+            self._rows[str(pid)] = {
+                "code_ids": kept["code_id"].to_numpy(dtype=np.int64),
+                "type_ids": kept["type_id"].to_numpy(dtype=np.int64),
+                "time_norm": kept["time_n"].to_numpy(dtype=np.float32),
+                "age_event_norm": kept["age_n"].to_numpy(dtype=np.float32),
+            }
+
+        n_patients = len(self._rows)
+        n_sig_lost = n_sig - n_sig_kept
+        stats = TruncationStats(
+            n_patients=n_patients,
+            n_over_max=n_over,
+            frac_over_max=n_over / n_patients if n_patients else 0.0,
+            max_seq_len_raw=max_raw,
+            n_signal_events=n_sig,
+            n_signal_events_kept=n_sig_kept,
+            frac_signal_events_lost=n_sig_lost / n_sig if n_sig else 0.0,
+            n_signal_a=n_a,
+            n_signal_a_lost=n_a_lost,
+            n_signal_b=n_b,
+            n_signal_b_lost=n_b_lost,
+        )
+        # Attach extra TEMP stats
+        stats.n_temp_events = n_temp
+        stats.n_temp_events_kept = n_temp_kept
+        stats.frac_temp_events_lost = (n_temp - n_temp_kept) / n_temp if n_temp else 0.0
+        return stats
+
+    def make_dataset(self, split: str, task: str) -> PatientSequenceDataset:
+        label_col = LABEL_COL[task]
+        sub = self.patients.loc[self.patients["split"] == split].copy()
+        code_ids: list[np.ndarray] = []
+        type_ids: list[np.ndarray] = []
+        time_norm: list[np.ndarray] = []
+        age_event: list[np.ndarray] = []
+        index_age: list[float] = []
+        labels: list[float] = []
+        groups: list[str] = []
+        pids: list[str] = []
+        age_scale = self.cfg.age_scale_years
+        for row in sub.itertuples(index=False):
+            pid = str(row.patient_id)
+            if pid not in self._rows:
+                continue
             packed = self._rows[pid]
             code_ids.append(packed["code_ids"])
             type_ids.append(packed["type_ids"])

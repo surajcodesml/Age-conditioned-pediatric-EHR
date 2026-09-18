@@ -14,15 +14,20 @@ DEFAULT_DATA_DIR = (
     REPO_ROOT / "synthea" / "sep1-exp" / "output" / "full" / "processed"
 )
 DEFAULT_OUTPUT_DIR = EXP_DIR / "outputs"
+DEFAULT_S4_DATA_DIR = DEFAULT_OUTPUT_DIR / "s4_data"
 
-ARMS = ("no_age", "late_age", "additive_age", "conditioned_age")
+ARMS = ("no_age", "late_age", "additive_age", "conditioned_age", "dkm_age", "shared_decay")
+BASELINE_ARMS = ("no_age", "late_age", "additive_age", "conditioned_age")
+S4_ARMS = ("no_age", "late_age", "additive_age", "conditioned_age", "shared_decay", "dkm_age")
 TASKS = ("S0", "S1", "S2")
+S4_TASKS = ("S4",)
 AGE_GROUPS = ("<1", "1-5", "6-11", "12-17")
 FULL_SEEDS = (0, 1, 2, 3, 4)
+DKM_PROBE_AGES = (0.0, 1.0, 3.0, 5.0, 8.0, 12.0, 15.0, 17.0)
 
 PAD = "<PAD>"
 UNK = "<UNK>"
-LABEL_COL = {"S0": "y_S0", "S1": "y_S1", "S2": "y_S2"}
+LABEL_COL = {"S0": "y_S0", "S1": "y_S1", "S2": "y_S2", "S4": "y_S4"}
 
 
 @dataclass

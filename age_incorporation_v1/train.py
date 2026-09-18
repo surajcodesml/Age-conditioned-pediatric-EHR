@@ -10,9 +10,9 @@ import torch
 from torch.nn import BCEWithLogitsLoss
 from torch.optim import AdamW
 
-from config import Config
+from config import DKM_PROBE_AGES, Config
 from evaluate import evaluate
-from model import AgeIncorporationModel, count_parameters
+from model import AgeIncorporationModel, count_parameters, dkm_lambda_curve
 
 
 def set_seed(seed: int) -> None:
@@ -51,6 +51,7 @@ def train_run(
         dropout=cfg.dropout,
         age_hidden=cfg.age_hidden,
         head_hidden=cfg.head_hidden,
+        age_scale_years=cfg.age_scale_years,
     ).to(device)
     n_params = count_parameters(model)
     opt = AdamW(model.parameters(), lr=cfg.lr, weight_decay=cfg.weight_decay)
@@ -87,19 +88,32 @@ def train_run(
         model.train()
         running = 0.0
         n_seen = 0
+        dkm_deltas: list[torch.Tensor] = []
+        dkm_gnorms: list[float] = []
         for batch in train_loader:
             opt.zero_grad(set_to_none=True)
+            pad = batch["padding_mask"].to(device)
             logits = model(
                 batch["code_ids"].to(device),
                 batch["type_ids"].to(device),
                 batch["time_norm"].to(device),
                 batch["age_event_norm"].to(device),
-                batch["padding_mask"].to(device),
+                pad,
                 batch["index_age_norm"].to(device),
             )
             labels = batch["labels"].to(device)
             loss = loss_fn(logits, labels)
             loss.backward()
+            if cfg.arm in ("dkm_age", "shared_decay"):
+                g2 = 0.0
+                for p in model.age_lambda_generator.parameters():
+                    if p.grad is not None:
+                        g2 += float(p.grad.detach().pow(2).sum())
+                dkm_gnorms.append(g2 ** 0.5)
+                cache = model._dkm_cache
+                if cache is not None:
+                    valid = ~pad
+                    dkm_deltas.append(cache["delta_lambda"][valid].detach().cpu())
             torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_clip)
             opt.step()
             bs = int(labels.size(0))
@@ -117,6 +131,16 @@ def train_run(
             "val_by_age_group": val_metrics["by_age_group"],
             "is_best": is_best,
         }
+        if cfg.arm in ("dkm_age", "shared_decay"):
+            deltas = torch.cat(dkm_deltas) if dkm_deltas else torch.zeros(1)
+            row["dkm"] = {
+                "lambda_base_raw": float(model.lambda_base_raw.detach()),
+                "lambda_base": float(torch.nn.functional.softplus(model.lambda_base_raw).detach()),
+                "lambda_at_ages": dkm_lambda_curve(model, device),
+                "delta_lambda_mean": float(deltas.mean()),
+                "delta_lambda_std": float(deltas.std(unbiased=False)) if deltas.numel() > 1 else 0.0,
+                "age_generator_grad_norm_mean": float(np.mean(dkm_gnorms)) if dkm_gnorms else 0.0,
+            }
         history.append(row)
         history_path.write_text(json.dumps(history, indent=2, default=str) + "\n")
         last_epoch = epoch
@@ -170,6 +194,21 @@ def train_run(
     }
     if extra_meta:
         result.update(extra_meta)
+    if cfg.arm in ("dkm_age", "shared_decay"):
+        dkm_diag = {
+            "probe_ages": list(DKM_PROBE_AGES),
+            "best_checkpoint": {
+                "epoch": best_epoch,
+                "lambda_base_raw": float(model.lambda_base_raw.detach()),
+                "lambda_base": float(torch.nn.functional.softplus(model.lambda_base_raw).detach()),
+                "lambda_at_ages": dkm_lambda_curve(model, device),
+            },
+            "per_epoch": [h.get("dkm") for h in history if "dkm" in h],
+        }
+        result["dkm_diagnostics"] = dkm_diag
+        (run_dir / "dkm_diagnostics.json").write_text(
+            json.dumps(dkm_diag, indent=2, default=str) + "\n"
+        )
     (run_dir / "metrics.json").write_text(json.dumps(result, indent=2, default=str) + "\n")
     history_path.write_text(json.dumps(history, indent=2, default=str) + "\n")
     (run_dir / "config.json").write_text(json.dumps(cfg.to_dict(), indent=2) + "\n")
