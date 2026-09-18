@@ -1,0 +1,67 @@
+{
+  "seed": 20260918,
+  "n_total_synthea": 10000,
+  "n_eligible": 9407,
+  "min_history_days": 90.0,
+  "gap_min_days": 7.0,
+  "gap_max_days": 90.0,
+  "gap_near_days": [
+    7.0,
+    14.0
+  ],
+  "gap_far_days": [
+    60.0,
+    90.0
+  ],
+  "gap_sampling": "half Uniform[7,14], half Uniform[60,90], then shuffled independently of polarity and age",
+  "tau_week_scale": 7.0,
+  "tau_max": 2.6288008294480694,
+  "tau_formula": "tau = clip( log(1 + dt_days / 7) / log(1 + 90 / 7), 0, 1 )",
+  "lambda0_true": 0.5,
+  "beta_true": {
+    "T0": 0.0,
+    "T1": 1.0,
+    "T2": -1.0
+  },
+  "n_signals_range": [
+    4,
+    6,
+    8
+  ],
+  "n_signals_note": "Even counts only, with n_pos = n_neg, so polarity counts cannot label the task.",
+  "age_mean_train": 7.4415071406867215,
+  "age_std_train": 5.594278748446983,
+  "split_counts": {
+    "train": 6582,
+    "val": 1407,
+    "test": 1418
+  },
+  "age_group_counts": {
+    "<1": 1900,
+    "1-5": 2508,
+    "6-11": 2503,
+    "12-17": 2496
+  },
+  "eligible_by_split_age": {
+    "train": {
+      "<1": 1328,
+      "1-5": 1755,
+      "6-11": 1752,
+      "12-17": 1747
+    },
+    "val": {
+      "<1": 282,
+      "1-5": 376,
+      "6-11": 375,
+      "12-17": 374
+    },
+    "test": {
+      "<1": 290,
+      "1-5": 377,
+      "6-11": 376,
+      "12-17": 375
+    }
+  },
+  "label_rule": "y = 1[sum_j softmax(-lambda(a) * tau_j) * x_j > 0], x in {+1,-1}",
+  "injection": "POS_SIGNAL/NEG_SIGNAL sampled independently of age; Synthea events kept as distractors"
+}
