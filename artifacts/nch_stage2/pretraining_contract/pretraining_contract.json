@@ -1,0 +1,377 @@
+{
+  "source": {
+    "active_run": "stage1_mimic_pretrain.train --arm age_temporal --run_name adkm_s0 --seed 0",
+    "active_run_config": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage1_mimic_pretrain/run/adkm_s0/config.json",
+    "git_commit": "6778b5527b82e03f2648e223ea023a7ba56f28e5",
+    "note": "Contract is taken from implementation + the already-written adkm_s0 config. The run directory is not modified."
+  },
+  "pipeline": {
+    "raw_mimic": "/home/suraj/Data/MIMIC-IV/physionet.org/files/mimiciv/3.1",
+    "build_event_table": {
+      "file": "preprocessing/build_event_table.py",
+      "function": "main",
+      "output": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/patient_events_full.parquet"
+    },
+    "rollup": {
+      "file": "preprocessing/rollup_and_describe.py",
+      "functions": [
+        "normalize_code",
+        "create_phecode_maps",
+        "create_ccs_maps",
+        "build_rollup"
+      ],
+      "output": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/patient_events_rolled_full.parquet"
+    },
+    "splits": {
+      "file": "preprocessing/build_splits.py",
+      "function": "assign_splits",
+      "strategy": "patient-level, quintiles of event count, 70/10/20, seed=42"
+    },
+    "embeddings_and_vocab": {
+      "file": "preprocessing/compute_bge_embeddings.py",
+      "function": "main",
+      "vocab_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/code_vocab.json",
+      "embedding_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/bge_embeddings.pt",
+      "encoder": "BAAI/bge-m3",
+      "embedding_dim": 1024,
+      "frozen": true
+    },
+    "tensorize": {
+      "file": "model_new/tensorize_pretrain.py",
+      "functions": [
+        "build_subject_payload",
+        "tensorize_bucket",
+        "rebuild_split"
+      ],
+      "output": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/tensorized_flat"
+    },
+    "dataset": {
+      "file": "model_new/data.py",
+      "class": "TensorizedPretrainDataset",
+      "collate": "pretrain_collate / make_collate"
+    },
+    "model": {
+      "file": "stage1_mimic_pretrain/model.py",
+      "class": "MinimalDKMModel",
+      "train": "stage1_mimic_pretrain/train.py"
+    }
+  },
+  "event_representation": {
+    "parquet_schema": [
+      "subject_id",
+      "hadm_id",
+      "event_time",
+      "code_id",
+      "code_type",
+      "timestamp_days",
+      "log_delta_t",
+      "age_at_event_days",
+      "sex",
+      "race"
+    ],
+    "model_event_tuple": {
+      "code_indices": "[B, L] int64; PAD=0, UNK=1, real = vocab_index + 2",
+      "timestamps_days": "[B, L] float64; days from the patient's first event; padded 0.0",
+      "age_years": "[B, L] float32; age_at_event_days / 365.25; padded 0.0",
+      "demographics": "[B, L, 9] float32; last-event vector is consumed by the head",
+      "attention_mask": "[B, L] bool",
+      "lengths": "[B] int64"
+    },
+    "timestamp": {
+      "raw": "event_time (absolute, deidentified)",
+      "model": "timestamp_days = (event_time - min_event_time_of_patient) / 86400",
+      "implementation": "preprocessing/build_event_table.py events_time CTE",
+      "storage_dtype": "float32 in shards; collate promotes to float64 for lag arithmetic"
+    },
+    "age_at_event": {
+      "formula": "age_at_event_days = (event_time - dob) / 86400",
+      "dob_mimic": "July 1 of (anchor_year - anchor_age); see patients_demo in build_event_table.py",
+      "years": "age_years = age_at_event_days / 365.25",
+      "clipping": "none in the loader",
+      "log1p": false
+    },
+    "index_age": {
+      "pretrain": "not a single index date; each sample is a next-visit forecast window",
+      "pooling_age": "age of the last valid input event (AttentionPooling.last_valid_index)",
+      "demographic_age": "same last-event age, then z-scored in MinimalDKMModel.standardize_demo_age"
+    },
+    "token": {
+      "string": "rolled code_id with type prefix (PHE_, CCS_, RXN_, ...)",
+      "vocab_id": "code_vocab.json maps token -> [0, V)",
+      "model_id": "PAD=0, UNK=1, real=vocab_id+2 (model_new.data._pad_common)",
+      "text_embeddings": "frozen BGE-M3 1024-d table; row 0/1 are zeros for PAD/UNK"
+    },
+    "event_types_included": {
+      "diagnosis": "ICD9_/ICD10_ then PheCode PHE_ (unmapped ICD leftover kept)",
+      "procedure": "PROC9_/PROC10_ then CCS_ (ICD-9-CM / ICD-10-PCS)",
+      "hcpcs": "HCPCS_ then CCS_ via the ICD-10-PCS CCS join (mostly leftover HCPCS_)",
+      "medication": "NDC_ then RXN_<RxCUI>",
+      "lab": "LAB_<mimic_itemid> passthrough",
+      "chart": "CHART_<mimic_itemid> passthrough",
+      "drg": "DRG_<code> passthrough",
+      "input": "INPUT_<itemid> passthrough",
+      "output": "OUTPUT_<itemid> passthrough",
+      "icu_procedure": "ICUPROC_<itemid> passthrough"
+    },
+    "demographics": {
+      "sex": "1 if gender=='M' else 0 (build_event_table.patients_demo)",
+      "race": "model_new.data.encode_race; 7 buckets WHITE,BLACK,ASIAN,HISPANIC,AMERICAN_INDIAN,OTHER,UNKNOWN",
+      "race_encoding_default": "one_hot",
+      "demo_dim": 9,
+      "demo_channels": [
+        "age_years",
+        "sex",
+        "race_WHITE",
+        "race_BLACK",
+        "race_ASIAN",
+        "race_HISPANIC",
+        "race_AMERICAN_INDIAN",
+        "race_OTHER",
+        "race_UNKNOWN"
+      ],
+      "n_race": 7,
+      "note": "patient-level constants broadcast across the sequence; head uses last-event demo"
+    },
+    "continuous_values": "not used as sequence tokens; labs/charts are itemid presence only",
+    "encounter": "hadm_id defines visit blocks for the pretraining target; not an input feature"
+  },
+  "vocabulary": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/code_vocab.json",
+    "size": 30635,
+    "id_range": [
+      0,
+      30634
+    ],
+    "token_to_id": "JSON object {token: int}; keys sorted alphabetically at BGE build time",
+    "id_to_token": "inverse of code_vocab.json; embedding table code_ids = ['[PAD]','[UNK]'] + sorted tokens",
+    "special_tokens": {
+      "PAD": {
+        "vocab_index": null,
+        "model_id": 0,
+        "embedding": "zeros"
+      },
+      "UNK": {
+        "vocab_index": 30635,
+        "model_id": 1,
+        "embedding": "zeros",
+        "note": "unk_vocab_index = len(code_vocab) in shards; collate maps that id -> 1"
+      }
+    },
+    "prefixes": {
+      "ICD10": 16092,
+      "RXN": 3720,
+      "HCPCS": 2364,
+      "CHART": 2311,
+      "PHE": 1748,
+      "ICD9": 1590,
+      "LAB": 976,
+      "DRG": 846,
+      "INPUT": 327,
+      "CCS": 231,
+      "PROC10": 188,
+      "ICUPROC": 159,
+      "OUTPUT": 71,
+      "NDC": 12
+    },
+    "code_systems": {
+      "ICD-9 diagnosis": "raw ICD9_<code> (no dots, as stored by MIMIC) or rolled PHE_",
+      "ICD-10 diagnosis": "raw ICD10_<code> (no dots) or rolled PHE_",
+      "ICD-9/10 procedures": "rolled CCS_ (231 categories); leftover PROC10_ exists, PROC9_ none in frozen vocab",
+      "CPT/HCPCS": "HCPCS_<code> leftover after CCS join against ICD-10-PCS (low yield)",
+      "medication": "RXN_<RxCUI>; 12 leftover NDC_ tokens",
+      "labs": "LAB_<MIMIC itemid> \u2014 MIMIC-local, not portable",
+      "chart": "CHART_<MIMIC itemid> \u2014 MIMIC-local, not portable",
+      "other": "DRG_, INPUT_, OUTPUT_, ICUPROC_"
+    },
+    "normalization": {
+      "function": "preprocessing.rollup_and_describe.normalize_code",
+      "rule": "strip().upper().replace('.', '')",
+      "icd_join": "PheWAS maps joined on the normalized ICD body after stripping the ICD9_/ICD10_ prefix",
+      "ndc": "strip hyphens/spaces before RxNorm lookup",
+      "type_encoded_in_token": true
+    },
+    "text_encoder": {
+      "name": "BAAI/bge-m3",
+      "file": "preprocessing/compute_bge_embeddings.py",
+      "frozen": true,
+      "dim": 1024,
+      "rows": 30637,
+      "descriptions_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/code_descriptions.json",
+      "n_descriptions": 30635
+    },
+    "rare_code_filtering": "none at vocab build; vocab = every code that received a description after rollup",
+    "oov": "codes missing from code_vocab.json map to unk_vocab_index = V, then model id 1",
+    "padding": "collate left-aligns real events and fills the right with PAD=0; mask False on pad"
+  },
+  "temporal": {
+    "event_order": "subject_id, event_time, code_id (parquet); within a visit: event_time, code_id (tensorize)",
+    "equal_timestamps": "stable secondary key code_id (and original index at window selection via lexsort)",
+    "lag_definition": "tau_ij = log1p(|t_i - t_j| / c) with c = 7 days",
+    "lag_function": "model_new.data.lag_to_tau",
+    "lag_probe_tau_of_7_days": 0.6931471824645996,
+    "units": "days",
+    "log1p": true,
+    "c_days": 7.0,
+    "tau_max": {
+      "computed": null,
+      "source": null,
+      "used_by_stage1_model": false,
+      "chebyshev_rescale": false,
+      "note": "tau_max is recorded by corpus_stats for the obsolete DKM Chebyshev path (INV-TMAX). stage1_mimic_pretrain.config.tau_transform_spec sets tau_max_used=False and chebyshev_rescale=False. The live model consumes raw log1p(|dt|/7). NCH must still freeze this MIMIC tau_max for any diagnostic of temporal support; it must not be re-estimated."
+    },
+    "clipping": "none on tau in Stage-1 attention",
+    "normalization_minus1_1": false,
+    "mimic_derived_constants": {
+      "WEEK_DAYS": 7.0,
+      "DAYS_PER_YEAR": 365.25,
+      "tau_max_mimic_train": null,
+      "span_days_max": null
+    },
+    "max_history": "no calendar window; count truncation only",
+    "sequence_truncation": {
+      "max_seq_len": 1024,
+      "direction": "keep newest events (drop oldest); select_forecast_input_indices"
+    },
+    "temporal_masking": "none (no causal mask)",
+    "padding_masking": "build_pair_mask / build_key_mask; padded keys get -inf then 0 attention",
+    "stored_log_delta_t": {
+      "file": "preprocessing/build_event_table.py",
+      "formula": "ln(1 + max(dt_consecutive_days, 0))  \u2014 NOT the model tau",
+      "used_by_model": false
+    },
+    "from_active_run": {
+      "name": "log1p_weeks",
+      "formula": "tau_ij = log(1 + |t_i - t_j| / c)",
+      "c_days": 7.0,
+      "t_unit": "days from first event (timestamps_days)",
+      "implementation": "model_new.data.lag_to_tau (float64 abs, then log1p)",
+      "chebyshev_rescale": false,
+      "tau_max_used": false
+    }
+  },
+  "age": {
+    "calculation": "age_at_event_days = (event_time - dob)/86400; years = days/365.25",
+    "units": {
+      "days": "age_at_event_days",
+      "years": "age_years"
+    },
+    "age_at_event_vs_index": "Every event carries its own age. Attention conditions on query age a_i. The prediction head uses the last input event's age (and its z-scored demo channel).",
+    "clipping": "none",
+    "log1p": false,
+    "normalization": {
+      "name": "standardize_years",
+      "formula": "z(a) = (a - mean) / sd",
+      "mean_frozen_config": 63.33601047086648,
+      "sd_frozen_config": 16.574804662346914,
+      "mean_active_run": 63.33601047086567,
+      "sd_active_run": 16.574804662350303,
+      "source": "model_new.data.corpus_stats event-level moments on MIMIC train",
+      "trainable": false,
+      "two_sites": {
+        "attention": "AgeTemporalBias.z_of(age_years) using buffers age_mean/age_sd",
+        "demographics": "MinimalDKMModel.standardize_demo_age on channel 0 of last-event demo"
+      }
+    },
+    "how_age_enters_model": [
+      "token sequence does not include age",
+      "age_years tensor -> lambda(a)=lambda0 + beta * z(a) in self-attention",
+      "demographics[...,0]=raw years; last event z-scored and projected (demo_proj) then concatenated onto pooled h"
+    ],
+    "transform_spec": {
+      "name": "standardize_years",
+      "formula": "z(a) = (a - mean) / sd",
+      "a_unit": "years (age_at_event_days / 365.25)",
+      "mean": 63.33601047086648,
+      "sd": 16.574804662346914,
+      "source": "model_new.data.corpus_stats event-level moments on MIMIC train",
+      "trainable": false,
+      "fourier": false,
+      "chebyshev": false,
+      "age_mlp": false
+    }
+  },
+  "sequence_construction": {
+    "unit": "one sample per (patient, next hadm-visit V_{m+1}) with \u22651 prior event",
+    "index_event": "start_time(V_{m+1}) = min timestamps in the target visit (strict past for input)",
+    "history_inclusion": "timestamp < target_time; ties go to the target (INV-HORIZON)",
+    "max_seq_len": 1024,
+    "min_events": "raw table: \u22655 events and >1 unique timestamp per patient (build_event_table). tensorize: \u22652 visits. dataset: \u22651 pre-boundary event.",
+    "padding": "right pad to batch max length (not max_seq_len if shorter)",
+    "truncation_direction": "drop oldest",
+    "chronological_order": true,
+    "duplicates": "not dropped; identical (time, code) rows remain",
+    "splits": {
+      "strategy": "patient-level quintile-stratified 70/10/20, seed 42 (build_splits.py)",
+      "active_run_counts": {
+        "n_patients": {
+          "train": 143802,
+          "val": 20511,
+          "test": 41174
+        },
+        "overlap": {
+          "train&val": 0,
+          "train&test": 0,
+          "val&test": 0
+        }
+      },
+      "leakage_prevention": "no subject_id overlap across train/val/test (asserted in adkm_s0 config)"
+    }
+  },
+  "stage1_objective": {
+    "pretrain_only": {
+      "target": "multi-hot codes of the next hadm visit; UNK dropped; duplicates collapsed",
+      "loss": "BCEWithLogitsLoss, unweighted, no pos_weight",
+      "head": "PredictionHead over |V|=30635",
+      "spec": {
+        "name": "future_visit_codes",
+        "input": "events with timestamp < start_time(V_{m+1}) (strict); ties go to target",
+        "target": "multi-hot code set of hadm-visit V_{m+1}, UNK dropped",
+        "horizon": "next admission/visit; not a fixed calendar window",
+        "masking": "padding_only (not causal); target visit is outside the input window",
+        "implementation": "model_new.data.TensorizedPretrainDataset",
+        "loss": "BCEWithLogitsLoss, unweighted, no pos_weight"
+      }
+    },
+    "encoder_inputs_stage2_must_reproduce": [
+      "code_indices with PAD=0 UNK=1 real=id+2 using the frozen MIMIC vocab",
+      "timestamps_days in days (origin may be first event of the retained window; only differences matter)",
+      "age_years = age_at_event_days/365.25",
+      "demographics layout (age_years, sex, 7-d race one-hot)",
+      "attention_mask / lengths",
+      "WEEK_DAYS=7 lag_to_tau",
+      "frozen age mean/sd for z(a)",
+      "max_seq_len=1024 newest-event truncation",
+      "padding-only mask (not causal)"
+    ],
+    "not_required_for_stage2_encoder": [
+      "future-visit multi-hot target_codes",
+      "hadm visit-block construction for forecasting",
+      "pretrain prediction head"
+    ]
+  },
+  "active_run_paths": {
+    "tensorized_dir": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/tensorized_flat",
+    "embedding_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/bge_embeddings.pt",
+    "vocab_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/code_vocab.json"
+  },
+  "reuse_for_nch": {
+    "must_reuse": [
+      "data/processed/code_vocab.json (do not regenerate)",
+      "data/processed/bge_embeddings.pt",
+      "lag_to_tau / WEEK_DAYS=7",
+      "DAYS_PER_YEAR=365.25",
+      "MIMIC_AGE_MEAN_YEARS / MIMIC_AGE_STD_YEARS (or the adkm_s0 recorded mean/sd)",
+      "encode_race / encode_sex conventions",
+      "PAD=0 UNK=1 offset +2",
+      "max_seq_len=1024 newest truncation",
+      "PheWAS ICD\u2192PheCode maps under data/processed/mappings/"
+    ],
+    "must_not_refit_on_nch": [
+      "vocabulary",
+      "BGE embeddings",
+      "age mean/sd",
+      "tau_max (even though unused by the live kernel)",
+      "WEEK_DAYS"
+    ]
+  }
+}

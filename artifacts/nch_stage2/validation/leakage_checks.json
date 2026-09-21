@@ -1,0 +1,298 @@
+{
+  "leakage_checks": {
+    "n_samples": 3671,
+    "temporal_leakage": {
+      "assert": "max(input_event_time) < index_time",
+      "n_violations": 0,
+      "passed": true
+    },
+    "ordering": {
+      "assert": "nondecreasing timestamps_days before pairwise tau",
+      "n_violations": 0,
+      "passed": true
+    },
+    "vocabulary": {
+      "assert": "every retained token id in [0, V)",
+      "V": 30635,
+      "n_out_of_range": 0,
+      "max_token_id_observed": 26726,
+      "special_tokens": {
+        "PAD_model_id": 0,
+        "UNK_model_id": 1,
+        "unk_vocab_index": 30635
+      },
+      "mimic_token_ids_unchanged": true,
+      "passed": true
+    },
+    "empty_sequences": 0,
+    "impossible_ages": 63,
+    "first_study_patient_uniqueness": {
+      "n_duplicate_patients": 0,
+      "passed": true
+    },
+    "patient_split_policy": "Splits are not assigned in this preprocessing pass. When they are, split on patient_id so no patient appears in more than one split (including the all-study cohort).",
+    "truncation": {
+      "max_seq_len": 1024,
+      "direction": "keep newest"
+    },
+    "constants_frozen": {
+      "age_mean": 63.33601047086567,
+      "age_sd": 16.574804662350303,
+      "tau_max": 6.7045674324035645,
+      "week_days": 7.0,
+      "days_per_year": 365.25,
+      "max_seq_len": 1024,
+      "pad_id": 0,
+      "unk_model_id": 1
+    }
+  },
+  "temporal_spotcheck": {
+    "passed": true,
+    "cases": [
+      {
+        "patient_id": 17740,
+        "sleep_study_id": 4801,
+        "n_events": 11,
+        "raw_span_days": 58.77083206176758,
+        "log_lag_span": 2.2402663092615103,
+        "lag_to_tau": 2.2402663092615103,
+        "match": true
+      },
+      {
+        "patient_id": 1564,
+        "sleep_study_id": 514,
+        "n_events": 63,
+        "raw_span_days": 1946.8194580078125,
+        "log_lag_span": 5.631631283172087,
+        "lag_to_tau": 5.631631283172087,
+        "match": true
+      },
+      {
+        "patient_id": 310,
+        "sleep_study_id": 20791,
+        "n_events": 163,
+        "raw_span_days": 43093.7578125,
+        "log_lag_span": 8.725385709538566,
+        "lag_to_tau": 8.725385709538566,
+        "match": true
+      },
+      {
+        "patient_id": 10726,
+        "sleep_study_id": 12454,
+        "n_events": 26,
+        "raw_span_days": 3076.8369140625,
+        "log_lag_span": 6.0880197029269505,
+        "lag_to_tau": 6.0880197029269505,
+        "match": true
+      },
+      {
+        "patient_id": 6436,
+        "sleep_study_id": 9721,
+        "n_events": 190,
+        "raw_span_days": 4409.8173828125,
+        "log_lag_span": 6.447264517519098,
+        "lag_to_tau": 6.447264517519098,
+        "match": true
+      },
+      {
+        "patient_id": 5584,
+        "sleep_study_id": 7180,
+        "n_events": 135,
+        "raw_span_days": 1355.821533203125,
+        "log_lag_span": 5.271402337313393,
+        "lag_to_tau": 5.271402337313393,
+        "match": true
+      },
+      {
+        "patient_id": 826,
+        "sleep_study_id": 4513,
+        "n_events": 30,
+        "raw_span_days": 1008.7750244140625,
+        "log_lag_span": 4.977497021899958,
+        "lag_to_tau": 4.977497021899958,
+        "match": true
+      },
+      {
+        "patient_id": 13366,
+        "sleep_study_id": 17521,
+        "n_events": 54,
+        "raw_span_days": 1683.2125244140625,
+        "log_lag_span": 5.4866994050465845,
+        "lag_to_tau": 5.4866994050465845,
+        "match": true
+      }
+    ]
+  },
+  "age_spotcheck": {
+    "cases": [
+      {
+        "band": "<1",
+        "patient_id": 91,
+        "sleep_study_id": 15028,
+        "index_age_days": 27.830381944444444,
+        "table_index_age_days": 27.830381944444444,
+        "sleep_study_age_days": 27.0,
+        "recomputed_from_dob": 27.830381944444444,
+        "abs_diff_vs_dob": 0.0
+      },
+      {
+        "band": "<1",
+        "patient_id": 127,
+        "sleep_study_id": 19126,
+        "index_age_days": 22.778622685185184,
+        "table_index_age_days": 22.778622685185184,
+        "sleep_study_age_days": 22.0,
+        "recomputed_from_dob": 22.778622685185184,
+        "abs_diff_vs_dob": 0.0
+      },
+      {
+        "band": "<1",
+        "patient_id": 136,
+        "sleep_study_id": 4501,
+        "index_age_days": 358.77856481481484,
+        "table_index_age_days": 358.77856481481484,
+        "sleep_study_age_days": 358.0,
+        "recomputed_from_dob": 358.77856481481484,
+        "abs_diff_vs_dob": 0.0
+      },
+      {
+        "band": "1-5",
+        "patient_id": 7,
+        "sleep_study_id": 12595,
+        "index_age_days": 775.7642476851852,
+        "table_index_age_days": 775.7642476851852,
+        "sleep_study_age_days": 775.0,
+        "recomputed_from_dob": 775.7642476851852,
+        "abs_diff_vs_dob": 0.0
+      },
+      {
+        "band": "1-5",
+        "patient_id": 22,
+        "sleep_study_id": 23233,
+        "index_age_days": 1730.784849537037,
+        "table_index_age_days": 1730.784849537037,
+        "sleep_study_age_days": 1730.0,
+        "recomputed_from_dob": 1730.784849537037,
+        "abs_diff_vs_dob": 0.0
+      },
+      {
+        "band": "1-5",
+        "patient_id": 31,
+        "sleep_study_id": 4429,
+        "index_age_days": 1146.7896412037037,
+        "table_index_age_days": 1146.7896412037037,
+        "sleep_study_age_days": 1146.0,
+        "recomputed_from_dob": 1146.7896412037037,
+        "abs_diff_vs_dob": 0.0
+      },
+      {
+        "band": "6-11",
+        "patient_id": 1,
+        "sleep_study_id": 4789,
+        "index_age_days": 3338.849178240741,
+        "table_index_age_days": 3338.849178240741,
+        "sleep_study_age_days": 3338.0,
+        "recomputed_from_dob": 3338.849178240741,
+        "abs_diff_vs_dob": 0.0
+      },
+      {
+        "band": "6-11",
+        "patient_id": 28,
+        "sleep_study_id": 15280,
+        "index_age_days": 2252.813425925926,
+        "table_index_age_days": 2252.813425925926,
+        "sleep_study_age_days": 2252.0,
+        "recomputed_from_dob": 2252.813425925926,
+        "abs_diff_vs_dob": 0.0
+      },
+      {
+        "band": "6-11",
+        "patient_id": 37,
+        "sleep_study_id": 14779,
+        "index_age_days": 3506.844351851852,
+        "table_index_age_days": 3506.844351851852,
+        "sleep_study_age_days": 3506.0,
+        "recomputed_from_dob": 3506.844351851852,
+        "abs_diff_vs_dob": 0.0
+      },
+      {
+        "band": "12-17",
+        "patient_id": 10,
+        "sleep_study_id": 22339,
+        "index_age_days": 4782.778657407407,
+        "table_index_age_days": 4782.778657407407,
+        "sleep_study_age_days": 4782.0,
+        "recomputed_from_dob": 4782.778657407407,
+        "abs_diff_vs_dob": 0.0
+      },
+      {
+        "band": "12-17",
+        "patient_id": 16,
+        "sleep_study_id": 24241,
+        "index_age_days": 4408.845497685185,
+        "table_index_age_days": 4408.845497685185,
+        "sleep_study_age_days": 4408.0,
+        "recomputed_from_dob": 4408.845497685185,
+        "abs_diff_vs_dob": 0.0
+      },
+      {
+        "band": "12-17",
+        "patient_id": 25,
+        "sleep_study_id": 18085,
+        "index_age_days": 6543.769166666667,
+        "table_index_age_days": 6543.769166666667,
+        "sleep_study_age_days": 6543.0,
+        "recomputed_from_dob": 6543.769166666667,
+        "abs_diff_vs_dob": 0.0
+      },
+      {
+        "band": ">=18",
+        "patient_id": 121,
+        "sleep_study_id": 23845,
+        "index_age_days": 6754.8879050925925,
+        "table_index_age_days": 6754.8879050925925,
+        "sleep_study_age_days": 6754.0,
+        "recomputed_from_dob": 6754.8879050925925,
+        "abs_diff_vs_dob": 0.0
+      },
+      {
+        "band": ">=18",
+        "patient_id": 259,
+        "sleep_study_id": 9391,
+        "index_age_days": 6664.847824074074,
+        "table_index_age_days": 6664.847824074074,
+        "sleep_study_age_days": 6664.0,
+        "recomputed_from_dob": 6664.847824074074,
+        "abs_diff_vs_dob": 0.0
+      },
+      {
+        "band": ">=18",
+        "patient_id": 271,
+        "sleep_study_id": 25219,
+        "index_age_days": 13713.768275462962,
+        "table_index_age_days": 13713.768275462962,
+        "sleep_study_age_days": 13713.0,
+        "recomputed_from_dob": 13713.768275462962,
+        "abs_diff_vs_dob": 0.0
+      }
+    ],
+    "max_abs_diff_days": 0.0,
+    "passed": true,
+    "note": "1-day tolerance for datetime parsing / time-of-day vs date-only DOB"
+  },
+  "missingness": {
+    "n_rows": 5187791,
+    "missing_patient_id": 0,
+    "missing_time": 0,
+    "missing_code": 1136847,
+    "n_redacted": 6460,
+    "n_impossible_age": 2707,
+    "n_measurement": 332569,
+    "handling": {
+      "measurements": "excluded from sequence tokens (not in Stage-1 portable vocab)",
+      "oov_clinical_codes": "retained in canonical_events; dropped from encoder input",
+      "missing_times": "cannot enter a time-ordered history",
+      "redacted": "not converted into clinical concepts"
+    }
+  }
+}

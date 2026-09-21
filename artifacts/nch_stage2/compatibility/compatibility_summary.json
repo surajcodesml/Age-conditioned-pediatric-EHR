@@ -1,0 +1,1306 @@
+{
+  "by_family": [
+    {
+      "event_type": "diagnosis",
+      "nch_rows": 1513853,
+      "nch_unique_raw_codes": 11472,
+      "nch_unique_normalized_codes": 11467,
+      "exact_mimic_vocab_matches": 5984,
+      "unique_code_coverage_pct": 52.18452951949071,
+      "event_weighted_coverage_pct": 91.15323614644223,
+      "oov_event_count": 133927,
+      "oov_event_pct": 8.846763853557777,
+      "n_patients": 3672,
+      "n_patients_with_oov": 3088,
+      "pct_patients_with_oov": 84.0958605664488
+    },
+    {
+      "event_type": "drg",
+      "nch_rows": 11594,
+      "nch_unique_raw_codes": 663,
+      "nch_unique_normalized_codes": 663,
+      "exact_mimic_vocab_matches": 0,
+      "unique_code_coverage_pct": 0.0,
+      "event_weighted_coverage_pct": 0.0,
+      "oov_event_count": 11594,
+      "oov_event_pct": 100.0,
+      "n_patients": 3648,
+      "n_patients_with_oov": 3648,
+      "pct_patients_with_oov": 100.0
+    },
+    {
+      "event_type": "measurement",
+      "nch_rows": 332569,
+      "nch_unique_raw_codes": 3,
+      "nch_unique_normalized_codes": 0,
+      "exact_mimic_vocab_matches": 0,
+      "unique_code_coverage_pct": 0.0,
+      "event_weighted_coverage_pct": 0.0,
+      "oov_event_count": 332569,
+      "oov_event_pct": 100.0,
+      "n_patients": 3665,
+      "n_patients_with_oov": 0,
+      "pct_patients_with_oov": 0.0
+    },
+    {
+      "event_type": "medication",
+      "nch_rows": 3035986,
+      "nch_unique_raw_codes": 2616,
+      "nch_unique_normalized_codes": 2616,
+      "exact_mimic_vocab_matches": 949,
+      "unique_code_coverage_pct": 36.276758409785934,
+      "event_weighted_coverage_pct": 31.86921810574884,
+      "oov_event_count": 2068441,
+      "oov_event_pct": 68.13078189425116,
+      "n_patients": 3468,
+      "n_patients_with_oov": 3366,
+      "pct_patients_with_oov": 97.05882352941177
+    },
+    {
+      "event_type": "procedure",
+      "nch_rows": 293789,
+      "nch_unique_raw_codes": 3684,
+      "nch_unique_normalized_codes": 3680,
+      "exact_mimic_vocab_matches": 204,
+      "unique_code_coverage_pct": 5.543478260869565,
+      "event_weighted_coverage_pct": 14.719747846243392,
+      "oov_event_count": 250544,
+      "oov_event_pct": 85.2802521537566,
+      "n_patients": 3666,
+      "n_patients_with_oov": 3665,
+      "pct_patients_with_oov": 99.97272231314784
+    }
+  ],
+  "oov_causes": [
+    {
+      "event_type": "diagnosis",
+      "oov_cause": "code_version_mismatch",
+      "n_events": 64455.0,
+      "n_codes": 225,
+      "n_patient_code_pairs": 5476.0
+    },
+    {
+      "event_type": "diagnosis",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 56541.0,
+      "n_codes": 1520,
+      "n_patient_code_pairs": 12137.0
+    },
+    {
+      "event_type": "diagnosis",
+      "oov_cause": "pediatric_absent",
+      "n_events": 6471.0,
+      "n_codes": 135,
+      "n_patient_code_pairs": 1966.0
+    },
+    {
+      "event_type": "diagnosis",
+      "oov_cause": "redacted",
+      "n_events": 6460.0,
+      "n_codes": 2,
+      "n_patient_code_pairs": 936.0
+    },
+    {
+      "event_type": "drg",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 11594.0,
+      "n_codes": 663,
+      "n_patient_code_pairs": 9454.0
+    },
+    {
+      "event_type": "medication",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 1136847.0,
+      "n_codes": 1,
+      "n_patient_code_pairs": 2685.0
+    },
+    {
+      "event_type": "medication",
+      "oov_cause": "pediatric_absent",
+      "n_events": 931594.0,
+      "n_codes": 1667,
+      "n_patient_code_pairs": 59376.0
+    },
+    {
+      "event_type": "procedure",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 249857.0,
+      "n_codes": 954,
+      "n_patient_code_pairs": 34047.0
+    },
+    {
+      "event_type": "procedure",
+      "oov_cause": "nch_local",
+      "n_events": 687.0,
+      "n_codes": 1,
+      "n_patient_code_pairs": 687.0
+    }
+  ],
+  "top_matched": [
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_630208",
+      "description": "ALBUTEROL SULFATE 2.5 mg in 3 mL RESPIRATORY (INHALATION) SOLUTION (medication)",
+      "n_events": 68453.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_315.2",
+      "description": "Speech and language disorder (mental disorders)",
+      "n_events": 47412.0,
+      "n_raw_variants": 11
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1807627",
+      "description": "SODIUM CHLORIDE 900 mg in 100 mL INTRAVENOUS INJECTION, SOLUTION [Sodium Chloride]_#1 (medication)",
+      "n_events": 43473.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_758.1",
+      "description": "Chromosomal anomalies (congenital anomalies)",
+      "n_events": 37136.0,
+      "n_raw_variants": 36
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_197803",
+      "description": "IBUPROFEN 100 mg in 5 mL ORAL SUSPENSION (medication)",
+      "n_events": 35374.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_343",
+      "description": "Infantile cerebral palsy (neurological)",
+      "n_events": 35095.0,
+      "n_raw_variants": 12
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_847630",
+      "description": "SODIUM CHLORIDE 600 mg in 100 mL / SODIUM LACTATE 310 mg in 100 mL / POTASSIUM CHLORIDE 30 mg in 100 mL / CALCIUM CHLORIDE 20 mg in 100 mL INTRAPERITONEAL INJECTION, SOLUTION (medication)",
+      "n_events": 30218.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_313.3",
+      "description": "Autism (mental disorders)",
+      "n_events": 24379.0,
+      "n_raw_variants": 8
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_315",
+      "description": "Develomental delays and disorders (mental disorders)",
+      "n_events": 24219.0,
+      "n_raw_variants": 9
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_312515",
+      "description": "POTASSIUM CHLORIDE 1.5 g in 15 mL ORAL SOLUTION (medication)",
+      "n_events": 21889.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_403884",
+      "description": "LEVETIRACETAM 100 mg in 1 mL ORAL SOLUTION [Levetiracetam Levetiracetam] (medication)",
+      "n_events": 20560.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1863605",
+      "description": "DEXTROSE MONOHYDRATE 50 g in 1000 mL / SODIUM CHLORIDE 4.5 g in 1000 mL / POTASSIUM CHLORIDE 1.49 g in 1000 mL INTRAVENOUS INJECTION, SOLUTION [Potassium Chloride in Dextrose and Sodium Chloride]_#2 (medication)",
+      "n_events": 19634.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_264.9",
+      "description": "Lack of normal physiological development, unspecified (endocrine/metabolic)",
+      "n_events": 19617.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_836358",
+      "description": "IPRATROPIUM BROMIDE 0.5 mg in 2.5 mL RESPIRATORY (INHALATION) SOLUTION (medication)",
+      "n_events": 18909.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "ICD10_R6250",
+      "description": "Unspecified lack of expected normal physiological development in childhood",
+      "n_events": 18093.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_197730",
+      "description": "FUROSEMIDE 10 mg in 1 mL ORAL SYRUP [Furosemide 1%] (medication)",
+      "n_events": 17186.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "ICD10_R0683",
+      "description": "Snoring",
+      "n_events": 16720.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1795250",
+      "description": "DEXTROSE MONOHYDRATE 5 g in 100 mL / SODIUM CHLORIDE 0.45 g in 100 mL INTRAVENOUS INJECTION, SOLUTION [Dextrose and Sodium Chloride]_#3 (medication)",
+      "n_events": 15809.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_876193",
+      "description": "POLYETHYLENE GLYCOL 3350 17 g in 17 g ORAL POWDER, FOR SOLUTION (medication)",
+      "n_events": 15733.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_465",
+      "description": "Acute upper respiratory infections of multiple or unspecified sites (respiratory)",
+      "n_events": 15226.0,
+      "n_raw_variants": 7
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_1002",
+      "description": "PHE_1002",
+      "n_events": 15086.0,
+      "n_raw_variants": 3
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_705610",
+      "description": "RxNorm 705610",
+      "n_events": 14944.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_312997",
+      "description": "sodium chloride 0.9 % Inhalation Solution (medication)",
+      "n_events": 14799.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_283077",
+      "description": "prednisolone 15 MG (as prednisolone sodium phosphate 20.2 MG) per 5 ML Oral Solution (medication)",
+      "n_events": 13969.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_530.11",
+      "description": "GERD (digestive)",
+      "n_events": 13933.0,
+      "n_raw_variants": 2
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1740467",
+      "description": "ONDANSETRON HYDROCHLORIDE 2 mg in 1 mL INTRAMUSCULAR INJECTION, SOLUTION [Ondansetron] (medication)",
+      "n_events": 13888.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_283523",
+      "description": "GABAPENTIN 250 mg in 5 mL ORAL SOLUTION [Gabapentin] (medication)",
+      "n_events": 13846.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_309843",
+      "description": "diazepam 1 MG/ML Oral Solution (medication)",
+      "n_events": 13380.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "ICD10_G4733",
+      "description": "Obstructive sleep apnea (adult) (pediatric)",
+      "n_events": 13110.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "procedure",
+      "mimic_token": "HCPCS_94003",
+      "description": "Pulmonary",
+      "n_events": 13075.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "ICD10_F902",
+      "description": "Attention-deficit hyperactivity disorder, combined type",
+      "n_events": 12723.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_512.8",
+      "description": "Cough (respiratory)",
+      "n_events": 12618.0,
+      "n_raw_variants": 2
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_278.1",
+      "description": "Obesity (endocrine/metabolic)",
+      "n_events": 12449.0,
+      "n_raw_variants": 5
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1735003",
+      "description": "Fentanyl Citrate 0.05 mg in 1 mL INTRAMUSCULAR INJECTION, SOLUTION_#2 (medication)",
+      "n_events": 11927.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_474.2",
+      "description": "Chronic tonsillitis and adenoiditis (respiratory)",
+      "n_events": 11897.0,
+      "n_raw_variants": 13
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1791840",
+      "description": "100 ML milrinone lactate 0.2 MG/ML Injection (medication)",
+      "n_events": 11894.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_198857",
+      "description": "DIMETHICONE 20 mg in 0.3 mL ORAL LIQUID [QUITA COLICOS Gas RELIEF Drops] (medication)",
+      "n_events": 11500.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "ICD10_G4730",
+      "description": "Sleep apnea, unspecified",
+      "n_events": 11205.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_292.12",
+      "description": "Symbolic dysfunction (mental disorders)",
+      "n_events": 10935.0,
+      "n_raw_variants": 6
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_327",
+      "description": "Sleep disorders (neurological)",
+      "n_events": 10853.0,
+      "n_raw_variants": 8
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_747.11",
+      "description": "Cardiac shunt/ heart septal defect (congenital anomalies)",
+      "n_events": 10562.0,
+      "n_raw_variants": 27
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_783",
+      "description": "Fever of unknown origin (symptoms)",
+      "n_events": 10144.0,
+      "n_raw_variants": 5
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_311376",
+      "description": "lorazepam 2 MG/ML Oral Solution (medication)",
+      "n_events": 10131.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1797907",
+      "description": "FLUTICASONE PROPIONATE 50 ug NASAL SPRAY, METERED (medication)",
+      "n_events": 9863.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1719286",
+      "description": "FUROSEMIDE 10 mg in 1 mL INTRAMUSCULAR INJECTION, SOLUTION (medication)",
+      "n_events": 9857.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1658717",
+      "description": "HEPARIN SODIUM 10000 [USP'U] in 100 mL INTRAVENOUS INJECTION, SOLUTION (medication)",
+      "n_events": 9834.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_312",
+      "description": "Conduct disorders (mental disorders)",
+      "n_events": 9811.0,
+      "n_raw_variants": 13
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1116927",
+      "description": "DEXAMETHASONE SODIUM PHOSPHATE 4 mg in 1 mL INTRA-ARTICULAR INJECTION (medication)",
+      "n_events": 9618.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_495",
+      "description": "Asthma (respiratory)",
+      "n_events": 9462.0,
+      "n_raw_variants": 4
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "ICD10_Z23",
+      "description": "Encounter for immunization",
+      "n_events": 9441.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_998212",
+      "description": "MORPHINE SULFATE 2 mg in 1 mL INTRAMUSCULAR INJECTION, SOLUTION (medication)",
+      "n_events": 9121.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_300.1",
+      "description": "Anxiety disorder (mental disorders)",
+      "n_events": 9006.0,
+      "n_raw_variants": 8
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_499",
+      "description": "Cystic fibrosis (respiratory)",
+      "n_events": 8965.0,
+      "n_raw_variants": 7
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "ICD10_Z931",
+      "description": "Gastrostomy status",
+      "n_events": 8961.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "ICD10_Z6854",
+      "description": "Body mass index [BMI] pediatric, greater than or equal to 95th percentile for age",
+      "n_events": 8008.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_483017",
+      "description": "ACETAMINOPHEN 10 mg in 1 mL INTRAVENOUS INJECTION, SOLUTION (medication)",
+      "n_events": 7939.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_238100",
+      "description": "lorazepam 2 MG/ML Injectable Solution (medication)",
+      "n_events": 7925.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_752.2",
+      "description": "Other specified congenital anomalies of nervous system (congenital anomalies)",
+      "n_events": 7832.0,
+      "n_raw_variants": 22
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1366192",
+      "description": "CLOBAZAM 2.5 mg in 1 mL ORAL SUSPENSION (medication)",
+      "n_events": 7656.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_749.2",
+      "description": "Congenital anomalies of skull and face bones (congenital anomalies)",
+      "n_events": 7557.0,
+      "n_raw_variants": 8
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_079",
+      "description": "Viral infection (infectious diseases)",
+      "n_events": 7429.0,
+      "n_raw_variants": 42
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_752.11",
+      "description": "Spina bifida (congenital anomalies)",
+      "n_events": 7388.0,
+      "n_raw_variants": 15
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_759",
+      "description": "Other and unspecified congenital anomalies (congenital anomalies)",
+      "n_events": 7375.0,
+      "n_raw_variants": 17
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "ICD10_R29898",
+      "description": "Other symptoms and signs involving the musculoskeletal system",
+      "n_events": 7338.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1049604",
+      "description": "OXYCODONE HYDROCHLORIDE 5 mg in 5 mL ORAL SOLUTION (medication)",
+      "n_events": 7258.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1665461",
+      "description": "KETOROLAC TROMETHAMINE 30 mg in 1 mL INTRAMUSCULAR INJECTION, SOLUTION [Ketorolac Tromethamine] (medication)",
+      "n_events": 7196.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_465.2",
+      "description": "Acute pharyngitis (respiratory)",
+      "n_events": 7016.0,
+      "n_raw_variants": 3
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_749.1",
+      "description": "Cleft palate (congenital anomalies)",
+      "n_events": 6787.0,
+      "n_raw_variants": 28
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1437702",
+      "description": "IPRATROPIUM BROMIDE 0.5 mg in 3 mL / ALBUTEROL SULFATE 3 mg in 3 mL RESPIRATORY (INHALATION) SOLUTION (medication)",
+      "n_events": 6759.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_313920",
+      "description": "cefazolin 200 MG/ML Injectable Solution (medication)",
+      "n_events": 6700.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_313.1",
+      "description": "Attention deficit hyperactivity disorder (mental disorders)",
+      "n_events": 6518.0,
+      "n_raw_variants": 5
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_251156",
+      "description": "FERROUS SULFATE 15 mg in 1 mL ORAL SOLUTION [FE-Vite Iron Oral Solution] (medication)",
+      "n_events": 6488.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_300.11",
+      "description": "Generalized anxiety disorder (mental disorders)",
+      "n_events": 6487.0,
+      "n_raw_variants": 2
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_389.1",
+      "description": "Sensorineural hearing loss (sense organs)",
+      "n_events": 6409.0,
+      "n_raw_variants": 7
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_1014673",
+      "description": "CETIRIZINE HYDROCHLORIDE 5 mg in 5 mL ORAL SOLUTION [childrens allergy relief] (medication)",
+      "n_events": 6226.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_758",
+      "description": "Chromosomal anomalies and genetic disorders (congenital anomalies)",
+      "n_events": 6167.0,
+      "n_raw_variants": 5
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_313782",
+      "description": "ACETAMINOPHEN 325 mg ORAL TABLET [Pain Relief Regular Strength] (medication)",
+      "n_events": 6081.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "ICD10_H6983",
+      "description": "Other specified disorders of Eustachian tube, bilateral",
+      "n_events": 6050.0,
+      "n_raw_variants": 1
+    },
+    {
+      "event_type": "diagnosis",
+      "mimic_token": "PHE_282.5",
+      "description": "Sickle cell anemia (hematopoietic)",
+      "n_events": 6030.0,
+      "n_raw_variants": 11
+    },
+    {
+      "event_type": "medication",
+      "mimic_token": "RXN_866021",
+      "description": "CYPROHEPTADINE HYDROCHLORIDE 2 mg in 5 mL ORAL SOLUTION (medication)",
+      "n_events": 5999.0,
+      "n_raw_variants": 1
+    }
+  ],
+  "top50_oov": [
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "",
+      "normalized_code": "",
+      "mimic_token": null,
+      "mapping_status": "oov",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 1136847,
+      "n_patients": 2685,
+      "sample_description": "TOBRAMYCIN AEROSOL INPATIENT < 160 MG"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "144450",
+      "normalized_code": "144450",
+      "mimic_token": "RXN_144450",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 135448,
+      "n_patients": 507,
+      "sample_description": "infant formula, iron/dha/ara"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "801092",
+      "normalized_code": "801092",
+      "mimic_token": "RXN_801092",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 53474,
+      "n_patients": 1262,
+      "sample_description": "albuterol sulfate"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "727634",
+      "normalized_code": "727634",
+      "mimic_token": "RXN_727634",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 53366,
+      "n_patients": 2556,
+      "sample_description": "sodium chloride 0.9 % (flush)"
+    },
+    {
+      "event_type": "procedure",
+      "code_system": "HCPCS",
+      "raw_code": "94640",
+      "normalized_code": "94640",
+      "mimic_token": "HCPCS_94640",
+      "mapping_status": "oov",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 47446,
+      "n_patients": 1045,
+      "sample_description": "COOL AEROSOL NEBULIZER PER DAY"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "307668",
+      "normalized_code": "307668",
+      "mimic_token": "RXN_307668",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 46809,
+      "n_patients": 2155,
+      "sample_description": "acetaminophen"
+    },
+    {
+      "event_type": "procedure",
+      "code_system": "HCPCS",
+      "raw_code": "97110",
+      "normalized_code": "97110",
+      "mimic_token": "HCPCS_97110",
+      "mapping_status": "oov",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 30191,
+      "n_patients": 1132,
+      "sample_description": "PTS THERAPEUTIC EXERCISE/15MIN"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "725145",
+      "normalized_code": "725145",
+      "mimic_token": "RXN_725145",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 26712,
+      "n_patients": 266,
+      "sample_description": "petrolatum,white"
+    },
+    {
+      "event_type": "procedure",
+      "code_system": "HCPCS",
+      "raw_code": "92507",
+      "normalized_code": "92507",
+      "mimic_token": "HCPCS_92507",
+      "mapping_status": "oov",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 24662,
+      "n_patients": 556,
+      "sample_description": "INDIVIDUAL S&H THERAPY, INTERM"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "107129",
+      "normalized_code": "107129",
+      "mimic_token": "RXN_107129",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 21858,
+      "n_patients": 312,
+      "sample_description": "water"
+    },
+    {
+      "event_type": "procedure",
+      "code_system": "HCPCS",
+      "raw_code": "97112",
+      "normalized_code": "97112",
+      "mimic_token": "HCPCS_97112",
+      "mapping_status": "oov",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 18298,
+      "n_patients": 738,
+      "sample_description": "PT NEUROMUSC RE-EDUC/15 MIN"
+    },
+    {
+      "event_type": "procedure",
+      "code_system": "HCPCS",
+      "raw_code": "97530",
+      "normalized_code": "97530",
+      "mimic_token": "HCPCS_97530",
+      "mapping_status": "oov",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 18283,
+      "n_patients": 885,
+      "sample_description": "OT FUNCTIONAL TRAINING/15 MIN"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "876863",
+      "normalized_code": "876863",
+      "mimic_token": "RXN_876863",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 17187,
+      "n_patients": 335,
+      "sample_description": "multivitamin with iron"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "244638",
+      "normalized_code": "244638",
+      "mimic_token": "RXN_244638",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 16882,
+      "n_patients": 179,
+      "sample_description": "cod liver oil/zinc oxide"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "846127",
+      "normalized_code": "846127",
+      "mimic_token": "RXN_846127",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 16266,
+      "n_patients": 365,
+      "sample_description": "chlorhexidine gluconate"
+    },
+    {
+      "event_type": "diagnosis",
+      "code_system": "ICD9",
+      "raw_code": "V57.1",
+      "normalized_code": "V571",
+      "mimic_token": "ICD9_V571",
+      "mapping_status": "oov",
+      "oov_cause": "code_version_mismatch",
+      "n_events": 15733,
+      "n_patients": 258,
+      "sample_description": "Other physical therapy"
+    },
+    {
+      "event_type": "diagnosis",
+      "code_system": "ICD9",
+      "raw_code": "V57.3",
+      "normalized_code": "V573",
+      "mimic_token": "ICD9_V573",
+      "mapping_status": "oov",
+      "oov_cause": "code_version_mismatch",
+      "n_events": 14931,
+      "n_patients": 278,
+      "sample_description": "Care involving speech-language therapy"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "1362057",
+      "normalized_code": "1362057",
+      "mimic_token": "RXN_1362057",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 14518,
+      "n_patients": 245,
+      "sample_description": "heparin sodium,porcine/PF"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "200317",
+      "normalized_code": "200317",
+      "mimic_token": "RXN_200317",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 13833,
+      "n_patients": 219,
+      "sample_description": "fat emulsions"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "416684",
+      "normalized_code": "416684",
+      "mimic_token": "RXN_416684",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 13219,
+      "n_patients": 126,
+      "sample_description": "zinc oxide/petrolatum, yellow"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "312447",
+      "normalized_code": "312447",
+      "mimic_token": "RXN_312447",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 12695,
+      "n_patients": 259,
+      "sample_description": "piperacillin sodium/tazobactam"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "836343",
+      "normalized_code": "836343",
+      "mimic_token": "RXN_836343",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 12607,
+      "n_patients": 83,
+      "sample_description": "ipratropium bromide"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "1360074",
+      "normalized_code": "1360074",
+      "mimic_token": "RXN_1360074",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 12295,
+      "n_patients": 216,
+      "sample_description": "beclomethasone dipropionate"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "1421893",
+      "normalized_code": "1421893",
+      "mimic_token": "RXN_1421893",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 12025,
+      "n_patients": 1575,
+      "sample_description": "lidocaine/transparent dressing"
+    },
+    {
+      "event_type": "diagnosis",
+      "code_system": "ICD9",
+      "raw_code": "V20.2",
+      "normalized_code": "V202",
+      "mimic_token": "ICD9_V202",
+      "mapping_status": "oov",
+      "oov_cause": "code_version_mismatch",
+      "n_events": 11539,
+      "n_patients": 902,
+      "sample_description": "Routine infant or child health check"
+    },
+    {
+      "event_type": "diagnosis",
+      "code_system": "ICD10",
+      "raw_code": "Z00.129",
+      "normalized_code": "Z00129",
+      "mimic_token": "ICD10_Z00129",
+      "mapping_status": "oov",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 11480,
+      "n_patients": 1218,
+      "sample_description": "Encounter for routine child health examination without abnormal findings"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "895994",
+      "normalized_code": "895994",
+      "mimic_token": "RXN_895994",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 11436,
+      "n_patients": 481,
+      "sample_description": "fluticasone propionate"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "646456",
+      "normalized_code": "646456",
+      "mimic_token": "RXN_646456",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 11122,
+      "n_patients": 254,
+      "sample_description": "nystatin"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "251154",
+      "normalized_code": "251154",
+      "mimic_token": "RXN_251154",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 10931,
+      "n_patients": 371,
+      "sample_description": "cholecalciferol (vitamin D3)"
+    },
+    {
+      "event_type": "diagnosis",
+      "code_system": "ICD9",
+      "raw_code": "V57.21",
+      "normalized_code": "V5721",
+      "mimic_token": "ICD9_V5721",
+      "mapping_status": "oov",
+      "oov_cause": "code_version_mismatch",
+      "n_events": 10883,
+      "n_patients": 244,
+      "sample_description": "Encounter for occupational therapy"
+    },
+    {
+      "event_type": "procedure",
+      "code_system": "HCPCS",
+      "raw_code": "94660",
+      "normalized_code": "94660",
+      "mimic_token": "HCPCS_94660",
+      "mapping_status": "oov",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 10670,
+      "n_patients": 513,
+      "sample_description": "BIPAP SUBSEQ DAYS"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "1808217",
+      "normalized_code": "1808217",
+      "mimic_token": "RXN_1808217",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 9692,
+      "n_patients": 1944,
+      "sample_description": "propofol"
+    },
+    {
+      "event_type": "procedure",
+      "code_system": "HCPCS",
+      "raw_code": "71010",
+      "normalized_code": "71010",
+      "mimic_token": "HCPCS_71010",
+      "mapping_status": "oov",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 9431,
+      "n_patients": 639,
+      "sample_description": "PORT CHEST SINGLE"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "1307427",
+      "normalized_code": "1307427",
+      "mimic_token": "RXN_1307427",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 9081,
+      "n_patients": 25,
+      "sample_description": "sildenafil citrate"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "70727",
+      "normalized_code": "70727",
+      "mimic_token": "RXN_70727",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 8800,
+      "n_patients": 132,
+      "sample_description": "pedi nutrit,iron,lac-free,fibr"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "895999",
+      "normalized_code": "895999",
+      "mimic_token": "RXN_895999",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 8726,
+      "n_patients": 323,
+      "sample_description": "fluticasone propionate"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "864761",
+      "normalized_code": "864761",
+      "mimic_token": "RXN_864761",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 8608,
+      "n_patients": 83,
+      "sample_description": "methadone HCl"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "686400",
+      "normalized_code": "686400",
+      "mimic_token": "RXN_686400",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 8134,
+      "n_patients": 129,
+      "sample_description": "erythromycin ethylsuccinate"
+    },
+    {
+      "event_type": "procedure",
+      "code_system": "HCPCS",
+      "raw_code": "99283",
+      "normalized_code": "99283",
+      "mimic_token": "HCPCS_99283",
+      "mapping_status": "oov",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 7713,
+      "n_patients": 1726,
+      "sample_description": "PR EMERGENCY DEPARTMENT VISIT MODERATE SEVERITY"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "1795344",
+      "normalized_code": "1795344",
+      "mimic_token": "RXN_1795344",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 7337,
+      "n_patients": 438,
+      "sample_description": "dextrose 5 % and 0.9 % NaCl"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "308189",
+      "normalized_code": "308189",
+      "mimic_token": "RXN_308189",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 7212,
+      "n_patients": 1430,
+      "sample_description": "amoxicillin"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "999961",
+      "normalized_code": "999961",
+      "mimic_token": "RXN_999961",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 6444,
+      "n_patients": 75,
+      "sample_description": "glycopyrrolate"
+    },
+    {
+      "event_type": "procedure",
+      "code_system": "HCPCS",
+      "raw_code": "71045",
+      "normalized_code": "71045",
+      "mimic_token": "HCPCS_71045",
+      "mapping_status": "oov",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 6351,
+      "n_patients": 506,
+      "sample_description": "CHG RADIOLOGIC EXAM CHEST SINGLE VIEW"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "856940",
+      "normalized_code": "856940",
+      "mimic_token": "RXN_856940",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 6186,
+      "n_patients": 803,
+      "sample_description": "hydrocodone/acetaminophen"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "310014",
+      "normalized_code": "310014",
+      "mimic_token": "RXN_310014",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 6142,
+      "n_patients": 94,
+      "sample_description": "dornase alfa"
+    },
+    {
+      "event_type": "procedure",
+      "code_system": "HCPCS",
+      "raw_code": "97124",
+      "normalized_code": "97124",
+      "mimic_token": "HCPCS_97124",
+      "mapping_status": "oov",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 6027,
+      "n_patients": 375,
+      "sample_description": "MASSAGE THERAPY PER 15 MINUTES"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "605320",
+      "normalized_code": "605320",
+      "mimic_token": "RXN_605320",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 5847,
+      "n_patients": 227,
+      "sample_description": "Saccharomyces boulardii"
+    },
+    {
+      "event_type": "procedure",
+      "code_system": "HCPCS",
+      "raw_code": "95810",
+      "normalized_code": "95810",
+      "mimic_token": "HCPCS_95810",
+      "mapping_status": "oov",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 5666,
+      "n_patients": 2305,
+      "sample_description": "POLYSOMNOGRAPHY, 6 YRS+, 4 OR MORE ADDL PARAM, W/ TECH"
+    },
+    {
+      "event_type": "procedure",
+      "code_system": "HCPCS",
+      "raw_code": "74000",
+      "normalized_code": "74000",
+      "mimic_token": "HCPCS_74000",
+      "mapping_status": "oov",
+      "oov_cause": "unknown_unmappable",
+      "n_events": 4975,
+      "n_patients": 733,
+      "sample_description": "X-RAY ABDOM SINGLE"
+    },
+    {
+      "event_type": "medication",
+      "code_system": "RXNORM",
+      "raw_code": "151029",
+      "normalized_code": "151029",
+      "mimic_token": "RXN_151029",
+      "mapping_status": "oov",
+      "oov_cause": "pediatric_absent",
+      "n_events": 4909,
+      "n_patients": 29,
+      "sample_description": "mometasone furoate"
+    }
+  ],
+  "normalization_rescues": 10132,
+  "measurements_not_tokenized": true,
+  "measurement_note": "NCH measurements (BMI, percentiles, vitals) have no counterpart in the frozen MIMIC LAB_/CHART_ itemid vocabulary and are retained only as covariates."
+}

@@ -1,0 +1,96 @@
+{
+  "do_not_start_finetuning": true,
+  "encoder_inputs": {
+    "vocab_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/code_vocab.json",
+    "embedding_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/bge_embeddings.pt",
+    "max_seq_len": 1024,
+    "pad_id": 0,
+    "unk_model_id": 1,
+    "unk_vocab_index": null,
+    "week_days": 7.0,
+    "days_per_year": 365.25,
+    "age_mean": 63.33601047086567,
+    "age_sd": 16.574804662350303,
+    "tau_max_diagnostic_only": 6.7045674324035645,
+    "tau_max_used_by_stage1_kernel": false,
+    "race_encoding": "one_hot",
+    "truncation": "newest",
+    "index": "first eligible sleep study; events with event_time < t_index"
+  },
+  "modalities_first_run": [
+    "diagnosis"
+  ],
+  "modalities_optional_justified": [
+    "procedure_icd_ccs_and_mimic_hcpcs"
+  ],
+  "modalities_not_for_first_run": [
+    "cpt_outpatient_therapy_imaging",
+    "medication",
+    "measurement",
+    "drg"
+  ],
+  "coverage": {
+    "diagnosis_event_pct": 91.15323614644223,
+    "procedure_event_pct": 14.719747846243392,
+    "medication_event_pct": 31.86921810574884,
+    "include_medications_in_first_run": false,
+    "include_procedures_in_first_run": false,
+    "procedure_breakdown": {
+      "icd_pcs_mapped_ccs_events": 30079,
+      "hcpcs_exact_events": 13166,
+      "cpt_oov_events": 249857,
+      "nch_local_oov_events": 687,
+      "note": "ICD-9/10-PCS roll up to CCS_ (Stage-1 convention). High-volume NCH CPT (94640, 97110, 92507, PSG 95782/95810, imaging) are not in the frozen MIMIC HCPCS leftover vocab. Do not invent a CPT→CCS map; MIMIC did not use one."
+    },
+    "reason": "First Stage-2 run should be diagnoses-only (91.2% event-weighted PheCode/ICD leftover coverage). Mapped ICD procedures add ~30k CCS events but CPT (85% of NCH procedure rows) is OOV. Medications are 31.9% event-weighted RXN_ coverage with 1.14M missing-RxCUI rows and 0.93M pediatric-absent CUIs — keep as an optional second representation, not the first run."
+  },
+  "cohort": "first_study (one index per patient)",
+  "splits": "not assigned; when created, split on patient_id even for all-study sequences",
+  "scientific_flags": {
+    "age_z_is_adult_standardized": true,
+    "nch_mean_z_age": -3.3825154435709486,
+    "tau_not_rescaled": true,
+    "nch_span_tau_over_tau_max": 0.7878251979699266,
+    "same_calendar_day_diagnoses_before_psg_are_included": true,
+    "exclude_index_age_ge18": true,
+    "sentinel_dates_cause_century_long_histories": "diagnosis min timestamp 1899-07-05; ~1% of first-study spans exceed MIMIC tau_max via implausible durations (~120y). Research decision: drop events with age<0 or history_duration>age_at_index+1y.",
+    "n_sequences_with_impossible_event_age": 63
+  },
+  "sequence_artifacts": {
+    "first_study_dx_proc": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/processed/first_study_sequences.npz",
+    "all_study_dx_proc": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/processed/all_study_sequences.npz"
+  },
+  "usable": {
+    "n_samples_with_ge1_event": 3671,
+    "n_samples_with_ge10_events": 3596,
+    "n_samples_with_ge30d_history": 3592,
+    "n_samples_with_ge1y_history": 3126,
+    "n_samples_total": 3671
+  },
+  "sequence_counts": {
+    "first_dx_proc": {
+      "n_samples": 3671,
+      "n_patients": 3671,
+      "npz": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/processed/first_study_diagnosis_procedure_sequences.npz",
+      "meta": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/processed/first_study_diagnosis_procedure_sequences.parquet"
+    },
+    "all_dx_proc": {
+      "n_samples": 3982,
+      "n_patients": 3671,
+      "npz": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/processed/all_study_diagnosis_procedure_sequences.npz",
+      "meta": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/processed/all_study_diagnosis_procedure_sequences.parquet"
+    },
+    "first_dx_proc_med": {
+      "n_samples": 3671,
+      "n_patients": 3671,
+      "npz": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/processed/first_study_diagnosis_procedure_medication_sequences.npz",
+      "meta": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/processed/first_study_diagnosis_procedure_medication_sequences.parquet"
+    },
+    "all_dx_proc_med": {
+      "n_samples": 3982,
+      "n_patients": 3671,
+      "npz": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/processed/all_study_diagnosis_procedure_medication_sequences.npz",
+      "meta": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/processed/all_study_diagnosis_procedure_medication_sequences.parquet"
+    }
+  }
+}

@@ -1,10 +1,10 @@
 {
   "run_id": "adkm_s0",
-  "git_commit": "863895267b1b90f9a6f5677aa1ecfd816407cd6e",
-  "git_dirty": true,
+  "git_commit": "6778b5527b82e03f2648e223ea023a7ba56f28e5",
+  "git_dirty": false,
   "seed": 0,
   "arm": "age_temporal",
-  "timestamp": "2026-09-20T23:47:30",
+  "timestamp": "2026-09-20T23:57:36",
   "model": {
     "arm": "age_temporal",
     "attention_equation": "s_ij^(h) = q_i^(h)^T k_j^(h) / sqrt(d_h) - [lambda0 + beta * z(a_i)] * tau_ij",

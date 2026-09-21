@@ -1,0 +1,101 @@
+{
+  "bands": {
+    "<1": {
+      "patients": 195,
+      "sleep_studies": 195,
+      "median_events": 41.0,
+      "median_history_days": 92.80239583333334,
+      "mean_z_age": -3.7972825612234975,
+      "fraction_span_tau_exceeding_mimic_tau_max": 0.0,
+      "mean_span_tau_over_tau_max": 0.37073359354105856,
+      "history_fractions": {
+        "ge_30d": 0.7435897435897436,
+        "ge_90d": 0.5128205128205128,
+        "ge_180d": 0.2923076923076923,
+        "ge_1y": 0.0,
+        "ge_2y": 0.0,
+        "ge_5y": 0.0
+      }
+    },
+    "1-5": {
+      "patients": 1187,
+      "sleep_studies": 1187,
+      "median_events": 113.0,
+      "median_history_days": 1004.8705902777778,
+      "mean_z_age": -3.607046996150568,
+      "fraction_span_tau_exceeding_mimic_tau_max": 0.02864363942712721,
+      "mean_span_tau_over_tau_max": 0.7167509178317392,
+      "history_fractions": {
+        "ge_30d": 0.987363100252738,
+        "ge_90d": 0.9502948609941028,
+        "ge_180d": 0.9090143218197135,
+        "ge_1y": 0.8525695029486099,
+        "ge_2y": 0.6604886267902275,
+        "ge_5y": 0.11373209772535804
+      }
+    },
+    "6-11": {
+      "patients": 1201,
+      "sleep_studies": 1201,
+      "median_events": 141.0,
+      "median_history_days": 2593.2507060185185,
+      "mean_z_age": -3.2896398192492686,
+      "fraction_span_tau_exceeding_mimic_tau_max": 0.019983347210657785,
+      "mean_span_tau_over_tau_max": 0.8442601598356808,
+      "history_fractions": {
+        "ge_30d": 0.9941715237302248,
+        "ge_90d": 0.9683597002497918,
+        "ge_180d": 0.9442131557035803,
+        "ge_1y": 0.9217318900915903,
+        "ge_2y": 0.8834304746044963,
+        "ge_5y": 0.7543713572023314
+      }
+    },
+    "12-17": {
+      "patients": 890,
+      "sleep_studies": 890,
+      "median_events": 164.0,
+      "median_history_days": 3424.662210648148,
+      "mean_z_age": -2.925051907964811,
+      "fraction_span_tau_exceeding_mimic_tau_max": 0.030337078651685393,
+      "mean_span_tau_over_tau_max": 0.8733005022814682,
+      "history_fractions": {
+        "ge_30d": 0.9932584269662922,
+        "ge_90d": 0.9662921348314607,
+        "ge_180d": 0.946067415730337,
+        "ge_1y": 0.9179775280898876,
+        "ge_2y": 0.8876404494382022,
+        "ge_5y": 0.7797752808988764
+      }
+    },
+    ">=18": {
+      "patients": 198,
+      "sleep_studies": 198,
+      "median_events": 321.0,
+      "median_history_days": 3597.8297627314814,
+      "mean_z_age": -2.5083173349211187,
+      "fraction_span_tau_exceeding_mimic_tau_max": 0.05555555555555555,
+      "mean_span_tau_over_tau_max": 0.8981616795336357,
+      "history_fractions": {
+        "ge_30d": 0.9949494949494949,
+        "ge_90d": 0.98989898989899,
+        "ge_180d": 0.9646464646464646,
+        "ge_1y": 0.9595959595959596,
+        "ge_2y": 0.9090909090909091,
+        "ge_5y": 0.8282828282828283
+      }
+    }
+  },
+  "vocab_coverage_preindex_dx_proc": {
+    "preindex_dx_proc_events": 1432911,
+    "preindex_oov_events": 316416,
+    "preindex_oov_pct": 22.08204138289119
+  },
+  "usable_histories": {
+    "n_samples_with_ge1_event": 3671,
+    "n_samples_with_ge10_events": 3596,
+    "n_samples_with_ge30d_history": 3592,
+    "n_samples_with_ge1y_history": 3126,
+    "n_samples_total": 3671
+  }
+}

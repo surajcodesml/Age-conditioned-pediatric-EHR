@@ -1,0 +1,595 @@
+{
+  "root": "/home/suraj/Data/NCH-Sleep-DataBank/physionet.org/files/nch-sleep/3.1.0",
+  "tables": {
+    "demographic": {
+      "path": "/home/suraj/Data/NCH-Sleep-DataBank/physionet.org/files/nch-sleep/3.1.0/Health_Data/DEMOGRAPHIC.csv",
+      "bytes": 278574,
+      "n_rows": 3673,
+      "columns": [
+        "STUDY_PAT_ID",
+        "BIRTH_DATE",
+        "PCORI_GENDER_CD",
+        "PCORI_RACE_CD",
+        "PCORI_HISPANIC_CD",
+        "GENDER_DESCR",
+        "RACE_DESCR",
+        "ETHNICITY_DESCR",
+        "LANGUAGE_DESCR",
+        "PEDS_GEST_AGE_NUM_WEEKS",
+        "PEDS_GEST_AGE_NUM_DAYS"
+      ]
+    },
+    "encounter": {
+      "path": "/home/suraj/Data/NCH-Sleep-DataBank/physionet.org/files/nch-sleep/3.1.0/Health_Data/ENCOUNTER.csv",
+      "bytes": 74979611,
+      "n_rows": 495138,
+      "columns": [
+        "STUDY_ENC_ID",
+        "STUDY_PAT_ID",
+        "ENCOUNTER_DATE",
+        "VISIT_START_DATETIME",
+        "VISIT_END_DATETIME",
+        "ADT_ARRIVAL_DATETIME",
+        "ED_DEPARTURE_DATETIME",
+        "ENCOUNTER_TYPE",
+        "VISIT_TYPE_CD",
+        "VISIT_TYPE_DESCR",
+        "ICU_VISIT_YN",
+        "PROV_ID",
+        "PROV_TYPE",
+        "DEPT_ID",
+        "DEPT_SPECIALTY",
+        "ADMIT_SOURCE",
+        "HOSP_ADMIT_SOURCE",
+        "DISCHARGE_DISPOSITION",
+        "DISCHARGE_DESTINATION",
+        "DRG_CODE",
+        "DRG_NAME",
+        "VISIT_REASON"
+      ]
+    },
+    "diagnosis": {
+      "path": "/home/suraj/Data/NCH-Sleep-DataBank/physionet.org/files/nch-sleep/3.1.0/Health_Data/DIAGNOSIS.csv",
+      "bytes": 240084167,
+      "n_rows": 1513853,
+      "columns": [
+        "column00",
+        "STUDY_DX_ID",
+        "STUDY_ENC_ID",
+        "STUDY_PAT_ID",
+        "DX_START_DATETIME",
+        "DX_END_DATETIME",
+        "DX_SOURCE_TYPE",
+        "DX_ENC_TYPE",
+        "DX_CODE_TYPE",
+        "DX_CODE",
+        "DX_NAME",
+        "DX_ALT_CODE",
+        "CLASS_OF_PROBLEM",
+        "CHRONIC_YN",
+        "PROV_ID"
+      ]
+    },
+    "procedure": {
+      "path": "/home/suraj/Data/NCH-Sleep-DataBank/physionet.org/files/nch-sleep/3.1.0/Health_Data/PROCEDURE.csv",
+      "bytes": 27918726,
+      "n_rows": 283599,
+      "columns": [
+        "STUDY_PROC_ID",
+        "STUDY_PAT_ID",
+        "STUDY_ENC_ID",
+        "PROCEDURE_DATETIME",
+        "STUDY_PROV_ID",
+        "PROC_ID_NCH",
+        "PROC_CODE",
+        "PROC_CODE_TYPE",
+        "PROC_DESCR"
+      ]
+    },
+    "procedure_surg_hx": {
+      "path": "/home/suraj/Data/NCH-Sleep-DataBank/physionet.org/files/nch-sleep/3.1.0/Health_Data/PROCEDURE_SURG_HX.csv",
+      "bytes": 884795,
+      "n_rows": 10190,
+      "columns": [
+        "STUDY_SURGHX_ID",
+        "STUDY_PAT_ID",
+        "PROC_NOTED_DATE",
+        "PROC_START_TIME",
+        "PROC_END_TIME",
+        "PROC_CODE",
+        "CPT_CODE",
+        "PROC_DESCR"
+      ]
+    },
+    "medication": {
+      "path": "/home/suraj/Data/NCH-Sleep-DataBank/physionet.org/files/nch-sleep/3.1.0/Health_Data/MEDICATION.csv",
+      "bytes": 973941429,
+      "n_rows": 3035986,
+      "columns": [
+        "STUDY_MED_ID",
+        "STUDY_ENC_ID",
+        "STUDY_PAT_ID",
+        "MED_START_DATETIME",
+        "MED_END_DATETIME",
+        "MED_ORDER_DATETIME",
+        "MED_TAKEN_DATETIME",
+        "MED_SOURCE_TYPE",
+        "QUANTITY",
+        "DAYS_SUPPLY",
+        "FREQUENCY",
+        "EFFECTIVE_DRUG_DOSE",
+        "EFF_DRUG_DOSE_SOURCE_VALUE",
+        "DRUG_DOSE_UNIT",
+        "REFILLS",
+        "RXNORM_CODE",
+        "RXNORM_TERM_TYPE",
+        "MEDICATION_DESCR",
+        "GENERIC_DRUG_DESCR",
+        "DRUG_ORDER_STATUS",
+        "DRUG_ACTION",
+        "ROUTE",
+        "ROUTE_SOURCE_VALUE",
+        "PRESCRIBING_PROV_ID",
+        "PHARM_CLASS",
+        "PHARM_SUBCLASS",
+        "THERA_CLASS",
+        "THERA_SUBCLASS"
+      ]
+    },
+    "measurement": {
+      "path": "/home/suraj/Data/NCH-Sleep-DataBank/physionet.org/files/nch-sleep/3.1.0/Health_Data/MEASUREMENT.csv",
+      "bytes": 25512204,
+      "n_rows": 332569,
+      "columns": [
+        "STUDY_MEAS_ID",
+        "STUDY_PAT_ID",
+        "STUDY_ENC_ID",
+        "MEAS_RECORDED_DATETIME",
+        "MEAS_TYPE",
+        "MEAS_VALUE_NUMBER",
+        "MEAS_VALUE_TEXT",
+        "MEAS_SOURCE",
+        "STUDY_PROV_ID"
+      ]
+    },
+    "sleep_study": {
+      "path": "/home/suraj/Data/NCH-Sleep-DataBank/physionet.org/files/nch-sleep/3.1.0/Health_Data/SLEEP_STUDY.csv",
+      "bytes": 181185,
+      "n_rows": 3984,
+      "columns": [
+        "STUDY_PAT_ID",
+        "SLEEP_STUDY_ID",
+        "SLEEP_STUDY_START_DATETIME",
+        "SLEEP_STUDY_DURATION_DATETIME",
+        "AGE_AT_SLEEP_STUDY_DAYS"
+      ]
+    },
+    "sleep_enc_id": {
+      "path": "/home/suraj/Data/NCH-Sleep-DataBank/physionet.org/files/nch-sleep/3.1.0/Health_Data/SLEEP_ENC_ID.csv",
+      "bytes": 79520,
+      "n_rows": 3964,
+      "columns": [
+        "STUDY_PAT_ID",
+        "SLEEP_STUDY_ID",
+        "STUDY_ENC_ID"
+      ]
+    }
+  },
+  "psg_waveforms_local": {
+    "edf_files_downloaded": 21,
+    "records_file_lines": 3984,
+    "used_for_ehr_representation": false,
+    "role": "index time / future label source only"
+  },
+  "patients": {
+    "n_rows": 3673,
+    "n_patients": 3673,
+    "missing_dob": 0.0,
+    "missing_sex": 0.0,
+    "missing_race": 0.0
+  },
+  "sex_values": [
+    {
+      "PCORI_GENDER_CD": "M",
+      "GENDER_DESCR": "Male",
+      "n": 2068
+    },
+    {
+      "PCORI_GENDER_CD": "F",
+      "GENDER_DESCR": "Female",
+      "n": 1604
+    },
+    {
+      "PCORI_GENDER_CD": "UN",
+      "GENDER_DESCR": "Unknown",
+      "n": 1
+    }
+  ],
+  "race_values": [
+    {
+      "PCORI_RACE_CD": "05",
+      "RACE_DESCR": "White",
+      "n": 2433
+    },
+    {
+      "PCORI_RACE_CD": "03",
+      "RACE_DESCR": "Black or African American",
+      "n": 738
+    },
+    {
+      "PCORI_RACE_CD": "06",
+      "RACE_DESCR": "Multiple race",
+      "n": 277
+    },
+    {
+      "PCORI_RACE_CD": "UN",
+      "RACE_DESCR": "Unknown",
+      "n": 115
+    },
+    {
+      "PCORI_RACE_CD": "02",
+      "RACE_DESCR": "Asian",
+      "n": 93
+    },
+    {
+      "PCORI_RACE_CD": "07",
+      "RACE_DESCR": "Refuse to answer",
+      "n": 9
+    },
+    {
+      "PCORI_RACE_CD": "04",
+      "RACE_DESCR": "Native Hawaiian or Other Pacific Islander",
+      "n": 5
+    },
+    {
+      "PCORI_RACE_CD": "01",
+      "RACE_DESCR": "American Indian or Alaska Native",
+      "n": 3
+    }
+  ],
+  "hispanic_values": [
+    {
+      "PCORI_HISPANIC_CD": "N",
+      "ETHNICITY_DESCR": "Not Hispanic or Latino",
+      "n": 3446
+    },
+    {
+      "PCORI_HISPANIC_CD": "Y",
+      "ETHNICITY_DESCR": "Hispanic or Latino",
+      "n": 186
+    },
+    {
+      "PCORI_HISPANIC_CD": "UN",
+      "ETHNICITY_DESCR": "Other",
+      "n": 23
+    },
+    {
+      "PCORI_HISPANIC_CD": "UN",
+      "ETHNICITY_DESCR": "Unknown",
+      "n": 15
+    },
+    {
+      "PCORI_HISPANIC_CD": "NI",
+      "ETHNICITY_DESCR": "No information",
+      "n": 3
+    }
+  ],
+  "encounters": {
+    "n_rows": 495138,
+    "n_encounters": 495138,
+    "n_patients": 3672,
+    "missing_date": 0.0
+  },
+  "encounter_types": [
+    {
+      "ENCOUNTER_TYPE": "Office Visit",
+      "n": 118656
+    },
+    {
+      "ENCOUNTER_TYPE": "Hospital Encounter",
+      "n": 69436
+    },
+    {
+      "ENCOUNTER_TYPE": "Appointment",
+      "n": 50842
+    },
+    {
+      "ENCOUNTER_TYPE": "Travel",
+      "n": 40217
+    },
+    {
+      "ENCOUNTER_TYPE": "Pharmacy Visit",
+      "n": 38189
+    },
+    {
+      "ENCOUNTER_TYPE": "Orders Only",
+      "n": 37210
+    },
+    {
+      "ENCOUNTER_TYPE": "Speech Therapy",
+      "n": 23848
+    },
+    {
+      "ENCOUNTER_TYPE": "Physical Therapy",
+      "n": 19846
+    },
+    {
+      "ENCOUNTER_TYPE": "Refill",
+      "n": 16311
+    },
+    {
+      "ENCOUNTER_TYPE": "Occupational Therapy",
+      "n": 15410
+    },
+    {
+      "ENCOUNTER_TYPE": "Procedure Pass",
+      "n": 9178
+    },
+    {
+      "ENCOUNTER_TYPE": "Surgery",
+      "n": 8337
+    },
+    {
+      "ENCOUNTER_TYPE": "Anesthesia Event",
+      "n": 6626
+    },
+    {
+      "ENCOUNTER_TYPE": "Anesthesia",
+      "n": 6621
+    },
+    {
+      "ENCOUNTER_TYPE": "Scan",
+      "n": 5245
+    },
+    {
+      "ENCOUNTER_TYPE": "PCTC Call",
+      "n": 4974
+    },
+    {
+      "ENCOUNTER_TYPE": "Nurse Triage",
+      "n": 4934
+    },
+    {
+      "ENCOUNTER_TYPE": "Resolute Professional Billing Hospital Prof Fee",
+      "n": 1740
+    },
+    {
+      "ENCOUNTER_TYPE": "Ancillary Orders",
+      "n": 1628
+    },
+    {
+      "ENCOUNTER_TYPE": "Abstract",
+      "n": 1478
+    },
+    {
+      "ENCOUNTER_TYPE": "Wait List",
+      "n": 1332
+    },
+    {
+      "ENCOUNTER_TYPE": "Nurse Only",
+      "n": 1230
+    },
+    {
+      "ENCOUNTER_TYPE": "Home Care Visit",
+      "n": 1173
+    },
+    {
+      "ENCOUNTER_TYPE": "BPA",
+      "n": 1134
+    },
+    {
+      "ENCOUNTER_TYPE": "Nutrition",
+      "n": 1094
+    },
+    {
+      "ENCOUNTER_TYPE": "Social Work",
+      "n": 1092
+    },
+    {
+      "ENCOUNTER_TYPE": "Prep for Surgery",
+      "n": 881
+    },
+    {
+      "ENCOUNTER_TYPE": "Athletic Training",
+      "n": 880
+    },
+    {
+      "ENCOUNTER_TYPE": "Community Orders",
+      "n": 871
+    },
+    {
+      "ENCOUNTER_TYPE": "Specialty Pharmacy",
+      "n": 852
+    }
+  ],
+  "diagnoses": {
+    "n_rows": 1513853,
+    "n_patients": 3672,
+    "n_encounters": 286213,
+    "n_raw_codes": 11472,
+    "missing_code": 0.0,
+    "missing_time": 0.0
+  },
+  "dx_code_types": [
+    {
+      "DX_CODE_TYPE": "ICD10",
+      "n": 1017334,
+      "n_codes": 7629
+    },
+    {
+      "DX_CODE_TYPE": "ICD9",
+      "n": 496519,
+      "n_codes": 3845
+    }
+  ],
+  "dx_source_types": [
+    {
+      "DX_SOURCE_TYPE": "Final Dx",
+      "n": 597654
+    },
+    {
+      "DX_SOURCE_TYPE": "Secondary Encounter Dx",
+      "n": 418147
+    },
+    {
+      "DX_SOURCE_TYPE": "Admit Dx",
+      "n": 255767
+    },
+    {
+      "DX_SOURCE_TYPE": "Primary Encounter Dx",
+      "n": 201804
+    },
+    {
+      "DX_SOURCE_TYPE": "Active",
+      "n": 19770
+    },
+    {
+      "DX_SOURCE_TYPE": "Resolved",
+      "n": 14300
+    },
+    {
+      "DX_SOURCE_TYPE": "External Injury Dx",
+      "n": 6411
+    }
+  ],
+  "procedures": {
+    "n_rows": 283599,
+    "n_patients": 3664,
+    "n_raw_codes": 2751,
+    "n_nch_local_ids": 2970,
+    "missing_code": 0.0,
+    "missing_time": 0.0
+  },
+  "proc_code_types": [
+    {
+      "PROC_CODE_TYPE": "CPT",
+      "n": 253495,
+      "n_codes": 33
+    },
+    {
+      "PROC_CODE_TYPE": "ICD-10-PCS",
+      "n": 19222,
+      "n_codes": 2010
+    },
+    {
+      "PROC_CODE_TYPE": "ICD-9-CM Volume 3",
+      "n": 10857,
+      "n_codes": 708
+    },
+    {
+      "PROC_CODE_TYPE": null,
+      "n": 25,
+      "n_codes": 5
+    }
+  ],
+  "procedure_surg_hx": {
+    "n_rows": 10190,
+    "n_patients": 3009,
+    "n_proc_code": 933,
+    "n_cpt": 905
+  },
+  "medications": {
+    "n_rows": 3035986,
+    "n_patients": 3468,
+    "n_rxcui": 2616,
+    "missing_rxcui": 1136847.0,
+    "missing_taken": 322675.0,
+    "missing_start": 0.0
+  },
+  "med_source_types": [
+    {
+      "MED_SOURCE_TYPE": "IP Meds",
+      "n": 2876900
+    },
+    {
+      "MED_SOURCE_TYPE": "OP Meds",
+      "n": 159086
+    }
+  ],
+  "measurements": {
+    "n_rows": 332569,
+    "n_patients": 3665,
+    "n_types": 3
+  },
+  "measurement_types": [
+    {
+      "MEAS_TYPE": "BMI",
+      "n": 158242
+    },
+    {
+      "MEAS_TYPE": "BMIPCT",
+      "n": 95582
+    },
+    {
+      "MEAS_TYPE": "BP",
+      "n": 78745
+    }
+  ],
+  "sleep_studies": {
+    "n_rows": 3984,
+    "n_patients": 3673,
+    "n_studies": 3984,
+    "missing_start": 0.0,
+    "min_age_days": 6.0,
+    "max_age_days": 21313.0,
+    "median_age_days": 2891.5
+  },
+  "patients_with_multiple_studies": 273,
+  "studies_per_patient": [
+    {
+      "n_studies": 1,
+      "n_patients": 3400
+    },
+    {
+      "n_studies": 2,
+      "n_patients": 238
+    },
+    {
+      "n_studies": 3,
+      "n_patients": 33
+    },
+    {
+      "n_studies": 4,
+      "n_patients": 1
+    },
+    {
+      "n_studies": 5,
+      "n_patients": 1
+    }
+  ],
+  "sleep_enc_id": {
+    "n_rows": 3964,
+    "n_studies": 3964,
+    "n_encounters": 3955
+  },
+  "duplicates": {
+    "diagnosis_id": 0,
+    "procedure_id": 0,
+    "medication_id": 0,
+    "sleep_study_id": 0
+  },
+  "date_ranges": {
+    "diagnosis": {
+      "min_t": "1899-07-05 00:00:00",
+      "max_t": "2020-07-19 13:03:00"
+    },
+    "encounter": {
+      "min_t": "1970-03-01 00:00:00",
+      "max_t": "2020-11-14 00:00:00"
+    },
+    "sleep_study": {
+      "min_t": "2017-06-29 20:58:41",
+      "max_t": "2020-06-24 20:24:04"
+    },
+    "birth": {
+      "min_t": "1960-08-22 00:00:00",
+      "max_t": "2020-03-20 00:00:00"
+    }
+  },
+  "dx_redacted_like": [
+    {
+      "DX_CODE": "redacted",
+      "n": 6460
+    }
+  ]
+}
