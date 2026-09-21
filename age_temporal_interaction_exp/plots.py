@@ -31,7 +31,7 @@ def plot_lambda_recovery(
     for ax, task in zip(axes, ("T0", "T1", "T2")):
         beta_t = BETA_TRUE[task]
         ax.plot(ages, LAMBDA0_TRUE + beta_t * z, color="black", lw=2.2, label="true λ*(a)")
-        task_rows = [r for r in rows if r["task"] == task and r["arm"] == "age_temporal"]
+        task_rows = [r for r in rows if r["task"] == task and r.get("model", r.get("arm")) == "age_temporal"]
         for i, r in enumerate(task_rows):
             lam = r["lambda0_hat"] + r["beta_hat"] * z
             ax.plot(
@@ -66,7 +66,7 @@ def plot_kernel_recovery(
     fig, axes = plt.subplots(3, 5, figsize=(14.0, 8.2), sharex=True, sharey=True)
     for r_i, task in enumerate(("T0", "T1", "T2")):
         beta_t = BETA_TRUE[task]
-        task_rows = [r for r in rows if r["task"] == task and r["arm"] == "age_temporal"]
+        task_rows = [r for r in rows if r["task"] == task and r.get("model", r.get("arm")) == "age_temporal"]
         for c_i, age in enumerate(KERNEL_AGES):
             ax = axes[r_i, c_i]
             z_a = (age - age_mean) / max(age_std, 1e-6)
@@ -102,7 +102,7 @@ def plot_beta_recovery(rows: list[dict[str, Any]], path: Path) -> None:
     colors = {"T0": "#4c4c4c", "T1": "#1f4e79", "T2": "#b35c1e"}
     rng = np.random.default_rng(0)
     for task in ("T0", "T1", "T2"):
-        vals = [r["beta_hat"] for r in rows if r["task"] == task and r["arm"] == "age_temporal"]
+        vals = [r["beta_hat"] for r in rows if r["task"] == task]
         if not vals:
             continue
         x = np.full(len(vals), {"T0": 0, "T1": 1, "T2": 2}[task], dtype=float)

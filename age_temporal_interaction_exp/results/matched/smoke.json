@@ -1,0 +1,15 @@
+{
+  "n_train": 128,
+  "train_bce": 9.789721389097394e-07,
+  "train_accuracy": 1.0,
+  "train_pair_accuracy": 1.0,
+  "lambda0_hat": -0.006398024968802929,
+  "beta_hat": 0.6862862706184387,
+  "passed": true,
+  "criteria": {
+    "train_accuracy_ge_0.95": true,
+    "train_bce_le_0.20": true,
+    "beta_hat_positive": true,
+    "pair_accuracy_ge_0.90": true
+  }
+}

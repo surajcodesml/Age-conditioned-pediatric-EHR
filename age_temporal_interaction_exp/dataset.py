@@ -52,6 +52,8 @@ class PackedPatient:
     patient_id: str
     labels: dict[str, float]
     true_w: dict[str, np.ndarray]
+    pair_id: str = ""
+    variant: str = ""
 
 
 def _signal_only(row: PackedPatient) -> PackedPatient:
@@ -70,6 +72,8 @@ def _signal_only(row: PackedPatient) -> PackedPatient:
         patient_id=row.patient_id,
         labels=row.labels,
         true_w={k: v[keep] for k, v in row.true_w.items()},
+        pair_id=row.pair_id,
+        variant=row.variant,
     )
 
 
@@ -97,6 +101,8 @@ class InteractionDataset(Dataset):
             "true_w": torch.from_numpy(r.true_w[self.task]),
             "age_group": r.age_group,
             "patient_id": r.patient_id,
+            "pair_id": r.pair_id or r.patient_id,
+            "variant": r.variant,
         }
 
 
@@ -121,6 +127,8 @@ def collate_batch(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "labels": torch.stack([r["label"] for r in rows]),
         "age_group": [r["age_group"] for r in rows],
         "patient_id": [r["patient_id"] for r in rows],
+        "pair_id": [r["pair_id"] for r in rows],
+        "variant": [r["variant"] for r in rows],
     }
 
 
@@ -251,6 +259,23 @@ class InteractionBenchmark:
         if signal_only:
             rows = [_signal_only(r) for r in rows]
         return InteractionDataset(rows, task)
+
+    def loader_from_rows(
+        self,
+        rows: list[PackedPatient],
+        task: str,
+        shuffle: bool,
+        batch_size: int | None = None,
+    ) -> DataLoader:
+        ds = InteractionDataset(rows, task)
+        return DataLoader(
+            ds,
+            batch_size=batch_size or self.cfg.batch_size,
+            shuffle=shuffle,
+            num_workers=self.cfg.num_workers,
+            collate_fn=collate_batch,
+            drop_last=False,
+        )
 
     def make_loader(
         self,

@@ -47,6 +47,8 @@ def predict(
     y_all: list[np.ndarray] = []
     groups_all: list[str] = []
     pids: list[str] = []
+    pair_ids: list[str] = []
+    variants: list[str] = []
     ages: list[np.ndarray] = []
     offset = 0
     for batch in loader:
@@ -68,6 +70,8 @@ def predict(
         y_all.append(batch["labels"].numpy())
         groups_all.extend(batch["age_group"])
         pids.extend(batch["patient_id"])
+        pair_ids.extend(batch.get("pair_id", batch["patient_id"]))
+        variants.extend(batch.get("variant", [""] * bs))
         ages.append(batch["age_years"].numpy())
     logits_np = np.concatenate(logits_all)
     y = np.concatenate(y_all).astype(np.float64)
@@ -77,6 +81,8 @@ def predict(
         "probs": _sigmoid(logits_np),
         "age_group": np.asarray(groups_all),
         "patient_id": np.asarray(pids),
+        "pair_id": np.asarray(pair_ids),
+        "variant": np.asarray(variants),
         "age_years": np.concatenate(ages),
     }
 
@@ -129,9 +135,47 @@ def summarize_predictions(pred: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+def pair_consistency(pred: dict[str, Any]) -> dict[str, Any] | None:
+    """Fraction of matched pairs where BOTH members are classified correctly.
+
+    Returns None when the loader has no size-2 pairs (original experiment).
+    """
+    pair_ids = pred.get("pair_id")
+    if pair_ids is None or len(pair_ids) == 0:
+        return None
+    y = pred["y"].astype(np.int64)
+    hat = (pred["probs"] >= 0.5).astype(np.int64)
+    groups: dict[str, list[int]] = {}
+    for i, pid in enumerate(pair_ids):
+        groups.setdefault(str(pid), []).append(i)
+    complete = [idxs for idxs in groups.values() if len(idxs) == 2]
+    if not complete:
+        return None
+    both = 0
+    same_pred = 0
+    opposite_pred = 0
+    n = len(complete)
+    for idxs in complete:
+        i, j = idxs
+        both += int((hat[i] == y[i]) and (hat[j] == y[j]))
+        same_pred += int(hat[i] == hat[j])
+        opposite_pred += int(hat[i] != hat[j])
+    return {
+        "n_pairs": int(n),
+        "pair_accuracy": float(both / n),
+        "same_prediction_rate": float(same_pred / n),
+        "opposite_prediction_rate": float(opposite_pred / n),
+    }
+
+
 @torch.no_grad()
 def evaluate(model: torch.nn.Module, loader, device: torch.device) -> dict[str, Any]:
-    return summarize_predictions(predict(model, loader, device))
+    pred = predict(model, loader, device)
+    out = summarize_predictions(pred)
+    pair = pair_consistency(pred)
+    if pair is not None:
+        out["pair"] = pair
+    return out
 
 
 def paired_delta_stats(delta: np.ndarray) -> dict[str, float]:
@@ -169,7 +213,7 @@ def counterfactual_age(
     bce_s = _per_example_bce(pred_s["logits"], y)
     d_k = bce_k - bce_c
     d_s = bce_s - bce_c
-    return {
+    out = {
         "correct": summarize_predictions(pred_c),
         "constant": summarize_predictions(pred_k),
         "shuffled": summarize_predictions(pred_s),
@@ -179,6 +223,11 @@ def counterfactual_age(
         "constant_bce": float(bce_k.mean()),
         "shuffled_bce": float(bce_s.mean()),
     }
+    for key, pred in (("correct", pred_c), ("constant", pred_k), ("shuffled", pred_s)):
+        pair = pair_consistency(pred)
+        if pair is not None:
+            out[f"pair_{key}"] = pair
+    return out
 
 
 def _spearman(a: np.ndarray, b: np.ndarray) -> float:

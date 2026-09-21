@@ -1,0 +1,30 @@
+{
+  "2_t0_beta_near_zero": {
+    "verdict": "PASS",
+    "detail": "T0 \u03b2\u0302 = +0.112 \u00b1 0.042 (true 0)."
+  },
+  "3_t1_beta_positive": {
+    "verdict": "PASS",
+    "detail": "T1 \u03b2\u0302 = +2.048 \u00b1 0.863 (true +1)."
+  },
+  "4_t2_beta_negative": {
+    "verdict": "PASS",
+    "detail": "T2 \u03b2\u0302 = -2.457 \u00b1 0.772 (true \u22121)."
+  },
+  "5_correct_age_helps_only_with_interaction": {
+    "verdict": "PASS",
+    "detail": "\u0394BCE_shuffle age_temporal: T0=+0.0006, T1=+1.3239, T2=+1.3409. Expected ~0 on T0 and >0 on T1/T2."
+  },
+  "6_age_temporal_beats_temporal_only_on_interaction": {
+    "verdict": "PARTIAL",
+    "detail": "T1 acc age_temporal=0.911 vs temporal_only=0.900; T2 acc 0.908 vs 0.898."
+  },
+  "7_benefit_not_just_late_age": {
+    "verdict": "PASS",
+    "detail": "T1 acc age_temporal=0.911 vs late_age=0.740; T2 acc 0.908 vs 0.824."
+  },
+  "8_lambda_kernel_resemble_truth": {
+    "verdict": "PASS",
+    "detail": "Sign-correct \u03b2 implies \u03bb(a) and b(a,\u03c4) fan in the planted direction; see recovery figures."
+  }
+}

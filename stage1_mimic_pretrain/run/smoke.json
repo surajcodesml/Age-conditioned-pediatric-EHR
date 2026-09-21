@@ -1,0 +1,115 @@
+{
+  "unit": {
+    "n": 18,
+    "n_ok": 18,
+    "results": [
+      {
+        "name": "test_broadcast_bias_across_heads",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_beta_zero_matches_no_interaction",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_changing_age_changes_logits_when_beta_nonzero",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_changing_age_does_not_change_logits_when_beta_zero",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_changing_time_gap_changes_logits",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_gradients_reach_lambda0_and_beta",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_gradients_lambda0_only_when_no_interaction",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_shuffled_ages_alter_outputs_when_age_conditioned",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_padding_receives_no_attention",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_no_nan_extreme_gaps_and_ages",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_overfit_tiny_batch",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_macro_metrics_skip_invalid_classes",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_constant_age_override_changes_conditioned_model",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_arms_share_backbone_at_init",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_temporal_only_alias_resolves_to_no_interaction",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_production_n_heads_and_d_head",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_pooling_ignores_age_by_default",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_pooling_bias_flag_uses_age",
+        "ok": true,
+        "error": null
+      }
+    ]
+  },
+  "tiny_mimic": {
+    "skipped": false,
+    "arms": {
+      "no_interaction": {
+        "returncode": 0,
+        "run_name": "smoke_no_interaction_20260920231520",
+        "wall_s": 1.6418805122375488
+      },
+      "age_temporal": {
+        "returncode": 0,
+        "run_name": "smoke_age_temporal_20260920231520",
+        "wall_s": 1.6120915412902832
+      }
+    }
+  },
+  "wall_s": 3.687088966369629,
+  "all_unit_passed": true
+}

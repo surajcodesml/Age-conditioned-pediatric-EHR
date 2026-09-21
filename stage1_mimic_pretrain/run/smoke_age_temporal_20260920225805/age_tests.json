@@ -1,0 +1,33 @@
+{
+  "L_correct": 0.018355310428887606,
+  "L_shuffle_mean": 0.018355310428887606,
+  "L_shuffle_std": 0.0,
+  "L_shuffle_values": [
+    0.018355310428887606,
+    0.018355310428887606,
+    0.018355310428887606
+  ],
+  "delta_L_shuffle": 0.0,
+  "delta_L_shuffle_mean": 0.0,
+  "n_shuffle": 3,
+  "shuffle_seed": 0,
+  "shuffle_protocol": "permute last-event age across sequences within each batch; broadcast onto valid positions; demographics unchanged",
+  "L_constant_mean_age": 0.018355310428887606,
+  "L_constant_median_age": 0.018355310428887606,
+  "delta_L_constant_mean": 0.0,
+  "delta_L_constant_median": 0.0,
+  "constant_mean_age": 63.33601047086648,
+  "constant_median_age": 58.702868326488705,
+  "lambda0": 0.0035122395493090153,
+  "beta": -0.0009321693796664476,
+  "lambda_at_ages": {
+    "20.0": 0.00594946276396513,
+    "30.0": 0.005387061275541782,
+    "40.0": 0.004824660252779722,
+    "50.0": 0.004262258764356375,
+    "60.0": 0.0036998572759330273,
+    "70.0": 0.00313745578750968,
+    "80.0": 0.0025750542990863323
+  },
+  "interpretation": "nonzero beta but negligible \u0394L_shuffle: parameter changed but likely has little functional effect"
+}

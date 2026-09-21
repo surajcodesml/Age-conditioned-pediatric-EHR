@@ -1,0 +1,46 @@
+{
+  "shortcuts": {
+    "T1": {
+      "n": 11568,
+      "prevalence": 0.5,
+      "corr_age_label": 0.0,
+      "corr_z_label": 0.0,
+      "age_only_auroc": 0.5,
+      "age_only_accuracy": 0.5,
+      "count_only_auroc": 0.5,
+      "prevalence_by_split": {
+        "train": 0.5,
+        "val": 0.5,
+        "test": 0.5
+      },
+      "prevalence_young": 0.5,
+      "prevalence_old": 0.5
+    },
+    "T2": {
+      "n": 11568,
+      "prevalence": 0.5,
+      "corr_age_label": 0.0,
+      "corr_z_label": 0.0,
+      "age_only_auroc": 0.5,
+      "age_only_accuracy": 0.5,
+      "count_only_auroc": 0.5,
+      "prevalence_by_split": {
+        "train": 0.5,
+        "val": 0.5,
+        "test": 0.5
+      },
+      "prevalence_young": 0.5,
+      "prevalence_old": 0.5
+    }
+  },
+  "pair_checks": {
+    "n_pairs": 5784,
+    "frac_identical_codes": 1.0,
+    "frac_identical_lags": 1.0,
+    "frac_label_disagreement": 1.0,
+    "frac_age_differs": 1.0
+  },
+  "notes": [
+    "Pairs share events/lags, labels disagree, and age/count shortcuts are at chance."
+  ]
+}

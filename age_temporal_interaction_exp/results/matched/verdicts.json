@@ -1,0 +1,30 @@
+{
+  "1_interaction_necessary": {
+    "verdict": "PASS",
+    "detail": "no_age AUROC=0.500 pair_acc=0.000; temporal_only AUROC=0.500 pair_acc=0.000. Chance AUROC/pair-acc is required if age\u00d7time is strictly necessary."
+  },
+  "2_age_temporal_solves": {
+    "verdict": "PASS",
+    "detail": "age_temporal acc=1.000\u00b10.000, AUROC=1.000\u00b10.000, pair_acc=1.000\u00b10.001."
+  },
+  "3_temporal_only_cannot": {
+    "verdict": "PASS",
+    "detail": "temporal_only acc=0.500, AUROC=0.500, pair_acc=0.000 (expected ~chance / pair_acc\u22480)."
+  },
+  "4_late_age_indirect": {
+    "verdict": "REPORT",
+    "detail": "late_age acc=0.506\u00b10.007, AUROC=0.499\u00b10.002, pair_acc=0.079\u00b10.101. Additive age at the head cannot implement a history-dependent flip; this is the measured result, not an assumed failure."
+  },
+  "5_beta_sign": {
+    "verdict": "PASS",
+    "detail": "T1 \u03b2\u0302=+1.232\u00b10.179 (true +1); T2 \u03b2\u0302=-1.558\u00b10.476 (true \u22121)"
+  },
+  "6_shuffle_breaks_age_temporal": {
+    "verdict": "PASS",
+    "detail": "age_temporal \u0394BCE_shuffle=+7.012\u00b11.494; pair_acc shuffled=0.253."
+  },
+  "7_beats_temporal_only": {
+    "verdict": "PASS",
+    "detail": "age_temporal acc=1.000 pair_acc=1.000 vs temporal_only acc=0.500 pair_acc=0.000."
+  }
+}
