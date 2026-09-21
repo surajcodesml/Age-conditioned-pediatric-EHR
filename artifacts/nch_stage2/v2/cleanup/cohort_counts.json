@@ -1,0 +1,19 @@
+{
+  "primary_rule": "index_age_years < 18",
+  "pediatric_all_studies": {
+    "n_studies": 3761,
+    "n_patients": 3475
+  },
+  "pediatric_first_study": {
+    "n_studies": 3475,
+    "n_patients": 3475
+  },
+  "adult_all_studies": {
+    "n_studies": 223,
+    "n_patients": 204
+  },
+  "adult_first_study": {
+    "n_studies": 204,
+    "n_patients": 204
+  }
+}

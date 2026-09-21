@@ -1,0 +1,38 @@
+{
+  "L_correct": 0.002223857445642352,
+  "L_shuffle_mean": 0.002223857445642352,
+  "L_shuffle_std": 0.0,
+  "L_shuffle_values": [
+    0.002223857445642352,
+    0.002223857445642352,
+    0.002223857445642352
+  ],
+  "delta_L_shuffle": 0.0,
+  "delta_L_shuffle_mean": 0.0,
+  "n_shuffle": 3,
+  "shuffle_seed": 0,
+  "shuffle_protocol": "permute last-event age across sequences within each batch; broadcast onto valid positions; demographics unchanged",
+  "L_constant_mean_age": 0.002223857445642352,
+  "L_constant_median_age": 0.002223857445642352,
+  "delta_L_constant_mean": 0.0,
+  "delta_L_constant_median": 0.0,
+  "L_constant_mean_age_including_demographics": 0.0022288516629487276,
+  "L_constant_median_age_including_demographics": 0.0021992078982293606,
+  "delta_L_constant_mean_including_demographics": 4.9942173063755035e-06,
+  "delta_L_constant_median_including_demographics": -2.4649547412991524e-05,
+  "constant_mean_age": 9.0,
+  "constant_median_age": 4.94060754776001,
+  "lambda0": -1.618115782737732,
+  "beta": 0.0,
+  "lambda_at_ages": {
+    "0.0": -1.618115782737732,
+    "1.0": -1.618115782737732,
+    "5.0": -1.618115782737732,
+    "10.0": -1.618115782737732,
+    "15.0": -1.618115782737732,
+    "18.0": -1.618115782737732
+  },
+  "interpretation": "beta\u22480 and \u0394L_shuffle\u22480: age interaction is not being used",
+  "constant_preferred_age": 9.0,
+  "z_P_at_constant_preferred": 0.0
+}

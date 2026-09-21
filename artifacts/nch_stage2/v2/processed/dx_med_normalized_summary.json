@@ -1,0 +1,19 @@
+{
+  "representation": "dx_med_normalized",
+  "modalities": [
+    "diagnosis",
+    "medication"
+  ],
+  "retain_oov_as_unk": true,
+  "unk_vocab_index": 30635,
+  "n_samples": 3473,
+  "n_patients": 3473,
+  "n_empty_indexes": 2,
+  "n_impossible_history_events_dropped": 0,
+  "unk_event_total": 248538,
+  "unk_event_pct": 20.514086111322044,
+  "pct_sequences_with_unk": 90.46933486898935,
+  "truncation_pct": 14.771091275554276,
+  "events_total_after_truncation": 1211548,
+  "events_per_patient_mean": 348.8476821192053
+}

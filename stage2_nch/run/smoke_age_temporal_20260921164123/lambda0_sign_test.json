@@ -1,0 +1,31 @@
+{
+  "equation": "s_ij = q^T k / sqrt(d) - lambda0 * tau_ij   (beta=0)",
+  "tau": "log1p(|dt|/7)",
+  "sequence_timestamps_days": [
+    0.0,
+    1.0,
+    1000.0
+  ],
+  "lambda0_0": {
+    "lambda0": 0.0,
+    "attn_last_to_t0_distant": 0.31239116191864014,
+    "attn_last_to_t1_near": 0.3194354176521301,
+    "attn_last_to_self": 0.36817339062690735
+  },
+  "lambda0_plus_2": {
+    "lambda0": 2.0,
+    "attn_last_to_t0_distant": 4.2690062400652096e-05,
+    "attn_last_to_t1_near": 4.429817636264488e-05,
+    "attn_last_to_self": 0.9999130368232727
+  },
+  "lambda0_minus_2": {
+    "lambda0": -2.0,
+    "attn_last_to_t0_distant": 0.49742361903190613,
+    "attn_last_to_t1_near": 0.5025471448898315,
+    "attn_last_to_self": 2.9248480132082477e-05
+  },
+  "positive_lambda0_is_recency": true,
+  "negative_lambda0_is_long_range": true,
+  "interpretation": "Positive \u03bb0 decreases attention from the last event to the distant (t=0) event relative to \u03bb0=0 (recency). Negative \u03bb0 increases that mass (long-range preference). Stage-1 learned \u03bb0<0, so the transferred prior is long-range, not recency.",
+  "passed": true
+}

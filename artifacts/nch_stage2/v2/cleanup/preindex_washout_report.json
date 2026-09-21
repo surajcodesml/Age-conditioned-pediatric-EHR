@@ -1,0 +1,11 @@
+{
+  "window_24h": {
+    "n_events": 108,
+    "n_patients": 57
+  },
+  "window_7d": {
+    "n_events": 532,
+    "n_patients": 244
+  },
+  "note": "Analysis only; these windows are NOT removed in v2 primary sequences."
+}

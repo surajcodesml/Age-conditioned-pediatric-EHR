@@ -1,0 +1,56 @@
+{
+  "note": "MIMIC side uses unique HCPCS_* vocab codes (event table too large to scan). NCH side event-weighted.",
+  "shared_chapters": 4,
+  "matrix": {
+    "CPT_CHAPTER_ANES": {
+      "mimic_unique_hcpcs_codes": 0,
+      "nch_events": 103,
+      "both_nonzero": false
+    },
+    "CPT_CHAPTER_CAT3": {
+      "mimic_unique_hcpcs_codes": 12,
+      "nch_events": 0,
+      "both_nonzero": false
+    },
+    "CPT_CHAPTER_EAM": {
+      "mimic_unique_hcpcs_codes": 5,
+      "nch_events": 7713,
+      "both_nonzero": true
+    },
+    "CPT_CHAPTER_HCPCS2": {
+      "mimic_unique_hcpcs_codes": 32,
+      "nch_events": 0,
+      "both_nonzero": false
+    },
+    "CPT_CHAPTER_MED": {
+      "mimic_unique_hcpcs_codes": 108,
+      "nch_events": 192200,
+      "both_nonzero": true
+    },
+    "CPT_CHAPTER_OTHER": {
+      "mimic_unique_hcpcs_codes": 0,
+      "nch_events": 19,
+      "both_nonzero": false
+    },
+    "CPT_CHAPTER_PATH": {
+      "mimic_unique_hcpcs_codes": 0,
+      "nch_events": 12221,
+      "both_nonzero": false
+    },
+    "CPT_CHAPTER_RAD": {
+      "mimic_unique_hcpcs_codes": 7,
+      "nch_events": 34084,
+      "both_nonzero": true
+    },
+    "CPT_CHAPTER_SURG": {
+      "mimic_unique_hcpcs_codes": 2200,
+      "nch_events": 9061,
+      "both_nonzero": true
+    },
+    "NONE": {
+      "mimic_unique_hcpcs_codes": 0,
+      "nch_events": 58,
+      "both_nonzero": false
+    }
+  }
+}

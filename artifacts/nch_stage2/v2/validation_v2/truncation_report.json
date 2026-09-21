@@ -1,0 +1,63 @@
+{
+  "percentiles_raw_length": {
+    "0.5": 211.0,
+    "0.75": 583.0,
+    "0.9": 1768.800000000001,
+    "0.95": 3269.5999999999967,
+    "0.99": 8575.359999999984
+  },
+  "n_gt_1024": 545,
+  "pct_gt_1024": 15.69248488338612,
+  "by_age_band": [
+    {
+      "age_band": "<1",
+      "n": 195,
+      "pct_gt_1024": 14.358974358974358,
+      "median_len": 203.0,
+      "median_duration_before": 93.80667824074074,
+      "median_duration_retained": 76.66315972222222,
+      "median_frac_retained": 1.0,
+      "median_earliest_age_before_y": 0.0054757015742642025,
+      "median_earliest_age_after_y": 0.013689253935660506
+    },
+    {
+      "age_band": "1-5",
+      "n": 1187,
+      "pct_gt_1024": 18.53411962931761,
+      "median_len": 188.0,
+      "median_duration_before": 1048.4009837962963,
+      "median_duration_retained": 935.8217129629629,
+      "median_frac_retained": 1.0,
+      "median_earliest_age_before_y": 0.08213552361396304,
+      "median_earliest_age_after_y": 0.33675564681724846
+    },
+    {
+      "age_band": "6-11",
+      "n": 1201,
+      "pct_gt_1024": 15.736885928393004,
+      "median_len": 220.0,
+      "median_duration_before": 2658.393159722222,
+      "median_duration_retained": 2443.8224537037036,
+      "median_frac_retained": 1.0,
+      "median_earliest_age_before_y": 0.5065023956194388,
+      "median_earliest_age_after_y": 1.0939253935660507
+    },
+    {
+      "age_band": "12-17",
+      "n": 890,
+      "pct_gt_1024": 12.134831460674157,
+      "median_len": 233.5,
+      "median_duration_before": 3547.3163541666668,
+      "median_duration_retained": 3193.807789351852,
+      "median_frac_retained": 1.0,
+      "median_earliest_age_before_y": 5.368925393566051,
+      "median_earliest_age_after_y": 6.225872689938399
+    }
+  ],
+  "adolescent_early_history": {
+    "pct_truncated": 12.134831460674157,
+    "median_earliest_age_before_y": 5.368925393566051,
+    "median_earliest_age_after_y": 6.225872689938399,
+    "highlight": "Adolescent truncation does not strongly shift earliest retained age"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "n_patients": {
+    "train": 143802,
+    "val": 20511,
+    "test": 41174
+  },
+  "overlap": {
+    "train&val": 0,
+    "train&test": 0,
+    "val&test": 0
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "representation": "diagnoses_only",
+  "modalities": [
+    "diagnosis"
+  ],
+  "retain_oov_as_unk": true,
+  "unk_vocab_index": 30635,
+  "n_samples": 3472,
+  "n_patients": 3472,
+  "n_empty_indexes": 3,
+  "n_impossible_history_events_dropped": 0,
+  "unk_event_total": 76552,
+  "unk_event_pct": 8.752160829758628,
+  "pct_sequences_with_unk": 79.75230414746544,
+  "truncation_pct": 6.509216589861751,
+  "events_total_after_truncation": 874664,
+  "events_per_patient_mean": 251.91935483870967
+}

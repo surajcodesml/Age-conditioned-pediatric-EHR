@@ -1,0 +1,7 @@
+{
+  "epoch": 0,
+  "val_bce": 0.004032497184495332,
+  "micro_auprc": 0.00030604810068425635,
+  "micro_auroc": 0.7648956655238388,
+  "note": "validation performance of the transferred Stage-1 weights, \u03b2_P=0, z_P ages"
+}

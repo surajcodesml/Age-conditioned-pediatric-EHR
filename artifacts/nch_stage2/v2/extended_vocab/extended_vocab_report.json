@@ -1,0 +1,720 @@
+{
+  "n_candidate": 22,
+  "n_selected_for_encode": 22,
+  "existing_vocab_size": 30635,
+  "append_start_id": 30635,
+  "run_encode": true,
+  "status": "complete",
+  "extended_shape": [
+    30659,
+    1024
+  ],
+  "nearest_neighbors": [
+    {
+      "token": "CPT_CHAPTER_ANES",
+      "description": "Anesthesia procedure (CPT chapter)",
+      "source": "cpt_chapter",
+      "neighbors": [
+        {
+          "token": "ICUPROC_229532",
+          "description": "Indwelling Port (ICU procedure)",
+          "cosine": 0.7082759141921997
+        },
+        {
+          "token": "CCS_134",
+          "description": "Cesarean section (procedure)",
+          "cosine": 0.6850521564483643
+        },
+        {
+          "token": "CCS_1",
+          "description": "Incision and excision of CNS (procedure)",
+          "cosine": 0.6835218667984009
+        },
+        {
+          "token": "ICUPROC_225430",
+          "description": "Cardiac Cath (ICU procedure)",
+          "cosine": 0.6795481443405151
+        },
+        {
+          "token": "ICUPROC_225202",
+          "description": "Indwelling Port (PortaCath) (ICU procedure)",
+          "cosine": 0.6775988936424255
+        }
+      ]
+    },
+    {
+      "token": "CPT_CHAPTER_SURG",
+      "description": "Surgical procedure (CPT chapter)",
+      "source": "cpt_chapter",
+      "neighbors": [
+        {
+          "token": "CCS_1",
+          "description": "Incision and excision of CNS (procedure)",
+          "cosine": 0.7121466994285583
+        },
+        {
+          "token": "ICUPROC_229532",
+          "description": "Indwelling Port (ICU procedure)",
+          "cosine": 0.7078032493591309
+        },
+        {
+          "token": "CCS_134",
+          "description": "Cesarean section (procedure)",
+          "cosine": 0.7044094204902649
+        },
+        {
+          "token": "ICUPROC_225430",
+          "description": "Cardiac Cath (ICU procedure)",
+          "cosine": 0.70429527759552
+        },
+        {
+          "token": "CCS_231",
+          "description": "Other therapeutic procedures (procedure)",
+          "cosine": 0.7024613618850708
+        }
+      ]
+    },
+    {
+      "token": "CPT_CHAPTER_RAD",
+      "description": "Radiology procedure (CPT chapter)",
+      "source": "cpt_chapter",
+      "neighbors": [
+        {
+          "token": "CCS_211",
+          "description": "Radiation therapy (procedure)",
+          "cosine": 0.7607587575912476
+        },
+        {
+          "token": "ICUPROC_225462",
+          "description": "Interventional Radiology (ICU procedure)",
+          "cosine": 0.7200937867164612
+        },
+        {
+          "token": "ICUPROC_225450",
+          "description": "Radiation Therapy (ICU procedure)",
+          "cosine": 0.7107619047164917
+        },
+        {
+          "token": "ICUPROC_229532",
+          "description": "Indwelling Port (ICU procedure)",
+          "cosine": 0.7038063406944275
+        },
+        {
+          "token": "ICUPROC_225443",
+          "description": "Nuclear Medicine (ICU procedure)",
+          "cosine": 0.6963484287261963
+        }
+      ]
+    },
+    {
+      "token": "CPT_CHAPTER_PATH",
+      "description": "Pathology and laboratory procedure (CPT chapter)",
+      "source": "cpt_chapter",
+      "neighbors": [
+        {
+          "token": "ICUPROC_229578",
+          "description": "Cath Lab (Sent) (ICU procedure)",
+          "cosine": 0.6454343795776367
+        },
+        {
+          "token": "LAB_51274",
+          "description": "PT (laboratory measurement)",
+          "cosine": 0.6442671418190002
+        },
+        {
+          "token": "CCS_227",
+          "description": "Other diagnostic procedures (procedure)",
+          "cosine": 0.6328969597816467
+        },
+        {
+          "token": "ICUPROC_229532",
+          "description": "Indwelling Port (ICU procedure)",
+          "cosine": 0.6285761594772339
+        },
+        {
+          "token": "CCS_76",
+          "description": "Colonoscopy and biopsy (procedure)",
+          "cosine": 0.6277819871902466
+        }
+      ]
+    },
+    {
+      "token": "CPT_CHAPTER_MED",
+      "description": "Medicine procedure (CPT chapter)",
+      "source": "cpt_chapter",
+      "neighbors": [
+        {
+          "token": "ICUPROC_225443",
+          "description": "Nuclear Medicine (ICU procedure)",
+          "cosine": 0.6719399094581604
+        },
+        {
+          "token": "CCS_29",
+          "description": "Dental procedures (procedure)",
+          "cosine": 0.6686705946922302
+        },
+        {
+          "token": "CCS_231",
+          "description": "Other therapeutic procedures (procedure)",
+          "cosine": 0.6665746569633484
+        },
+        {
+          "token": "ICUPROC_229532",
+          "description": "Indwelling Port (ICU procedure)",
+          "cosine": 0.6659111380577087
+        },
+        {
+          "token": "CCS_134",
+          "description": "Cesarean section (procedure)",
+          "cosine": 0.6559838056564331
+        }
+      ]
+    },
+    {
+      "token": "CPT_CHAPTER_EAM",
+      "description": "Evaluation and management service (CPT chapter)",
+      "source": "cpt_chapter",
+      "neighbors": [
+        {
+          "token": "CCS_218",
+          "description": "Psychological and psychiatric evaluation and therapy (procedure)",
+          "cosine": 0.6465795040130615
+        },
+        {
+          "token": "CHART_227959",
+          "description": "Restraints Evaluated (Restraint/Support Systems)",
+          "cosine": 0.5952829122543335
+        },
+        {
+          "token": "CHART_229377",
+          "description": "Part 1 Question (Swallow Evaluation)",
+          "cosine": 0.5939143896102905
+        },
+        {
+          "token": "CHART_229703",
+          "description": "CPOT-Pain Management (Pain/Sedation)",
+          "cosine": 0.5925845503807068
+        },
+        {
+          "token": "CHART_224859",
+          "description": "Status and Comfort (Behavioral) (Restraint/Support Systems)",
+          "cosine": 0.5921714305877686
+        }
+      ]
+    },
+    {
+      "token": "CPT_CHAPTER_HCPCS2",
+      "description": "HCPCS Level II procedure/service",
+      "source": "cpt_chapter",
+      "neighbors": [
+        {
+          "token": "HCPCS_99195",
+          "description": "Other services and procedures",
+          "cosine": 0.6088844537734985
+        },
+        {
+          "token": "ICD10_R29702",
+          "description": "NIHSS score 2",
+          "cosine": 0.5921003222465515
+        },
+        {
+          "token": "CHART_226763",
+          "description": "HrApacheIIScore (Scores - APACHE II)",
+          "cosine": 0.579781174659729
+        },
+        {
+          "token": "ICUPROC_229521",
+          "description": "ICP - PbtO2 (ICU procedure)",
+          "cosine": 0.5723190903663635
+        },
+        {
+          "token": "ICD10_L89812",
+          "description": "Pressure ulcer of head, stage 2",
+          "cosine": 0.5710033774375916
+        }
+      ]
+    },
+    {
+      "token": "RXN_308189",
+      "description": "AMOXICILLIN 400 mg in 5 mL ORAL POWDER, FOR SUSPENSION (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "RXN_239191",
+          "description": "AMOXICILLIN 250 mg in 5 mL ORAL POWDER, FOR SUSPENSION (medication)",
+          "cosine": 0.9414198994636536
+        },
+        {
+          "token": "RXN_617322",
+          "description": "AMOXICILLIN 250 mg in 5 mL / CLAVULANATE POTASSIUM 62.5 mg in 5 mL ORAL POWDER, FOR SUSPENSION (medication)",
+          "cosine": 0.8617746829986572
+        },
+        {
+          "token": "RXN_141963",
+          "description": "AZITHROMYCIN DIHYDRATE 200 mg in 5 mL ORAL POWDER, FOR SUSPENSION (medication)",
+          "cosine": 0.8113476634025574
+        },
+        {
+          "token": "RXN_308182",
+          "description": "AMOXICILLIN 250 mg ORAL CAPSULE (medication)",
+          "cosine": 0.7852421998977661
+        },
+        {
+          "token": "RXN_283536",
+          "description": "OXCARBAZEPINE 300 mg in 5 mL ORAL SUSPENSION (medication)",
+          "cosine": 0.7836667895317078
+        }
+      ]
+    },
+    {
+      "token": "RXN_801092",
+      "description": "ALBUTEROL SULFATE 90 ug RESPIRATORY (INHALATION) AEROSOL, METERED (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "RXN_2123072",
+          "description": "ALBUTEROL SULFATE 90 ug RESPIRATORY (INHALATION) AEROSOL, METERED [Albuterol Sulfate HFA] (medication)",
+          "cosine": 0.9499140977859497
+        },
+        {
+          "token": "RXN_801095",
+          "description": "ALBUTEROL SULFATE 90 ug RESPIRATORY (INHALATION) AEROSOL, METERED [VENTOLIN HFA] (medication)",
+          "cosine": 0.9435644745826721
+        },
+        {
+          "token": "RXN_630208",
+          "description": "ALBUTEROL SULFATE 2.5 mg in 3 mL RESPIRATORY (INHALATION) SOLUTION (medication)",
+          "cosine": 0.825968325138092
+        },
+        {
+          "token": "RXN_1190225",
+          "description": "IPRATROPIUM BROMIDE 20 ug / ALBUTEROL SULFATE 100 ug RESPIRATORY (INHALATION) SPRAY, METERED [Combivent Respimat] (medication)",
+          "cosine": 0.8214560151100159
+        },
+        {
+          "token": "RXN_1437702",
+          "description": "IPRATROPIUM BROMIDE 0.5 mg in 3 mL / ALBUTEROL SULFATE 3 mg in 3 mL RESPIRATORY (INHALATION) SOLUTION (medication)",
+          "cosine": 0.7890284657478333
+        }
+      ]
+    },
+    {
+      "token": "RXN_307668",
+      "description": "ACETAMINOPHEN 160 mg in 5 mL ORAL SUSPENSION [Dye Free Pain Reliever Childrens] (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "RXN_307675",
+          "description": "ACETAMINOPHEN 160 mg in 5 mL ORAL LIQUID [Little Remedies Infant Fever/Pain Reliever] (medication)",
+          "cosine": 0.8294816017150879
+        },
+        {
+          "token": "RXN_313782",
+          "description": "ACETAMINOPHEN 325 mg ORAL TABLET [Pain Relief Regular Strength] (medication)",
+          "cosine": 0.7509334683418274
+        },
+        {
+          "token": "RXN_993755",
+          "description": "ACETAMINOPHEN 120 mg in 5 mL / CODEINE PHOSPHATE 12 mg in 5 mL ORAL SOLUTION (medication)",
+          "cosine": 0.7344067692756653
+        },
+        {
+          "token": "RXN_197803",
+          "description": "IBUPROFEN 100 mg in 5 mL ORAL SUSPENSION (medication)",
+          "cosine": 0.7211028337478638
+        },
+        {
+          "token": "RXN_198440",
+          "description": "ACETAMINOPHEN 500 mg ORAL TABLET [Acetaminophen ES] (medication)",
+          "cosine": 0.7207105159759521
+        }
+      ]
+    },
+    {
+      "token": "RXN_1311560",
+      "description": "norflurane (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "ICUPROC_229983",
+          "description": "Isoflurane (Inhaled) (ICU procedure)",
+          "cosine": 0.6200873255729675
+        },
+        {
+          "token": "RXN_748961",
+          "description": "NORETHINDRONE 0.35 mg ORAL TABLET [NORETHINDRONE] (medication)",
+          "cosine": 0.6196907162666321
+        },
+        {
+          "token": "RXN_1648755",
+          "description": "NITROFURANTOIN MONOHYDRATE 75 mg / NITROFURANTOIN 25 mg ORAL CAPSULE (medication)",
+          "cosine": 0.6075072288513184
+        },
+        {
+          "token": "ICUPROC_229984",
+          "description": "Sevoflurane (Inhaled) (ICU procedure)",
+          "cosine": 0.6067093014717102
+        },
+        {
+          "token": "INPUT_221906",
+          "description": "Norepinephrine (ICU input)",
+          "cosine": 0.6015784740447998
+        }
+      ]
+    },
+    {
+      "token": "RXN_727634",
+      "description": "sodium chloride 0.9 % (flush) (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "RXN_312997",
+          "description": "sodium chloride 0.9 % Inhalation Solution (medication)",
+          "cosine": 0.8636487722396851
+        },
+        {
+          "token": "RXN_1807631",
+          "description": "SODIUM CHLORIDE 9 mg in 1 mL INTRAVENOUS INJECTION, SOLUTION [Sodium chloride]_#1 (medication)",
+          "cosine": 0.7279832363128662
+        },
+        {
+          "token": "RXN_724590",
+          "description": "sodium chloride 3 % Inhalation Solution (medication)",
+          "cosine": 0.7264814972877502
+        },
+        {
+          "token": "RXN_1807633",
+          "description": "SODIUM CHLORIDE 9 mg in 1 mL INTRAVENOUS INJECTION, SOLUTION [Sodium chloride]_#3 (medication)",
+          "cosine": 0.7242518663406372
+        },
+        {
+          "token": "RXN_1807639",
+          "description": "SODIUM CHLORIDE 9 mg in 1 mL INTRAVENOUS INJECTION, SOLUTION [Sodium chloride]_#5 (medication)",
+          "cosine": 0.7206642627716064
+        }
+      ]
+    },
+    {
+      "token": "RXN_198434",
+      "description": "acetaminophen 120 MG Rectal Suppository (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "RXN_198443",
+          "description": "acetaminophen 650 MG Rectal Suppository (medication)",
+          "cosine": 0.8923337459564209
+        },
+        {
+          "token": "RXN_209363",
+          "description": "acetaminophen 650 MG Rectal Suppository [Acephen] (medication)",
+          "cosine": 0.8536087274551392
+        },
+        {
+          "token": "RXN_198464",
+          "description": "aspirin 300 MG Rectal Suppository (medication)",
+          "cosine": 0.7588984966278076
+        },
+        {
+          "token": "RXN_312398",
+          "description": "phenylephrine 0.0025 MG/MG Rectal Suppository (medication)",
+          "cosine": 0.7582855224609375
+        },
+        {
+          "token": "RXN_892678",
+          "description": "morphine sulfate 30 MG Rectal Suppository (medication)",
+          "cosine": 0.7387978434562683
+        }
+      ]
+    },
+    {
+      "token": "RXN_1737759",
+      "description": "lidocaine HCl/PF (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "RXN_1010844",
+          "description": "5 ML lidocaine hydrochloride 40 MG/ML Injection (medication)",
+          "cosine": 0.728334903717041
+        },
+        {
+          "token": "RXN_1737763",
+          "description": "10 ML lidocaine hydrochloride 20 MG/ML Injection (medication)",
+          "cosine": 0.7193617820739746
+        },
+        {
+          "token": "RXN_1737568",
+          "description": "2 ML lidocaine hydrochloride 10 MG/ML Injection (medication)",
+          "cosine": 0.7189516425132751
+        },
+        {
+          "token": "RXN_1010745",
+          "description": "epinephrine 0.005 MG/ML / lidocaine hydrochloride 5 MG/ML Injectable Solution (medication)",
+          "cosine": 0.7131567597389221
+        },
+        {
+          "token": "RXN_1867996",
+          "description": "30 ML epinephrine 0.005 MG/ML / lidocaine hydrochloride 15 MG/ML Injection (medication)",
+          "cosine": 0.7116352319717407
+        }
+      ]
+    },
+    {
+      "token": "RXN_1808217",
+      "description": "propofol 10 mg in 1 mL INTRAVENOUS INJECTION, EMULSION (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "RXN_1808222",
+          "description": "propofol 10 mg in 1 mL INTRAVENOUS INJECTION, EMULSION (medication)",
+          "cosine": 0.9999992847442627
+        },
+        {
+          "token": "RXN_1808224",
+          "description": "PROPOFOL 10 mg in 1 mL INTRAVENOUS INJECTION, EMULSION (medication)",
+          "cosine": 0.9684198498725891
+        },
+        {
+          "token": "RXN_1808225",
+          "description": "PROPOFOL 10 mg in 1 mL INTRAVENOUS INJECTION, EMULSION [Diprivan] (medication)",
+          "cosine": 0.9076282382011414
+        },
+        {
+          "token": "RXN_1808219",
+          "description": "100 ML propofol 10 MG/ML Injection [Diprivan] (medication)",
+          "cosine": 0.8145759105682373
+        },
+        {
+          "token": "RXN_483017",
+          "description": "ACETAMINOPHEN 10 mg in 1 mL INTRAVENOUS INJECTION, SOLUTION (medication)",
+          "cosine": 0.8015612959861755
+        }
+      ]
+    },
+    {
+      "token": "RXN_904810",
+      "description": "succinylcholine chloride (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "RXN_2598128",
+          "description": "5 ML succinylcholine chloride 20 MG/ML Prefilled Syringe (medication)",
+          "cosine": 0.7622025609016418
+        },
+        {
+          "token": "RXN_1594591",
+          "description": "SUCCINYLCHOLINE CHLORIDE 20 mg in 1 mL INTRAMUSCULAR INJECTION, SOLUTION [Anectine] (medication)",
+          "cosine": 0.7516354322433472
+        },
+        {
+          "token": "RXN_1594593",
+          "description": "SUCCINYLCHOLINE CHLORIDE 20 mg in 1 mL INTRAMUSCULAR INJECTION, SOLUTION [QUELICIN] (medication)",
+          "cosine": 0.7472528219223022
+        },
+        {
+          "token": "RXN_828525",
+          "description": "10 ML calcium chloride 100 MG/ML Injection (medication)",
+          "cosine": 0.6955289244651794
+        },
+        {
+          "token": "RXN_1794887",
+          "description": "1000 ML glucose 50 MG/ML / sodium chloride 2 MG/ML Injection (medication)",
+          "cosine": 0.6831806898117065
+        }
+      ]
+    },
+    {
+      "token": "RXN_1670366",
+      "description": "bupivacaine HCl/epinephrine/PF (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "RXN_1867596",
+          "description": "30 ML bupivacaine hydrochloride 2.5 MG/ML / epinephrine 0.005 MG/ML Injection (medication)",
+          "cosine": 0.7811521887779236
+        },
+        {
+          "token": "RXN_1672919",
+          "description": "30 ML bupivacaine hydrochloride 5 MG/ML / epinephrine 0.005 MG/ML Injection (medication)",
+          "cosine": 0.7781773209571838
+        },
+        {
+          "token": "RXN_1867614",
+          "description": "30 ML bupivacaine hydrochloride 2.5 MG/ML / epinephrine 0.005 MG/ML Injection [Marcaine with Epinephrine] (medication)",
+          "cosine": 0.7763409614562988
+        },
+        {
+          "token": "RXN_1673243",
+          "description": "30 ML bupivacaine hydrochloride 5 MG/ML / epinephrine 0.005 MG/ML Injection [Marcaine with Epinephrine] (medication)",
+          "cosine": 0.7702394723892212
+        },
+        {
+          "token": "RXN_1012413",
+          "description": "bupivacaine hydrochloride 2.5 MG/ML / epinephrine 0.005 MG/ML Injectable Solution [Sensorcaine with Epinephrine] (medication)",
+          "cosine": 0.7618036270141602
+        }
+      ]
+    },
+    {
+      "token": "RXN_897756",
+      "description": "1 ML hydromorphone hydrochloride 1 MG/ML Prefilled Syringe (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "RXN_1872265",
+          "description": "1 ML hydromorphone hydrochloride 1 MG/ML Prefilled Syringe [Dilaudid] (medication)",
+          "cosine": 0.9478676319122314
+        },
+        {
+          "token": "RXN_1872752",
+          "description": "0.5 ML hydromorphone hydrochloride 1 MG/ML Prefilled Syringe [Dilaudid] (medication)",
+          "cosine": 0.9218357801437378
+        },
+        {
+          "token": "RXN_897653",
+          "description": "1 ML hydromorphone hydrochloride 1 MG/ML Injection (medication)",
+          "cosine": 0.8877596855163574
+        },
+        {
+          "token": "RXN_1724383",
+          "description": "1 ML hydromorphone hydrochloride 1 MG/ML Cartridge (medication)",
+          "cosine": 0.8757333159446716
+        },
+        {
+          "token": "RXN_1724644",
+          "description": "1 ML hydromorphone hydrochloride 2 MG/ML Cartridge (medication)",
+          "cosine": 0.8410122990608215
+        }
+      ]
+    },
+    {
+      "token": "RXN_311935",
+      "description": "NEOSTIGMINE METHYLSULFATE 0.5 mg in 1 mL INTRAVENOUS INJECTION (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "RXN_311936",
+          "description": "NEOSTIGMINE METHYLSULFATE 1 mg in 1 mL INTRAVENOUS INJECTION (medication)",
+          "cosine": 0.9606274366378784
+        },
+        {
+          "token": "RXN_1658221",
+          "description": "MAGNESIUM SULFATE HEPTAHYDRATE 500 mg in 1 mL INTRAMUSCULAR INJECTION, SOLUTION (medication)",
+          "cosine": 0.7895211577415466
+        },
+        {
+          "token": "RXN_1658236",
+          "description": "MAGNESIUM SULFATE HEPTAHYDRATE 500 mg in 1 mL INTRAMUSCULAR INJECTION, SOLUTION (medication)",
+          "cosine": 0.7894282341003418
+        },
+        {
+          "token": "RXN_990982",
+          "description": "PHYSOSTIGMINE SALICYLATE 1 mg in 1 mL INTRAVENOUS INJECTION (medication)",
+          "cosine": 0.787391185760498
+        },
+        {
+          "token": "RXN_1190546",
+          "description": "ATROPINE SULFATE 0.1 mg in 1 mL INTRAVENOUS INJECTION, SOLUTION (medication)",
+          "cosine": 0.7820994853973389
+        }
+      ]
+    },
+    {
+      "token": "RXN_27792",
+      "description": "ioversol (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "RXN_798415",
+          "description": "Tubersol 50 UNT/ML Injectable Solution (medication)",
+          "cosine": 0.6337423920631409
+        },
+        {
+          "token": "RXN_1608333",
+          "description": "ISAVUCONAZONIUM SULFATE 100 mg ORAL CAPSULE [CRESEMBA] (medication)",
+          "cosine": 0.6093559265136719
+        },
+        {
+          "token": "RXN_200095",
+          "description": "IRBESARTAN 150 mg ORAL TABLET (medication)",
+          "cosine": 0.6061574220657349
+        },
+        {
+          "token": "RXN_311207",
+          "description": "ivermectin 3 MG Oral Tablet (medication)",
+          "cosine": 0.6058858633041382
+        },
+        {
+          "token": "RXN_833164",
+          "description": "itraconazole 100 MG Oral Capsule [Sporanox] (medication)",
+          "cosine": 0.6046037077903748
+        }
+      ]
+    },
+    {
+      "token": "RXN_763564",
+      "description": "adalimumab (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "RXN_1655728",
+          "description": "ADALIMUMAB 40 mg in 0.8 mL SUBCUTANEOUS INJECTION, SOLUTION [Humira] (medication)",
+          "cosine": 0.6930720806121826
+        },
+        {
+          "token": "RXN_1726846",
+          "description": "ADALIMUMAB 40 mg in 0.4 mL SUBCUTANEOUS INJECTION, SOLUTION [Humira] (medication)",
+          "cosine": 0.6928309202194214
+        },
+        {
+          "token": "RXN_727705",
+          "description": "0.8 ML adalimumab 50 MG/ML Prefilled Syringe [Humira] (medication)",
+          "cosine": 0.6743761897087097
+        },
+        {
+          "token": "RXN_1986819",
+          "description": "ACALABRUTINIB 100 mg ORAL CAPSULE, GELATIN COATED [CALQUENCE] (medication)",
+          "cosine": 0.6256802082061768
+        },
+        {
+          "token": "RXN_1425230",
+          "description": "dabrafenib 75 MG Oral Capsule [Tafinlar] (medication)",
+          "cosine": 0.6146342158317566
+        }
+      ]
+    },
+    {
+      "token": "RXN_1421893",
+      "description": "LIDOCAINE 40 mg in 1 g TOPICAL CREAM (medication)",
+      "source": "pediatric_or_unseen_rxcui",
+      "neighbors": [
+        {
+          "token": "RXN_197877",
+          "description": "PRILOCAINE 25 mg in 1 g / LIDOCAINE 25 mg in 1 g TOPICAL CREAM (medication)",
+          "cosine": 0.8939902186393738
+        },
+        {
+          "token": "RXN_1543069",
+          "description": "LIDOCAINE 50 mg in 1 g TOPICAL OINTMENT (medication)",
+          "cosine": 0.8683118224143982
+        },
+        {
+          "token": "RXN_1745091",
+          "description": "LIDOCAINE 50 mg in 1 g TOPICAL PATCH (medication)",
+          "cosine": 0.8658607006072998
+        },
+        {
+          "token": "RXN_1011852",
+          "description": "LIDOCAINE HYDROCHLORIDE 20 mg in 1 g TOPICAL GEL (medication)",
+          "cosine": 0.8365160822868347
+        },
+        {
+          "token": "RXN_1000091",
+          "description": "DOXEPIN HYDROCHLORIDE 50 mg in 1 g TOPICAL CREAM (medication)",
+          "cosine": 0.8208881616592407
+        }
+      ]
+    }
+  ],
+  "defensible": true,
+  "defensible_rationale": "Underlying code vectors are frozen BGE-M3; appending identically-encoded descriptions preserves geometry. Layer-0 projection remains MIMIC-trained."
+}

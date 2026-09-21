@@ -1,0 +1,309 @@
+{
+  "run_id": "smoke_no_interaction_20260921164123",
+  "git_commit": "2d3429d46898ea56969139951288cc5e91c03fee",
+  "git_dirty": true,
+  "seed": 0,
+  "arm": "no_interaction",
+  "timestamp": "2026-09-21T16:41:25",
+  "stage1": {
+    "stage1_ckpt": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage1_mimic_pretrain/run/adkm_s0/checkpoint_best.pt",
+    "transferred": {
+      "n_loaded": 26,
+      "skipped": [
+        "age_mean",
+        "age_sd",
+        "temporal.beta",
+        "temporal.age_mean",
+        "temporal.age_sd"
+      ],
+      "shape_mismatch": [],
+      "missing_after_load": [
+        "age_mean",
+        "age_sd",
+        "temporal.beta",
+        "temporal.age_mean",
+        "temporal.age_sd"
+      ],
+      "unexpected_after_load": [],
+      "lambda0": -1.616810917854309,
+      "beta": 0.0,
+      "age_mean": 9.0,
+      "age_sd": 9.0,
+      "beta_requires_grad": false,
+      "lambda0_requires_grad": true,
+      "embedding_frozen": true
+    },
+    "reset": [
+      "temporal.beta -> 0",
+      "age_mean/age_sd -> 9/9 (z_P)"
+    ],
+    "kept": [
+      "embedding_table",
+      "encoder",
+      "pooling",
+      "demo_proj",
+      "head",
+      "temporal.lambda0"
+    ],
+    "not_used": [
+      "adult beta_A",
+      "MIMIC age mu/sigma"
+    ],
+    "stage1_kind": "best",
+    "stage1_epoch": 7,
+    "stage1_val_bce": 0.009129779955837875,
+    "stage1_arm": "age_temporal"
+  },
+  "lambda0_sign_test": {
+    "positive_lambda0_is_recency": true,
+    "negative_lambda0_is_long_range": true,
+    "interpretation": "Positive \u03bb0 decreases attention from the last event to the distant (t=0) event relative to \u03bb0=0 (recency). Negative \u03bb0 increases that mass (long-range preference). Stage-1 learned \u03bb0<0, so the transferred prior is long-range, not recency."
+  },
+  "model": {
+    "arm": "no_interaction",
+    "attention_equation": "s_ij^(h) = q_i^(h)^T k_j^(h) / sqrt(d_h) - [lambda0 + beta * z(a_i)] * tau_ij",
+    "lambda0_beta": "single scalars shared across all attention heads (not per-head)",
+    "d_model": 256,
+    "n_layers": 1,
+    "n_heads": 4,
+    "d_head": 64,
+    "use_residual": true,
+    "use_layernorm": true,
+    "use_ffn": true,
+    "ffn_mult": 4,
+    "use_out_proj": true,
+    "demo_dim": 9,
+    "demo_channels": [
+      "age_years",
+      "sex",
+      "race_WHITE",
+      "race_BLACK",
+      "race_ASIAN",
+      "race_HISPANIC",
+      "race_AMERICAN_INDIAN",
+      "race_OTHER",
+      "race_UNKNOWN"
+    ],
+    "demo_hidden": 64,
+    "race_encoding": "one_hot",
+    "age_transform": {
+      "name": "pediatric_fixed",
+      "formula": "z_P(a) = (a - 9) / 9",
+      "a_unit": "years (age_at_event_days / 365.25)",
+      "center_years": 9.0,
+      "scale_years": 9.0,
+      "intended_domain_years": [
+        0.0,
+        18.0
+      ],
+      "clip_applied": false,
+      "source": "Stage-2 spec; not estimated from NCH or MIMIC moments",
+      "trainable": false,
+      "fourier": false,
+      "chebyshev": false,
+      "age_mlp": false,
+      "mimic_adult_mu_sigma_reused": false
+    },
+    "tau_transform": {
+      "name": "log1p_weeks",
+      "formula": "tau_ij = log(1 + |t_i - t_j| / c)",
+      "c_days": 7.0,
+      "t_unit": "days from first event (timestamps_days)",
+      "implementation": "model_new.data.lag_to_tau (float64 abs, then log1p)",
+      "chebyshev_rescale": false,
+      "tau_max_used": false
+    },
+    "embedding_dim": 1024,
+    "masking": "padding_only",
+    "pooling": "attention_relevance_only (no lambda/beta)",
+    "pool_temporal_bias": false,
+    "experimental_difference": "self-attention lambda(a)*tau only; pooling identical across arms",
+    "head_in": 320,
+    "head_out": 30635,
+    "head_final_bias": -7.0,
+    "task": "pretrain",
+    "obsolete_disabled": [
+      "LogAgeFourier / LinearAgeFourier",
+      "ChebyshevKernel / polynomial temporal basis",
+      "AgeConditioner MLP / coefficient generator",
+      "per-head lambda/beta"
+    ]
+  },
+  "params": {
+    "backbone": 1644160,
+    "age": 1,
+    "head": 9936555,
+    "frozen_embedding": 31372288,
+    "total_trainable": 11580716,
+    "lambda0_trainable": 1,
+    "beta_trainable": 0
+  },
+  "optim": {
+    "lr_backbone": 0.0001,
+    "lr_age": 0.001,
+    "lr_head": 0.001,
+    "n_tensors": {
+      "backbone": 20,
+      "age": 1,
+      "head": 4
+    },
+    "n_params": {
+      "backbone": 1644160,
+      "age": 1,
+      "head": 9936555
+    },
+    "batch_size": 4,
+    "epochs": 2,
+    "patience": 0,
+    "optimizer": "Adam",
+    "grad_clip": 1.0
+  },
+  "data": {
+    "paths": {
+      "tensorized_dir": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/tensorized_forecast/diagnoses_only",
+      "embedding_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/bge_embeddings.pt",
+      "vocab_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/code_vocab.json",
+      "stage1_ckpt": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage1_mimic_pretrain/run/adkm_s0/checkpoint_best.pt"
+    },
+    "split_sizes": {
+      "train": 8,
+      "val": 8,
+      "test": 8
+    },
+    "max_seq_len": 32,
+    "age_transform": {
+      "name": "pediatric_fixed",
+      "formula": "z_P(a) = (a - 9) / 9",
+      "a_unit": "years (age_at_event_days / 365.25)",
+      "center_years": 9.0,
+      "scale_years": 9.0,
+      "intended_domain_years": [
+        0.0,
+        18.0
+      ],
+      "clip_applied": false,
+      "source": "Stage-2 spec; not estimated from NCH or MIMIC moments",
+      "trainable": false,
+      "fourier": false,
+      "chebyshev": false,
+      "age_mlp": false,
+      "mimic_adult_mu_sigma_reused": false
+    },
+    "tau_transform": {
+      "name": "log1p_weeks",
+      "formula": "tau_ij = log(1 + |t_i - t_j| / c)",
+      "c_days": 7.0,
+      "t_unit": "days from first event (timestamps_days)",
+      "implementation": "model_new.data.lag_to_tau (float64 abs, then log1p)",
+      "chebyshev_rescale": false,
+      "tau_max_used": false
+    },
+    "target": {
+      "name": "future_encounter_codes",
+      "input": "events with timestamp < start_time(V_{m+1}) (strict); ties go to the target",
+      "target": "multi-hot code set of the next NCH encounter, UNK dropped, duplicates collapsed",
+      "horizon": "next clinical encounter (encounter_id), not a fixed calendar window",
+      "index_cut": "only events strictly before the first pediatric sleep-study index_time",
+      "masking": "padding_only (not causal); target encounter is outside the input window",
+      "representation": "diagnoses_only",
+      "modalities": [
+        "diagnosis"
+      ],
+      "head": "full Stage-1 vocabulary |V|=30635 retained",
+      "oov": "input UNK (vocab index |V| \u2192 model id 1); UNK dropped from the target",
+      "loss": "BCEWithLogitsLoss, unweighted, no pos_weight",
+      "implementation": "stage2_nch.tensorize + stage2_nch.dataset.NCHForecastDataset"
+    },
+    "history_bin_edges": [
+      0.0,
+      32.0,
+      33.0,
+      null
+    ],
+    "patient_splits": {
+      "json_n": {
+        "train": 2433,
+        "val": 522,
+        "test": 520
+      },
+      "dataset_n": {
+        "train": 2397,
+        "val": 512,
+        "test": 511
+      },
+      "overlap": {
+        "train&val": 0,
+        "train&test": 0,
+        "val&test": 0
+      }
+    },
+    "tensorize": {
+      "representation": "diagnoses_only",
+      "modalities": [
+        "diagnosis"
+      ],
+      "events_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/processed/canonical_events_clean.parquet",
+      "index_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/processed/sleep_studies_pediatric_first.parquet",
+      "vocab_size": 30635,
+      "unk_vocab_index": 30635,
+      "horizon": "next NCH encounter_id after a strict time cut; pre first sleep-study index",
+      "age_out_of_range": {
+        "n_age_lt0": 0,
+        "n_age_gt18": 0,
+        "n_clipped_to_0_18": 0,
+        "clip_applied": false,
+        "note": "No pre-index pediatric diagnosis ages outside [0, 18]; z_P is unclipped."
+      },
+      "oov": {
+        "n_mapped": 956093,
+        "n_oov_as_unk": 109402,
+        "event_weighted_mapped_pct": 89.73228405576751,
+        "target_drops_unk": true
+      },
+      "patient_splits": {
+        "train": 2433,
+        "val": 522,
+        "test": 520
+      },
+      "overlap": {
+        "train&val": 0,
+        "train&test": 0,
+        "val&test": 0
+      },
+      "n_patients_lt2_encounters": 52,
+      "splits": {
+        "train": {
+          "n_patients_written": 2397,
+          "n_events": 732973,
+          "n_patients_with_ge2_encounters": 2397,
+          "n_forecast_windows_upper_bound": 137714,
+          "shard": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/tensorized_forecast/diagnoses_only/train/shard_000.npz"
+        },
+        "val": {
+          "n_patients_written": 512,
+          "n_events": 178483,
+          "n_patients_with_ge2_encounters": 512,
+          "n_forecast_windows_upper_bound": 33321,
+          "shard": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/tensorized_forecast/diagnoses_only/val/shard_000.npz"
+        },
+        "test": {
+          "n_patients_written": 511,
+          "n_events": 152183,
+          "n_patients_with_ge2_encounters": 511,
+          "n_forecast_windows_upper_bound": 28215,
+          "shard": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/tensorized_forecast/diagnoses_only/test/shard_000.npz"
+        }
+      },
+      "clip_applied": false
+    },
+    "compatibility": {
+      "passed": true
+    }
+  },
+  "env": {
+    "torch": "2.9.1+cu128",
+    "python": "3.13.9",
+    "device": "cpu",
+    "gpu": null
+  }
+}

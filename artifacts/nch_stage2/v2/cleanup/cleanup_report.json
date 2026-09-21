@@ -1,0 +1,43 @@
+{
+  "rules": {
+    "sentinel_years": [
+      1899,
+      1900
+    ],
+    "pre1990_timestamp": true,
+    "age_before_dob": true,
+    "age_gt_120y": true,
+    "missing_event_time": true,
+    "exclude_entire_psg_encounter": true,
+    "note": "Invalid events removed; patients retained if remaining valid events exist."
+  },
+  "n_events_before": 5187791,
+  "n_events_after_sentinel_filter": 5184909,
+  "n_events_after_psg_encounter_exclusion": 5145246,
+  "removed_by_reason": {
+    "age_before_dob": 2637,
+    "sentinel_year": 240,
+    "pre1990_timestamp": 5
+  },
+  "psg_encounter_removed": {
+    "n_events": 39663,
+    "by_event_type": {
+      "diagnosis": 20603,
+      "procedure": 7455,
+      "measurement": 6968,
+      "drg": 3752,
+      "medication": 885
+    },
+    "sleep_related": {
+      "null": 23362,
+      "psg_cpt": 7401,
+      "snoring": 4363,
+      "osa": 2723,
+      "osa_related_token": 1814
+    },
+    "osa": 2723,
+    "snoring": 4363,
+    "psg_cpt": 7401
+  },
+  "patients_with_any_valid_event": 3671
+}

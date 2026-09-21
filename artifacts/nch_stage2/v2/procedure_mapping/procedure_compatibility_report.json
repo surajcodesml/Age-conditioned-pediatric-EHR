@@ -1,0 +1,321 @@
+{
+  "provenance": {
+    "grouping_scheme": "AMA CPT codebook section ranges (public section boundaries)",
+    "not_used": "AHRQ CCS for Services and Procedures (AMA license gate; download 404/unavailable)",
+    "stage1_CCS_namespace": "CCS_* from ICD-9-PCS / ICD-10-PCS Single-Level CCS \u2014 NOT interchangeable with CPT Svcs/Proc CCS",
+    "new_namespace": "CPT_CHAPTER_* (distinct from Stage-1 CCS_*)"
+  },
+  "n_events": 286190,
+  "n_unique_codes": 3680,
+  "family_counts": {
+    "CPT_HCPCS_LEVEL_I": 255459,
+    "ICD10_PCS": 19198,
+    "ICD9_PCS": 10847,
+    "NCH_LOCAL_SHX": 686
+  },
+  "exact_token_level": {
+    "unique_code_coverage_pct": 74.29347826086956,
+    "event_weighted_coverage_pct": 15.095216464586464,
+    "patient_coverage_pct": 76.42111368909512,
+    "n_events_covered": 43201,
+    "n_events_oov": 242989
+  },
+  "after_format_normalization": {
+    "unique_code_coverage_pct": 74.29347826086956,
+    "event_weighted_coverage_pct": 15.095216464586464,
+    "patient_coverage_pct": 76.42111368909512,
+    "n_events_covered": 43201,
+    "n_events_oov": 242989
+  },
+  "cpt_chapter_grouping": {
+    "note": "CPT chapter grouping recovers category labels but does NOT map to Stage-1 CCS_* tokens",
+    "top_chapters": [
+      [
+        "CPT_CHAPTER_MED",
+        192200
+      ],
+      [
+        "CPT_CHAPTER_RAD",
+        34084
+      ],
+      [
+        "CPT_CHAPTER_PATH",
+        12221
+      ],
+      [
+        "CPT_CHAPTER_OTHER",
+        9333
+      ],
+      [
+        "CPT_CHAPTER_SURG",
+        9061
+      ],
+      [
+        "CPT_CHAPTER_EAM",
+        7713
+      ],
+      [
+        "CPT_CHAPTER_ANES",
+        709
+      ]
+    ],
+    "unique_code_coverage_pct": 96.46201873048908,
+    "event_weighted_coverage_pct": 99.97729576957555,
+    "patient_coverage_pct": 100.0,
+    "n_events_covered": 255401,
+    "n_events_oov": 58
+  },
+  "icd_pcs_ccs_mapped_events": 30045,
+  "compatible_with_stage1_CCS": {
+    "verdict": "NO \u2014 Stage-1 CCS_* are ICD procedure CCS categories; CPT chapters / SvcsProc CCS are a different taxonomy",
+    "do_not_map_cpt_chapter_to_CCS": true
+  },
+  "normalized_transfer_to_existing_stage1": {
+    "unique_code_coverage_pct": 74.29347826086956,
+    "event_weighted_coverage_pct": 15.095216464586464,
+    "patient_coverage_pct": 76.42111368909512,
+    "n_events_covered": 43201,
+    "n_events_oov": 242989
+  },
+  "extended_chapter_coverage": {
+    "unique_code_coverage_pct": 99.04891304347827,
+    "event_weighted_coverage_pct": 99.74003284531256,
+    "patient_coverage_pct": 99.30394431554524,
+    "n_events_covered": 285446,
+    "n_events_oov": 744
+  },
+  "top_remaining_oov_codes": [
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "94640",
+      "n": 47435
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "97110",
+      "n": 30188
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "92507",
+      "n": 24662
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "97112",
+      "n": 18297
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "97530",
+      "n": 18271
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "94660",
+      "n": 10656
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "71010",
+      "n": 9430
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "99283",
+      "n": 7713
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "71045",
+      "n": 6329
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "97124",
+      "n": 6027
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "74000",
+      "n": 4974
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "71020",
+      "n": 4673
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "84443",
+      "n": 4646
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "84439",
+      "n": 4082
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "94762",
+      "n": 4080
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "93005",
+      "n": 4060
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "71046",
+      "n": 3850
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "92567",
+      "n": 3613
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "93010",
+      "n": 3490
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "74018",
+      "n": 3253
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "93320",
+      "n": 3167
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "87633",
+      "n": 2961
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "94010",
+      "n": 2742
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "95810",
+      "n": 1056
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "47058",
+      "n": 1053
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "95782",
+      "n": 1031
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "42516",
+      "n": 946
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "42522",
+      "n": 856
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "42514",
+      "n": 826
+    },
+    {
+      "family": "CPT_HCPCS_LEVEL_I",
+      "raw_code": "76000",
+      "n": 769
+    }
+  ],
+  "top_exact_mapped": [
+    {
+      "mimic_token": "HCPCS_94003",
+      "n": 13068
+    },
+    {
+      "mimic_token": "CCS_33",
+      "n": 1940
+    },
+    {
+      "mimic_token": "CCS_23",
+      "n": 1902
+    },
+    {
+      "mimic_token": "CCS_198",
+      "n": 1462
+    },
+    {
+      "mimic_token": "CCS_26",
+      "n": 1395
+    },
+    {
+      "mimic_token": "CCS_29",
+      "n": 1342
+    },
+    {
+      "mimic_token": "CCS_216",
+      "n": 1321
+    },
+    {
+      "mimic_token": "CCS_37",
+      "n": 1181
+    },
+    {
+      "mimic_token": "CCS_227",
+      "n": 1076
+    },
+    {
+      "mimic_token": "CCS_54",
+      "n": 986
+    },
+    {
+      "mimic_token": "CCS_193",
+      "n": 961
+    },
+    {
+      "mimic_token": "CCS_70",
+      "n": 929
+    },
+    {
+      "mimic_token": "CCS_228",
+      "n": 742
+    },
+    {
+      "mimic_token": "CCS_30",
+      "n": 733
+    },
+    {
+      "mimic_token": "CCS_192",
+      "n": 619
+    },
+    {
+      "mimic_token": "CCS_95",
+      "n": 496
+    },
+    {
+      "mimic_token": "CCS_220",
+      "n": 455
+    },
+    {
+      "mimic_token": "CCS_31",
+      "n": 447
+    },
+    {
+      "mimic_token": "CCS_223",
+      "n": 430
+    },
+    {
+      "mimic_token": "CCS_231",
+      "n": 430
+    }
+  ]
+}

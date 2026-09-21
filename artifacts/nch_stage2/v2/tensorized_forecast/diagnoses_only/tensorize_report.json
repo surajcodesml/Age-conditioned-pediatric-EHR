@@ -1,0 +1,59 @@
+{
+  "representation": "diagnoses_only",
+  "modalities": [
+    "diagnosis"
+  ],
+  "events_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/processed/canonical_events_clean.parquet",
+  "index_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/processed/sleep_studies_pediatric_first.parquet",
+  "vocab_size": 30635,
+  "unk_vocab_index": 30635,
+  "horizon": "next NCH encounter_id after a strict time cut; pre first sleep-study index",
+  "age_out_of_range": {
+    "n_age_lt0": 0,
+    "n_age_gt18": 0,
+    "n_clipped_to_0_18": 0,
+    "clip_applied": false,
+    "note": "No pre-index pediatric diagnosis ages outside [0, 18]; z_P is unclipped."
+  },
+  "oov": {
+    "n_mapped": 956093,
+    "n_oov_as_unk": 109402,
+    "event_weighted_mapped_pct": 89.73228405576751,
+    "target_drops_unk": true
+  },
+  "patient_splits": {
+    "train": 2433,
+    "val": 522,
+    "test": 520
+  },
+  "overlap": {
+    "train&val": 0,
+    "train&test": 0,
+    "val&test": 0
+  },
+  "n_patients_lt2_encounters": 52,
+  "splits": {
+    "train": {
+      "n_patients_written": 2397,
+      "n_events": 732973,
+      "n_patients_with_ge2_encounters": 2397,
+      "n_forecast_windows_upper_bound": 137714,
+      "shard": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/tensorized_forecast/diagnoses_only/train/shard_000.npz"
+    },
+    "val": {
+      "n_patients_written": 512,
+      "n_events": 178483,
+      "n_patients_with_ge2_encounters": 512,
+      "n_forecast_windows_upper_bound": 33321,
+      "shard": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/tensorized_forecast/diagnoses_only/val/shard_000.npz"
+    },
+    "test": {
+      "n_patients_written": 511,
+      "n_events": 152183,
+      "n_patients_with_ge2_encounters": 511,
+      "n_forecast_windows_upper_bound": 28215,
+      "shard": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/tensorized_forecast/diagnoses_only/test/shard_000.npz"
+    }
+  },
+  "clip_applied": false
+}

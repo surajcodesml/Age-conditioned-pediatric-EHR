@@ -1,0 +1,25 @@
+{
+  "code_embedding_source": "data/processed/bge_embeddings.pt from BAAI/bge-m3 dense vectors",
+  "embedding_text": "code_descriptions.json strings (rolled clinical descriptions)",
+  "embedding_dim": 1024,
+  "projection": "No learned projection of BGE vectors during pretraining. embedding_table is a register_buffer; layer-0 Linear maps 1024\u2192d_model and IS trained.",
+  "checkpoint_embedding_identical_to_bge_file": true,
+  "embedding_table_shape": [
+    30637,
+    1024
+  ],
+  "requires_grad_in_checkpoint": false,
+  "bge_vectors_updated_during_pretraining": false,
+  "model_contract": {
+    "register_buffer": true,
+    "requires_grad_False": true,
+    "technically_valid_to_append": true,
+    "constraints": [
+      "Leave existing MIMIC token IDs and rows 0..N+1 unchanged",
+      "Append new rows after current table",
+      "Use identical BGE-M3 encode pipeline on authoritative descriptions",
+      "Do not renumber Stage-1 tokens",
+      "layer-0 Linear was trained on MIMIC embedding geometry; new vectors must be same space"
+    ]
+  }
+}

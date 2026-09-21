@@ -1,0 +1,20 @@
+{
+  "primary_positive_codes": {
+    "ICD10CM": "{'G4733'}",
+    "ICD9CM": "{'32723'}"
+  },
+  "related_not_required_for_positive": {
+    "ICD10CM": "{'G4710', 'G4731', 'G4730', 'G4739', 'G4700'}",
+    "ICD9CM": "{'78057', '32721', '32720'}"
+  },
+  "snoring_codes": [
+    "78609",
+    "R0683"
+  ],
+  "definition": {
+    "osa_at_index": "OSA code on linked PSG/index encounter",
+    "prior_osa": "OSA code in any pre-index event (excluding index encounter)",
+    "incident_osa": "osa_at_index AND NOT prior_osa"
+  },
+  "limitation": "Negatives reflect absence of coded OSA, not confirmed physiological absence. Coding incompleteness may undercall prior OSA and overcall incident cases."
+}

@@ -1,0 +1,52 @@
+{
+  "val": {
+    "medium": {
+      "n_examples": 7,
+      "n_patients": 7,
+      "bce": 0.0022633056921352234,
+      "precision@5": 0.0,
+      "recall@5": 0.0,
+      "micro_auprc": 0.0004515118998801816,
+      "micro_auroc": 0.8002445675561433,
+      "n_valid_classes_macro": 21
+    },
+    "short": {
+      "n_examples": 1,
+      "n_patients": 1,
+      "bce": 0.0019477203022688627,
+      "precision@5": 0.0,
+      "recall@5": 0.0,
+      "micro_auprc": 9.25593396859796e-05,
+      "micro_auroc": 0.485832272385989,
+      "n_valid_classes_macro": 0
+    }
+  },
+  "test": {
+    "medium": {
+      "n_examples": 7,
+      "n_patients": 7,
+      "bce": 0.002573491772636771,
+      "precision@5": 0.0,
+      "recall@5": 0.0,
+      "micro_auprc": 0.0003556336254840431,
+      "micro_auroc": 0.7624085344526058,
+      "n_valid_classes_macro": 19
+    },
+    "short": {
+      "n_examples": 1,
+      "n_patients": 1,
+      "bce": 0.004438786301761866,
+      "precision@5": 0.0,
+      "recall@5": 0.0,
+      "micro_auprc": 0.00042167124908748044,
+      "micro_auroc": 0.6816780933725106,
+      "n_valid_classes_macro": 0
+    }
+  },
+  "edges": [
+    0.0,
+    32.0,
+    33.0,
+    null
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "json_n": {
+    "train": 2433,
+    "val": 522,
+    "test": 520
+  },
+  "dataset_n": {
+    "train": 2397,
+    "val": 512,
+    "test": 511
+  },
+  "overlap": {
+    "train&val": 0,
+    "train&test": 0,
+    "val&test": 0
+  }
+}

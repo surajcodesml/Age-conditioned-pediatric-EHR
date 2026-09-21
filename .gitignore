@@ -38,6 +38,12 @@ checkpoints/
 *.sqlite
 *.sqlite3
 
+# UMLS / RxNorm extracts (RXNCONSO.RRF, RXNREL.RRF, …)
+*.RRF
+
+# Preprocessing scratch (extracted dumps, DuckDB workdirs, etc.)
+**/_work/
+
 # Experiment trackers & run folders
 *.log
 wandb/

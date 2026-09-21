@@ -1,0 +1,108 @@
+{
+  "osa_code_set": {
+    "primary_positive_codes": {
+      "ICD10CM": "{'G4733'}",
+      "ICD9CM": "{'32723'}"
+    },
+    "related_not_required_for_positive": {
+      "ICD10CM": "{'G4710', 'G4731', 'G4730', 'G4739', 'G4700'}",
+      "ICD9CM": "{'78057', '32721', '32720'}"
+    },
+    "snoring_codes": [
+      "78609",
+      "R0683"
+    ],
+    "definition": {
+      "osa_at_index": "OSA code on linked PSG/index encounter",
+      "prior_osa": "OSA code in any pre-index event (excluding index encounter)",
+      "incident_osa": "osa_at_index AND NOT prior_osa"
+    },
+    "limitation": "Negatives reflect absence of coded OSA, not confirmed physiological absence. Coding incompleteness may undercall prior OSA and overcall incident cases."
+  },
+  "n_patients": 3475,
+  "n_studies": 3475,
+  "incident_osa_n": 705,
+  "incident_osa_prevalence": 0.20287769784172663,
+  "osa_at_index_n": 1040,
+  "prior_osa_n": 591,
+  "by_age_band": [
+    {
+      "age_band": "1-5",
+      "n": 1188,
+      "incident_osa_prev": 0.22138047138047137,
+      "osa_at_index_prev": 0.2996632996632997,
+      "prior_osa_prev": 0.14057239057239057,
+      "n_ahi_valid": 7
+    },
+    {
+      "age_band": "12-17",
+      "n": 890,
+      "incident_osa_prev": 0.22247191011235956,
+      "osa_at_index_prev": 0.3595505617977528,
+      "prior_osa_prev": 0.19662921348314608,
+      "n_ahi_valid": 4
+    },
+    {
+      "age_band": "6-11",
+      "n": 1201,
+      "incident_osa_prev": 0.1723563696919234,
+      "osa_at_index_prev": 0.2614487926727727,
+      "prior_osa_prev": 0.15903413821815154,
+      "n_ahi_valid": 7
+    },
+    {
+      "age_band": "<1",
+      "n": 196,
+      "incident_osa_prev": 0.18877551020408162,
+      "osa_at_index_prev": 0.25510204081632654,
+      "prior_osa_prev": 0.29591836734693877,
+      "n_ahi_valid": 0
+    }
+  ],
+  "ahi": {
+    "n_local_tsv_files": 20,
+    "n_local_edf_files": 21,
+    "n_studies_with_valid_ahi": 20,
+    "n_studies_attempted": 20,
+    "missingness_note": "SleepBank Sleep_Data locally contains only ~20 EDF/TSV pairs; cohort-wide AHI is NOT available from Health_Data tables. Do not fabricate labels for the remaining studies.",
+    "derivation": "AHI = count(apnea|hypopnea annotations) / sleep_hours; sleep_hours from stage annotation durations when present.",
+    "pediatric_severity_bins": [
+      {
+        "name": "normal",
+        "lo": 0.0,
+        "hi": 1.0
+      },
+      {
+        "name": "mild",
+        "lo": 1.0,
+        "hi": 5.0
+      },
+      {
+        "name": "moderate",
+        "lo": 5.0,
+        "hi": 10.0
+      },
+      {
+        "name": "severe",
+        "lo": 10.0,
+        "hi": Infinity
+      }
+    ]
+  },
+  "ahi_distribution_valid": {
+    "count": 18.0,
+    "mean": 3.4342272210971028,
+    "std": 7.319787862660846,
+    "min": 0.0,
+    "25%": 0.2713590757069018,
+    "50%": 0.7844633258193169,
+    "75%": 2.4003278341793575,
+    "max": 30.80789946140036
+  },
+  "ahi_severity_counts": {
+    "normal": 10,
+    "mild": 5,
+    "severe": 2,
+    "moderate": 1
+  }
+}

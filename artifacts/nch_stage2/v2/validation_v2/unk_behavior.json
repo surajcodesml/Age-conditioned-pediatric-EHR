@@ -1,0 +1,30 @@
+{
+  "stage1_oov_contract": "OOV clinical codes are retained as vocab index |V| \u2192 model token id 1 (UNK). They are NOT dropped. Confirmed in model_new/data.py collate (unk_id \u2192 1).",
+  "v1_bug": "v1 NCH preprocessing silently dropped OOV events; v2 preserves Stage-1 UNK contract.",
+  "strict_dx_proc_med": {
+    "representation": "dx_proc_med_strict",
+    "modalities": [
+      "diagnosis",
+      "procedure",
+      "medication"
+    ],
+    "retain_oov_as_unk": true,
+    "unk_vocab_index": 30635,
+    "n_samples": 3473,
+    "n_patients": 3473,
+    "n_empty_indexes": 2,
+    "n_impossible_history_events_dropped": 0,
+    "unk_event_total": 365359,
+    "unk_event_pct": 28.95460100139955,
+    "pct_sequences_with_unk": 94.87474805643537,
+    "truncation_pct": 15.692484883386122,
+    "events_total_after_truncation": 1261834,
+    "events_per_patient_mean": 363.32680679527783
+  },
+  "unk_by_age_band": {
+    "1-5": 0.24224202639306147,
+    "12-17": 0.1657990310015694,
+    "6-11": 0.19429372868404032,
+    "<1": 0.45007132949875717
+  }
+}

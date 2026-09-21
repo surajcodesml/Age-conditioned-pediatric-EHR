@@ -1,0 +1,96 @@
+{
+  "unit": {
+    "n": 14,
+    "n_ok": 14,
+    "results": [
+      {
+        "name": "test_pediatric_z_endpoints",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_arms_identical_at_beta_zero",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_age_changes_logits_only_when_beta_nonzero",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_beta_and_lambda0_gradients",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_padding_mask",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_no_future_leakage_in_window",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_nan_free_pediatric_extremes",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_pooling_independent_of_beta",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_shuffle_changes_outputs_when_beta_set",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_lambda0_sign",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_stage1_checkpoint_loads_and_resets_beta",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_vocab_indices_align",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_patient_split_json_disjoint",
+        "ok": true,
+        "error": null
+      },
+      {
+        "name": "test_tiny_overfit",
+        "ok": true,
+        "error": null
+      }
+    ]
+  },
+  "tiny_nch": {
+    "skipped": false,
+    "device": "cpu",
+    "arms": {
+      "no_interaction": {
+        "returncode": 0,
+        "run_name": "smoke_no_interaction_20260921164123",
+        "wall_s": 4.680553197860718
+      },
+      "age_temporal": {
+        "returncode": 0,
+        "run_name": "smoke_age_temporal_20260921164123",
+        "wall_s": 4.4615607261657715
+      }
+    }
+  },
+  "wall_s": 10.318894863128662,
+  "all_unit_passed": true
+}

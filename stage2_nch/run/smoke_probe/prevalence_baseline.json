@@ -1,0 +1,43 @@
+{
+  "n_classes": 30635,
+  "mean_prevalence": 8.56863065121593e-05,
+  "n_always_zero": 30615,
+  "source": "first 2 train batches",
+  "val": {
+    "bce": 0.0013976434711366892,
+    "log_loss": 0.0013976434711366892,
+    "micro_auroc": 0.5205082375729085,
+    "macro_auroc": 0.5,
+    "micro_auprc": 0.0015955907237797642,
+    "macro_auprc": 0.5329192546583851,
+    "n_classes": 30635,
+    "n_valid_classes_macro": 23,
+    "n_classes_no_positive": 30612,
+    "n_classes_no_negative": 0,
+    "n_examples": 8,
+    "prevalence": 9.792720811674371e-05,
+    "mean_positives_per_example": 3.0,
+    "recall@5": 0.0,
+    "precision@5": 0.0,
+    "recall@10": 0.125,
+    "precision@10": 0.012500000186264515,
+    "recall@20": 0.125,
+    "precision@20": 0.0062500000931322575,
+    "recall@50": 0.125,
+    "precision@50": 0.0024999999441206455,
+    "positive_bce": 13.326507568359375,
+    "negative_bce": 9.262477396987379e-05,
+    "n_positive_labels": 24,
+    "n_negative_labels": 245056,
+    "imbalance": {
+      "n_examples": 8,
+      "n_classes": 30635,
+      "mean_prevalence": 9.792720811674371e-05,
+      "median_prevalence": 0.0,
+      "max_prevalence": 0.25,
+      "frac_classes_never_positive": 0.9992492247429411,
+      "mean_positives_per_example": 3.0,
+      "weighting": "none (existing pipeline: unweighted BCEWithLogitsLoss, no pos_weight)"
+    }
+  }
+}

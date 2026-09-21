@@ -1,0 +1,102 @@
+{
+  "seed": 42,
+  "ratios": {
+    "train": 0.7,
+    "val": 0.15,
+    "test": 0.15
+  },
+  "stratification": "age_band | incident_osa | ahi_quartile(if enough valid)",
+  "zero_patient_overlap": true,
+  "by_split": {
+    "train": {
+      "n_patients": 2433,
+      "incident_osa_prevalence": 0.20304151253596384,
+      "age_years_mean": 8.094198163935667,
+      "age_band_counts": {
+        "6-11": 841,
+        "1-5": 832,
+        "12-17": 623,
+        "<1": 137
+      },
+      "sex_counts": {
+        "1": 1367,
+        "0": 1066
+      },
+      "race_counts": {
+        "0": 1569,
+        "1": 481,
+        "5": 190,
+        "3": 118,
+        "2": 64,
+        "6": 8,
+        "4": 3
+      },
+      "history_duration_median": 1896.606394675926,
+      "seq_len_median": 209.0,
+      "truncation_pct": 15.618577887381832,
+      "mean_frac_unk": 0.21743237814469837,
+      "n_ahi_valid": 12
+    },
+    "val": {
+      "n_patients": 522,
+      "incident_osa_prevalence": 0.20306513409961685,
+      "age_years_mean": 8.019454048909605,
+      "age_band_counts": {
+        "6-11": 180,
+        "1-5": 178,
+        "12-17": 134,
+        "<1": 30
+      },
+      "sex_counts": {
+        "1": 300,
+        "0": 222
+      },
+      "race_counts": {
+        "0": 348,
+        "1": 93,
+        "3": 38,
+        "5": 30,
+        "2": 11,
+        "6": 2
+      },
+      "history_duration_median": 1932.0700868055555,
+      "seq_len_median": 239.0,
+      "truncation_pct": 16.091954022988507,
+      "mean_frac_unk": 0.22183896986235982,
+      "n_ahi_valid": 4
+    },
+    "test": {
+      "n_patients": 520,
+      "incident_osa_prevalence": 0.20192307692307693,
+      "age_years_mean": 8.113342733604584,
+      "age_band_counts": {
+        "6-11": 180,
+        "1-5": 178,
+        "12-17": 133,
+        "<1": 29
+      },
+      "sex_counts": {
+        "1": 307,
+        "0": 213
+      },
+      "race_counts": {
+        "0": 324,
+        "1": 113,
+        "5": 45,
+        "3": 23,
+        "2": 13,
+        "6": 2
+      },
+      "history_duration_median": 1813.847974537037,
+      "seq_len_median": 209.0,
+      "truncation_pct": 15.576923076923077,
+      "mean_frac_unk": 0.2150628408587526,
+      "n_ahi_valid": 2
+    }
+  },
+  "n_ids": {
+    "train": 2433,
+    "val": 522,
+    "test": 520
+  }
+}

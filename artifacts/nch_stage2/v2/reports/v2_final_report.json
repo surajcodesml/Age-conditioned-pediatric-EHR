@@ -1,0 +1,741 @@
+{
+  "version": "nch_stage2_v2",
+  "cleanup": {
+    "rules": {
+      "sentinel_years": [
+        1899,
+        1900
+      ],
+      "pre1990_timestamp": true,
+      "age_before_dob": true,
+      "age_gt_120y": true,
+      "missing_event_time": true,
+      "exclude_entire_psg_encounter": true,
+      "note": "Invalid events removed; patients retained if remaining valid events exist."
+    },
+    "n_events_before": 5187791,
+    "n_events_after_sentinel_filter": 5184909,
+    "n_events_after_psg_encounter_exclusion": 5145246,
+    "removed_by_reason": {
+      "age_before_dob": 2637,
+      "sentinel_year": 240,
+      "pre1990_timestamp": 5
+    },
+    "psg_encounter_removed": {
+      "n_events": 39663,
+      "by_event_type": {
+        "diagnosis": 20603,
+        "procedure": 7455,
+        "measurement": 6968,
+        "drg": 3752,
+        "medication": 885
+      },
+      "sleep_related": {
+        "null": 23362,
+        "psg_cpt": 7401,
+        "snoring": 4363,
+        "osa": 2723,
+        "osa_related_token": 1814
+      },
+      "osa": 2723,
+      "snoring": 4363,
+      "psg_cpt": 7401
+    },
+    "patients_with_any_valid_event": 3671
+  },
+  "washout_preindex_analysis_only": {
+    "window_24h": {
+      "n_events": 108,
+      "n_patients": 57
+    },
+    "window_7d": {
+      "n_events": 532,
+      "n_patients": 244
+    },
+    "note": "Analysis only; these windows are NOT removed in v2 primary sequences."
+  },
+  "cohort": {
+    "primary_rule": "index_age_years < 18",
+    "pediatric_all_studies": {
+      "n_studies": 3761,
+      "n_patients": 3475
+    },
+    "pediatric_first_study": {
+      "n_studies": 3475,
+      "n_patients": 3475
+    },
+    "adult_all_studies": {
+      "n_studies": 223,
+      "n_patients": 204
+    },
+    "adult_first_study": {
+      "n_studies": 204,
+      "n_patients": 204
+    }
+  },
+  "leakage_test": {
+    "psg_encounter_events_in_clean_table": 0,
+    "passed": true
+  },
+  "temporal_after_cleanup": {
+    "n": 3473,
+    "history_duration_days": {
+      "min": 1.3181712962962964,
+      "p50": 1890.8529513888889,
+      "p95": 4428.203261574074,
+      "p99": 5278.505187499994,
+      "max": 6374.786261574074
+    },
+    "max_years": 17.453213584049486,
+    "extreme_120y_gone": true
+  },
+  "procedures": {
+    "exact_event_weighted_pct": 15.095216464586464,
+    "format_normalized_pct": 15.095216464586464,
+    "chapter_extended_pct": 99.74003284531256,
+    "compatible_with_stage1_CCS": {
+      "verdict": "NO \u2014 Stage-1 CCS_* are ICD procedure CCS categories; CPT chapters / SvcsProc CCS are a different taxonomy",
+      "do_not_map_cpt_chapter_to_CCS": true
+    },
+    "family_counts": {
+      "CPT_HCPCS_LEVEL_I": 255459,
+      "ICD10_PCS": 19198,
+      "ICD9_PCS": 10847,
+      "NCH_LOCAL_SHX": 686
+    },
+    "mimic_nch_shared_chapters": 4,
+    "ccs_svcsproc_available": false
+  },
+  "medications": {
+    "L0_exact_stage1_rxcui": {
+      "event_weighted_pct": 31.877848744327235,
+      "unique_concept_n": 949,
+      "patient_coverage_pct": 97.05797519469282,
+      "n_events_recovered": 966968,
+      "n_events_remaining_oov": 2066386
+    },
+    "L1_brand_neutral_to_existing_stage1": {
+      "event_weighted_pct": 38.81630696582067,
+      "unique_concept_n": 1155,
+      "patient_coverage_pct": 97.77905970579752,
+      "n_events_recovered": 1177436,
+      "n_events_remaining_oov": 1855918
+    },
+    "L2_ingredient_to_existing_stage1": {
+      "event_weighted_pct": 31.877848744327235,
+      "unique_concept_n": 949,
+      "patient_coverage_pct": 97.05797519469282,
+      "n_events_recovered": 966968,
+      "n_events_remaining_oov": 2066386
+    },
+    "L2_ingredient_any_including_new_ingset": {
+      "event_weighted_pct": 37.353800446634324,
+      "unique_concept_n": 1048,
+      "patient_coverage_pct": 97.37525237957888,
+      "n_events_recovered": 1133073,
+      "n_events_remaining_oov": 1900281
+    },
+    "L3_therapeutic_class_nch_fields": {
+      "event_weighted_pct": 62.551650746994916,
+      "unique_concept_n": 2616,
+      "patient_coverage_pct": 99.65387943466975,
+      "n_events_recovered": 1897413,
+      "n_events_remaining_oov": 1135941
+    }
+  },
+  "medication_oov_char": {
+    "unique_oov_cuis": 1667,
+    "formulation_mismatch_cuis_ingredient_in_stage1": 2,
+    "genuinely_absent_or_unresolvable_cuis": 1665,
+    "tty_among_oov": {
+      "missing": 1135941,
+      "Semantic Clinical Drug": 726001,
+      "Precise Ingredient": 163751,
+      "Ingredient": 40041,
+      "Generic Pack": 637,
+      "Multiple Ingredients": 15
+    }
+  },
+  "missing_rxcui": {
+    "method": "exact normalized name match to rxcui_name_cache.json only (no fuzzy)",
+    "n_missing_rxcui_events": 1135941,
+    "n_exact_name_mapped": 0,
+    "n_mapped_into_stage1_vocab": 0,
+    "unique_missing_generic_names": 270,
+    "unique_missing_descr_names": 1378,
+    "unique_generics_exact_matchable_to_rxnorm_cache": 32,
+    "unique_descr_exact_matchable_to_rxnorm_cache": 2,
+    "examples": [],
+    "note": "Many missing-RxCUI rows are NCH compound/custom strings (e.g. LET gel, human milk) that have no exact RxNorm string match; fuzzy matching is disallowed."
+  },
+  "bge_extension": {
+    "freeze": {
+      "code_embedding_source": "data/processed/bge_embeddings.pt from BAAI/bge-m3 dense vectors",
+      "embedding_text": "code_descriptions.json strings (rolled clinical descriptions)",
+      "embedding_dim": 1024,
+      "projection": "No learned projection of BGE vectors during pretraining. embedding_table is a register_buffer; layer-0 Linear maps 1024\u2192d_model and IS trained.",
+      "checkpoint_embedding_identical_to_bge_file": true,
+      "embedding_table_shape": [
+        30637,
+        1024
+      ],
+      "requires_grad_in_checkpoint": false,
+      "bge_vectors_updated_during_pretraining": false,
+      "model_contract": {
+        "register_buffer": true,
+        "requires_grad_False": true,
+        "technically_valid_to_append": true,
+        "constraints": [
+          "Leave existing MIMIC token IDs and rows 0..N+1 unchanged",
+          "Append new rows after current table",
+          "Use identical BGE-M3 encode pipeline on authoritative descriptions",
+          "Do not renumber Stage-1 tokens",
+          "layer-0 Linear was trained on MIMIC embedding geometry; new vectors must be same space"
+        ]
+      }
+    },
+    "sample": {
+      "status": "complete",
+      "extended_shape": [
+        30659,
+        1024
+      ],
+      "defensible": true,
+      "n_selected_for_encode": 22
+    }
+  },
+  "truncation": {
+    "percentiles_raw_length": {
+      "0.5": 211.0,
+      "0.75": 583.0,
+      "0.9": 1768.800000000001,
+      "0.95": 3269.5999999999967,
+      "0.99": 8575.359999999984
+    },
+    "n_gt_1024": 545,
+    "pct_gt_1024": 15.69248488338612,
+    "by_age_band": [
+      {
+        "age_band": "<1",
+        "n": 195,
+        "pct_gt_1024": 14.358974358974358,
+        "median_len": 203.0,
+        "median_duration_before": 93.80667824074074,
+        "median_duration_retained": 76.66315972222222,
+        "median_frac_retained": 1.0,
+        "median_earliest_age_before_y": 0.0054757015742642025,
+        "median_earliest_age_after_y": 0.013689253935660506
+      },
+      {
+        "age_band": "1-5",
+        "n": 1187,
+        "pct_gt_1024": 18.53411962931761,
+        "median_len": 188.0,
+        "median_duration_before": 1048.4009837962963,
+        "median_duration_retained": 935.8217129629629,
+        "median_frac_retained": 1.0,
+        "median_earliest_age_before_y": 0.08213552361396304,
+        "median_earliest_age_after_y": 0.33675564681724846
+      },
+      {
+        "age_band": "6-11",
+        "n": 1201,
+        "pct_gt_1024": 15.736885928393004,
+        "median_len": 220.0,
+        "median_duration_before": 2658.393159722222,
+        "median_duration_retained": 2443.8224537037036,
+        "median_frac_retained": 1.0,
+        "median_earliest_age_before_y": 0.5065023956194388,
+        "median_earliest_age_after_y": 1.0939253935660507
+      },
+      {
+        "age_band": "12-17",
+        "n": 890,
+        "pct_gt_1024": 12.134831460674157,
+        "median_len": 233.5,
+        "median_duration_before": 3547.3163541666668,
+        "median_duration_retained": 3193.807789351852,
+        "median_frac_retained": 1.0,
+        "median_earliest_age_before_y": 5.368925393566051,
+        "median_earliest_age_after_y": 6.225872689938399
+      }
+    ],
+    "adolescent_early_history": {
+      "pct_truncated": 12.134831460674157,
+      "median_earliest_age_before_y": 5.368925393566051,
+      "median_earliest_age_after_y": 6.225872689938399,
+      "highlight": "Adolescent truncation does not strongly shift earliest retained age"
+    }
+  },
+  "age_extrapolation": {
+    "status": "complete",
+    "lambda0": -1.616810917854309,
+    "beta": -0.08273673802614212,
+    "flags": {
+      "sign_change_across_0_90": false,
+      "pediatric_lambda_magnitude_max": 1.3855146534733793,
+      "adult_support_approx": {
+        "mean": 63.33600997924805,
+        "sd": 16.574804306030273,
+        "approx_range_years": [
+          30.1864013671875,
+          96.4856185913086
+        ]
+      },
+      "extrapolation_z_at_age_0": -3.8212221881983264,
+      "extrapolation_z_at_age_10": -3.2178968146153766,
+      "beta_near_zero": false,
+      "interpretation_hint": "pathological pediatric extrapolation risk"
+    }
+  },
+  "labels": {
+    "osa_code_set": {
+      "primary_positive_codes": {
+        "ICD10CM": "{'G4733'}",
+        "ICD9CM": "{'32723'}"
+      },
+      "related_not_required_for_positive": {
+        "ICD10CM": "{'G4710', 'G4731', 'G4730', 'G4739', 'G4700'}",
+        "ICD9CM": "{'78057', '32721', '32720'}"
+      },
+      "snoring_codes": [
+        "78609",
+        "R0683"
+      ],
+      "definition": {
+        "osa_at_index": "OSA code on linked PSG/index encounter",
+        "prior_osa": "OSA code in any pre-index event (excluding index encounter)",
+        "incident_osa": "osa_at_index AND NOT prior_osa"
+      },
+      "limitation": "Negatives reflect absence of coded OSA, not confirmed physiological absence. Coding incompleteness may undercall prior OSA and overcall incident cases."
+    },
+    "n_patients": 3475,
+    "n_studies": 3475,
+    "incident_osa_n": 705,
+    "incident_osa_prevalence": 0.20287769784172663,
+    "osa_at_index_n": 1040,
+    "prior_osa_n": 591,
+    "by_age_band": [
+      {
+        "age_band": "1-5",
+        "n": 1188,
+        "incident_osa_prev": 0.22138047138047137,
+        "osa_at_index_prev": 0.2996632996632997,
+        "prior_osa_prev": 0.14057239057239057,
+        "n_ahi_valid": 7
+      },
+      {
+        "age_band": "12-17",
+        "n": 890,
+        "incident_osa_prev": 0.22247191011235956,
+        "osa_at_index_prev": 0.3595505617977528,
+        "prior_osa_prev": 0.19662921348314608,
+        "n_ahi_valid": 4
+      },
+      {
+        "age_band": "6-11",
+        "n": 1201,
+        "incident_osa_prev": 0.1723563696919234,
+        "osa_at_index_prev": 0.2614487926727727,
+        "prior_osa_prev": 0.15903413821815154,
+        "n_ahi_valid": 7
+      },
+      {
+        "age_band": "<1",
+        "n": 196,
+        "incident_osa_prev": 0.18877551020408162,
+        "osa_at_index_prev": 0.25510204081632654,
+        "prior_osa_prev": 0.29591836734693877,
+        "n_ahi_valid": 0
+      }
+    ],
+    "ahi": {
+      "n_local_tsv_files": 20,
+      "n_local_edf_files": 21,
+      "n_studies_with_valid_ahi": 20,
+      "n_studies_attempted": 20,
+      "missingness_note": "SleepBank Sleep_Data locally contains only ~20 EDF/TSV pairs; cohort-wide AHI is NOT available from Health_Data tables. Do not fabricate labels for the remaining studies.",
+      "derivation": "AHI = count(apnea|hypopnea annotations) / sleep_hours; sleep_hours from stage annotation durations when present.",
+      "pediatric_severity_bins": [
+        {
+          "name": "normal",
+          "lo": 0.0,
+          "hi": 1.0
+        },
+        {
+          "name": "mild",
+          "lo": 1.0,
+          "hi": 5.0
+        },
+        {
+          "name": "moderate",
+          "lo": 5.0,
+          "hi": 10.0
+        },
+        {
+          "name": "severe",
+          "lo": 10.0,
+          "hi": Infinity
+        }
+      ]
+    },
+    "ahi_distribution_valid": {
+      "count": 18.0,
+      "mean": 3.4342272210971028,
+      "std": 7.319787862660846,
+      "min": 0.0,
+      "25%": 0.2713590757069018,
+      "50%": 0.7844633258193169,
+      "75%": 2.4003278341793575,
+      "max": 30.80789946140036
+    },
+    "ahi_severity_counts": {
+      "normal": 10,
+      "mild": 5,
+      "severe": 2,
+      "moderate": 1
+    }
+  },
+  "splits": {
+    "train": {
+      "n_patients": 2433,
+      "incident_osa_prevalence": 0.20304151253596384,
+      "age_years_mean": 8.094198163935667,
+      "age_band_counts": {
+        "6-11": 841,
+        "1-5": 832,
+        "12-17": 623,
+        "<1": 137
+      },
+      "sex_counts": {
+        "1": 1367,
+        "0": 1066
+      },
+      "race_counts": {
+        "0": 1569,
+        "1": 481,
+        "5": 190,
+        "3": 118,
+        "2": 64,
+        "6": 8,
+        "4": 3
+      },
+      "history_duration_median": 1896.606394675926,
+      "seq_len_median": 209.0,
+      "truncation_pct": 15.618577887381832,
+      "mean_frac_unk": 0.21743237814469837,
+      "n_ahi_valid": 12
+    },
+    "val": {
+      "n_patients": 522,
+      "incident_osa_prevalence": 0.20306513409961685,
+      "age_years_mean": 8.019454048909605,
+      "age_band_counts": {
+        "6-11": 180,
+        "1-5": 178,
+        "12-17": 134,
+        "<1": 30
+      },
+      "sex_counts": {
+        "1": 300,
+        "0": 222
+      },
+      "race_counts": {
+        "0": 348,
+        "1": 93,
+        "3": 38,
+        "5": 30,
+        "2": 11,
+        "6": 2
+      },
+      "history_duration_median": 1932.0700868055555,
+      "seq_len_median": 239.0,
+      "truncation_pct": 16.091954022988507,
+      "mean_frac_unk": 0.22183896986235982,
+      "n_ahi_valid": 4
+    },
+    "test": {
+      "n_patients": 520,
+      "incident_osa_prevalence": 0.20192307692307693,
+      "age_years_mean": 8.113342733604584,
+      "age_band_counts": {
+        "6-11": 180,
+        "1-5": 178,
+        "12-17": 133,
+        "<1": 29
+      },
+      "sex_counts": {
+        "1": 307,
+        "0": 213
+      },
+      "race_counts": {
+        "0": 324,
+        "1": 113,
+        "5": 45,
+        "3": 23,
+        "2": 13,
+        "6": 2
+      },
+      "history_duration_median": 1813.847974537037,
+      "seq_len_median": 209.0,
+      "truncation_pct": 15.576923076923077,
+      "mean_frac_unk": 0.2150628408587526,
+      "n_ahi_valid": 2
+    }
+  },
+  "representation_variants_ready": [
+    "diagnoses_only",
+    "dx_proc_strict",
+    "dx_proc_normalized",
+    "dx_med_normalized",
+    "dx_proc_med_strict",
+    "dx_proc_med_normalized",
+    "extended_bge_sample_embeddings (offline only; not yet a full Stage-2 tensor set)"
+  ],
+  "answers": {
+    "1_procedure_mismatch_ontology": "Most OOV is CPT/HCPCS Level I ({'CPT_HCPCS_LEVEL_I': 255459, 'ICD10_PCS': 19198, 'ICD9_PCS': 10847, 'NCH_LOCAL_SHX': 686}); ICD-PCS already maps to CCS_*. Exact event-weighted coverage 15.1% \u2192 format-normalized 15.1%.",
+    "2_procedure_grouping_recovery": "CPT chapter grouping (not AMA CCS Svcs/Proc \u2014 unavailable) covers 99.7% events as CPT_CHAPTER_* (new namespace). Stage-1-compatible normalized recovery remains 15.1%.",
+    "3_groups_compatible_with_stage1": "NO for CPT chapters vs CCS_*: Stage-1 CCS_* are ICD procedure CCS. MIMIC/NCH share 4 CPT chapters at coarse level.",
+    "4_med_coverage_ladder": {
+      "L0_exact_stage1_rxcui": {
+        "event_weighted_pct": 31.877848744327235,
+        "unique_concept_n": 949,
+        "patient_coverage_pct": 97.05797519469282,
+        "n_events_recovered": 966968,
+        "n_events_remaining_oov": 2066386
+      },
+      "L1_brand_neutral_to_existing_stage1": {
+        "event_weighted_pct": 38.81630696582067,
+        "unique_concept_n": 1155,
+        "patient_coverage_pct": 97.77905970579752,
+        "n_events_recovered": 1177436,
+        "n_events_remaining_oov": 1855918
+      },
+      "L2_ingredient_to_existing_stage1": {
+        "event_weighted_pct": 31.877848744327235,
+        "unique_concept_n": 949,
+        "patient_coverage_pct": 97.05797519469282,
+        "n_events_recovered": 966968,
+        "n_events_remaining_oov": 2066386
+      },
+      "L2_ingredient_any_including_new_ingset": {
+        "event_weighted_pct": 37.353800446634324,
+        "unique_concept_n": 1048,
+        "patient_coverage_pct": 97.37525237957888,
+        "n_events_recovered": 1133073,
+        "n_events_remaining_oov": 1900281
+      },
+      "L3_therapeutic_class_nch_fields": {
+        "event_weighted_pct": 62.551650746994916,
+        "unique_concept_n": 2616,
+        "patient_coverage_pct": 99.65387943466975,
+        "n_events_recovered": 1897413,
+        "n_events_remaining_oov": 1135941
+      }
+    },
+    "5_med_oov_pediatric_vs_formulation": {
+      "unique_oov_cuis": 1667,
+      "formulation_mismatch_cuis_ingredient_in_stage1": 2,
+      "genuinely_absent_or_unresolvable_cuis": 1665,
+      "tty_among_oov": {
+        "missing": 1135941,
+        "Semantic Clinical Drug": 726001,
+        "Precise Ingredient": 163751,
+        "Ingredient": 40041,
+        "Generic Pack": 637,
+        "Multiple Ingredients": 15
+      }
+    },
+    "6_missing_rxcui_mappable": {
+      "method": "exact normalized name match to rxcui_name_cache.json only (no fuzzy)",
+      "n_missing_rxcui_events": 1135941,
+      "n_exact_name_mapped": 0,
+      "n_mapped_into_stage1_vocab": 0,
+      "unique_missing_generic_names": 270,
+      "unique_missing_descr_names": 1378,
+      "unique_generics_exact_matchable_to_rxnorm_cache": 32,
+      "unique_descr_exact_matchable_to_rxnorm_cache": 2,
+      "examples": [],
+      "note": "Many missing-RxCUI rows are NCH compound/custom strings (e.g. LET gel, human milk) that have no exact RxNorm string match; fuzzy matching is disallowed."
+    },
+    "7_extended_bge_valid": true,
+    "8_extended_preserves": {
+      "proc_chapter_pct": 99.74003284531256,
+      "med_L2_any_pct": 37.353800446634324,
+      "sample_encode_status": "complete"
+    },
+    "9_truncation": {
+      "percentiles_raw_length": {
+        "0.5": 211.0,
+        "0.75": 583.0,
+        "0.9": 1768.800000000001,
+        "0.95": 3269.5999999999967,
+        "0.99": 8575.359999999984
+      },
+      "n_gt_1024": 545,
+      "pct_gt_1024": 15.69248488338612,
+      "by_age_band": [
+        {
+          "age_band": "<1",
+          "n": 195,
+          "pct_gt_1024": 14.358974358974358,
+          "median_len": 203.0,
+          "median_duration_before": 93.80667824074074,
+          "median_duration_retained": 76.66315972222222,
+          "median_frac_retained": 1.0,
+          "median_earliest_age_before_y": 0.0054757015742642025,
+          "median_earliest_age_after_y": 0.013689253935660506
+        },
+        {
+          "age_band": "1-5",
+          "n": 1187,
+          "pct_gt_1024": 18.53411962931761,
+          "median_len": 188.0,
+          "median_duration_before": 1048.4009837962963,
+          "median_duration_retained": 935.8217129629629,
+          "median_frac_retained": 1.0,
+          "median_earliest_age_before_y": 0.08213552361396304,
+          "median_earliest_age_after_y": 0.33675564681724846
+        },
+        {
+          "age_band": "6-11",
+          "n": 1201,
+          "pct_gt_1024": 15.736885928393004,
+          "median_len": 220.0,
+          "median_duration_before": 2658.393159722222,
+          "median_duration_retained": 2443.8224537037036,
+          "median_frac_retained": 1.0,
+          "median_earliest_age_before_y": 0.5065023956194388,
+          "median_earliest_age_after_y": 1.0939253935660507
+        },
+        {
+          "age_band": "12-17",
+          "n": 890,
+          "pct_gt_1024": 12.134831460674157,
+          "median_len": 233.5,
+          "median_duration_before": 3547.3163541666668,
+          "median_duration_retained": 3193.807789351852,
+          "median_frac_retained": 1.0,
+          "median_earliest_age_before_y": 5.368925393566051,
+          "median_earliest_age_after_y": 6.225872689938399
+        }
+      ],
+      "adolescent_early_history": {
+        "pct_truncated": 12.134831460674157,
+        "median_earliest_age_before_y": 5.368925393566051,
+        "median_earliest_age_after_y": 6.225872689938399,
+        "highlight": "Adolescent truncation does not strongly shift earliest retained age"
+      }
+    },
+    "10_index_leakage": {
+      "psg_encounter_events_in_clean_table": 0,
+      "passed": true
+    },
+    "11_12_age_function": {
+      "sign_change_across_0_90": false,
+      "pediatric_lambda_magnitude_max": 1.3855146534733793,
+      "adult_support_approx": {
+        "mean": 63.33600997924805,
+        "sd": 16.574804306030273,
+        "approx_range_years": [
+          30.1864013671875,
+          96.4856185913086
+        ]
+      },
+      "extrapolation_z_at_age_0": -3.8212221881983264,
+      "extrapolation_z_at_age_10": -3.2178968146153766,
+      "beta_near_zero": false,
+      "interpretation_hint": "pathological pediatric extrapolation risk"
+    },
+    "13_incident_osa": {
+      "n": 705,
+      "prevalence": 0.20287769784172663
+    },
+    "14_ahi": {
+      "n_local_tsv_files": 20,
+      "n_local_edf_files": 21,
+      "n_studies_with_valid_ahi": 20,
+      "n_studies_attempted": 20,
+      "missingness_note": "SleepBank Sleep_Data locally contains only ~20 EDF/TSV pairs; cohort-wide AHI is NOT available from Health_Data tables. Do not fabricate labels for the remaining studies.",
+      "derivation": "AHI = count(apnea|hypopnea annotations) / sleep_hours; sleep_hours from stage annotation durations when present.",
+      "pediatric_severity_bins": [
+        {
+          "name": "normal",
+          "lo": 0.0,
+          "hi": 1.0
+        },
+        {
+          "name": "mild",
+          "lo": 1.0,
+          "hi": 5.0
+        },
+        {
+          "name": "moderate",
+          "lo": 5.0,
+          "hi": 10.0
+        },
+        {
+          "name": "severe",
+          "lo": 10.0,
+          "hi": Infinity
+        }
+      ]
+    },
+    "15_splits": {
+      "train": 2433,
+      "val": 522,
+      "test": 520
+    },
+    "16_ready_variants": [
+      "diagnoses_only",
+      "dx_proc_strict",
+      "dx_proc_normalized",
+      "dx_med_normalized",
+      "dx_proc_med_strict",
+      "dx_proc_med_normalized",
+      "extended_bge_offline_sample"
+    ],
+    "washout_24h_7d": {
+      "window_24h": {
+        "n_events": 108,
+        "n_patients": 57
+      },
+      "window_7d": {
+        "n_events": 532,
+        "n_patients": 244
+      },
+      "note": "Analysis only; these windows are NOT removed in v2 primary sequences."
+    },
+    "cohort_counts": {
+      "primary_rule": "index_age_years < 18",
+      "pediatric_all_studies": {
+        "n_studies": 3761,
+        "n_patients": 3475
+      },
+      "pediatric_first_study": {
+        "n_studies": 3475,
+        "n_patients": 3475
+      },
+      "adult_all_studies": {
+        "n_studies": 223,
+        "n_patients": 204
+      },
+      "adult_first_study": {
+        "n_studies": 204,
+        "n_patients": 204
+      }
+    },
+    "temporal_cleaned": {
+      "n": 3473,
+      "history_duration_days": {
+        "min": 1.3181712962962964,
+        "p50": 1890.8529513888889,
+        "p95": 4428.203261574074,
+        "p99": 5278.505187499994,
+        "max": 6374.786261574074
+      },
+      "max_years": 17.453213584049486,
+      "extreme_120y_gone": true
+    }
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "stage1_rxn_token_semantics": {
+    "token_format": "RXN_<RxCUI>",
+    "source": "MIMIC NDC\u2192RxCUI rollup via RxNorm_full_prescribe_04062026; leftover NDC_* rare",
+    "observed_nch_term_types": {
+      "Semantic Clinical Drug": 1692925,
+      "NaN": 1135941,
+      "Precise Ingredient": 163751,
+      "Ingredient": 40041,
+      "Generic Pack": 681,
+      "Multiple Ingredients": 15
+    },
+    "note": "Stage-1 tokens are RxCUI IDs as observed after NDC mapping (typically SCD/IN mix depending on RxNorm map target)."
+  },
+  "nch_medication_fields": {
+    "columns": [
+      "RXNORM_CODE",
+      "RXNORM_TERM_TYPE",
+      "MEDICATION_DESCR",
+      "GENERIC_DRUG_DESCR",
+      "PHARM_CLASS",
+      "PHARM_SUBCLASS",
+      "THERA_CLASS",
+      "THERA_SUBCLASS",
+      "ROUTE",
+      "EFFECTIVE_DRUG_DOSE",
+      "DRUG_DOSE_UNIT"
+    ],
+    "missing_rxcui_event_fraction_in_source_sample": 0.3744572603430978
+  },
+  "levels": {
+    "L0_exact_stage1_rxcui": {
+      "event_weighted_pct": 31.877848744327235,
+      "unique_concept_n": 949,
+      "patient_coverage_pct": 97.05797519469282,
+      "n_events_recovered": 966968,
+      "n_events_remaining_oov": 2066386
+    },
+    "L1_brand_neutral_to_existing_stage1": {
+      "event_weighted_pct": 38.81630696582067,
+      "unique_concept_n": 1155,
+      "patient_coverage_pct": 97.77905970579752,
+      "n_events_recovered": 1177436,
+      "n_events_remaining_oov": 1855918
+    },
+    "L2_ingredient_to_existing_stage1": {
+      "event_weighted_pct": 31.877848744327235,
+      "unique_concept_n": 949,
+      "patient_coverage_pct": 97.05797519469282,
+      "n_events_recovered": 966968,
+      "n_events_remaining_oov": 2066386
+    },
+    "L2_ingredient_any_including_new_ingset": {
+      "event_weighted_pct": 37.353800446634324,
+      "unique_concept_n": 1048,
+      "patient_coverage_pct": 97.37525237957888,
+      "n_events_recovered": 1133073,
+      "n_events_remaining_oov": 1900281
+    },
+    "L3_therapeutic_class_nch_fields": {
+      "event_weighted_pct": 62.551650746994916,
+      "unique_concept_n": 2616,
+      "patient_coverage_pct": 99.65387943466975,
+      "n_events_recovered": 1897413,
+      "n_events_remaining_oov": 1135941
+    }
+  },
+  "missing_rxcui_name_mapping": {
+    "method": "exact normalized name match to rxcui_name_cache.json only (no fuzzy)",
+    "n_missing_rxcui_events": 1135941,
+    "n_exact_name_mapped": 0,
+    "n_mapped_into_stage1_vocab": 0,
+    "unique_missing_generic_names": 270,
+    "unique_missing_descr_names": 1378,
+    "unique_generics_exact_matchable_to_rxnorm_cache": 32,
+    "unique_descr_exact_matchable_to_rxnorm_cache": 2,
+    "examples": [],
+    "note": "Many missing-RxCUI rows are NCH compound/custom strings (e.g. LET gel, human milk) that have no exact RxNorm string match; fuzzy matching is disallowed."
+  },
+  "oov_characterization": {
+    "unique_oov_cuis": 1667,
+    "formulation_mismatch_cuis_ingredient_in_stage1": 2,
+    "genuinely_absent_or_unresolvable_cuis": 1665,
+    "tty_among_oov": {
+      "missing": 1135941,
+      "Semantic Clinical Drug": 726001,
+      "Precise Ingredient": 163751,
+      "Ingredient": 40041,
+      "Generic Pack": 637,
+      "Multiple Ingredients": 15
+    }
+  },
+  "rxnorm_provenance": {
+    "rxnorm_zip": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/mappings/RxNorm_full_prescribe_04062026.zip",
+    "rxnorm_version_pin": "RxNorm_full_prescribe_04062026",
+    "conso": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/processed/_work/rxnorm/RXNCONSO.RRF",
+    "rel": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/processed/_work/rxnorm/RXNREL.RRF"
+  },
+  "examples_l1": [
+    {
+      "rxcui": "801092",
+      "level1_token": "RXN_801095",
+      "GENERIC_DRUG_DESCR": "albuterol sulfate"
+    },
+    {
+      "rxcui": "1808217",
+      "level1_token": "RXN_1808219",
+      "GENERIC_DRUG_DESCR": "propofol"
+    },
+    {
+      "rxcui": "897756",
+      "level1_token": "RXN_1872265",
+      "GENERIC_DRUG_DESCR": "hydromorphone HCl/PF"
+    },
+    {
+      "rxcui": "1726992",
+      "level1_token": "RXN_1726997",
+      "GENERIC_DRUG_DESCR": "sugammadex sodium"
+    },
+    {
+      "rxcui": "725145",
+      "level1_token": "RXN_1052954",
+      "GENERIC_DRUG_DESCR": "petrolatum,white"
+    },
+    {
+      "rxcui": "895999",
+      "level1_token": "RXN_896001",
+      "GENERIC_DRUG_DESCR": "fluticasone propionate"
+    },
+    {
+      "rxcui": "403908",
+      "level1_token": "RXN_404630",
+      "GENERIC_DRUG_DESCR": "ciprofloxacin HCl/dexameth"
+    },
+    {
+      "rxcui": "895994",
+      "level1_token": "RXN_895996",
+      "GENERIC_DRUG_DESCR": "fluticasone propionate"
+    },
+    {
+      "rxcui": "242446",
+      "level1_token": "RXN_876425",
+      "GENERIC_DRUG_DESCR": "ofloxacin"
+    },
+    {
+      "rxcui": "1300189",
+      "level1_token": "RXN_1300191",
+      "GENERIC_DRUG_DESCR": "diph,pertuss(acell),tet vac/PF"
+    },
+    {
+      "rxcui": "797638",
+      "level1_token": "RXN_797641",
+      "GENERIC_DRUG_DESCR": "mening vac A,C,Y,W-135 dip/PF"
+    },
+    {
+      "rxcui": "308696",
+      "level1_token": "RXN_992496",
+      "GENERIC_DRUG_DESCR": "benzoyl peroxide"
+    },
+    {
+      "rxcui": "1298068",
+      "level1_token": "RXN_1298360",
+      "GENERIC_DRUG_DESCR": "cyclopentolate/phenylephrine"
+    },
+    {
+      "rxcui": "901640",
+      "level1_token": "RXN_901644",
+      "GENERIC_DRUG_DESCR": "pneumoc 13-val conj-Dip crm/PF"
+    },
+    {
+      "rxcui": "804183",
+      "level1_token": "RXN_804186",
+      "GENERIC_DRUG_DESCR": "measles,mumps,rubella vacc/PF"
+    }
+  ],
+  "information_lost_notes": {
+    "L1": "Collapses brand variants to clinical drug when RxNorm tradename_of supports it; loses brand identity.",
+    "L2": "Collapses strengths/dose forms to ingredient set; loses formulation/route/strength.",
+    "L3": "Uses NCH PHARM/THERA class strings; coarsest; not a Stage-1 token namespace."
+  }
+}

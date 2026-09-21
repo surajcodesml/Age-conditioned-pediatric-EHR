@@ -1,0 +1,52 @@
+{
+  "vocab_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/code_vocab.json",
+  "vocab_size": 30635,
+  "special_tokens": {
+    "PAD": {
+      "vocab_index": null,
+      "model_id": 0
+    },
+    "UNK": {
+      "vocab_index": null,
+      "model_id": 1,
+      "shard_unk_vocab_index": "len(vocab)"
+    }
+  },
+  "model_id_rule": "PAD=0, UNK=1, real = vocab_index + 2 (model_new.data._pad_common)",
+  "embedding": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/bge_embeddings.pt",
+    "n_rows": 30637,
+    "dim": 1024,
+    "matches_vocab_plus_pad_unk": true
+  },
+  "stage1_checkpoint": {
+    "embedding_table": [
+      30637,
+      1024
+    ],
+    "head_out": [
+      30635,
+      320
+    ],
+    "lambda0": -1.616810917854309,
+    "beta_adult_not_transferred": -0.08273673802614212,
+    "age_mean_adult": 63.33600997924805,
+    "age_sd_adult": 16.574804306030273,
+    "epoch": 7,
+    "val_bce": 0.009129779955837875,
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage1_mimic_pretrain/run/adkm_s0/checkpoint_best.pt",
+    "head_matches_vocab": true,
+    "embedding_matches_bge_rows": true
+  },
+  "nch_shards": {
+    "n_shards": 3,
+    "n_events": 1063639,
+    "code_min": 5752,
+    "code_max": 30635,
+    "unk_vocab_index": 30635,
+    "unk_consistent": true
+  },
+  "nch_target_space": "subset of MIMIC |V|; full 30635-d head is retained. UNK is input-only and is dropped from the multi-hot target (Stage-1 contract).",
+  "no_silent_remap": true,
+  "passed": true
+}
