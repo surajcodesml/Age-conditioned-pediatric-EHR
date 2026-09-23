@@ -1,0 +1,86 @@
+{
+  "val": {
+    "1-5": {
+      "n_examples": 15507,
+      "n_patients": 401,
+      "bce": 0.00040340622073245616,
+      "precision@5": 0.18867608544969802,
+      "recall@5": 0.45541799580906095,
+      "micro_auprc": 0.18262578461114887,
+      "micro_auroc": 0.9932554184177659,
+      "n_valid_classes_macro": 638
+    },
+    "12-17": {
+      "n_examples": 3754,
+      "n_patients": 129,
+      "bce": 0.000541661573550239,
+      "precision@5": 0.14331380118301845,
+      "recall@5": 0.32279361496348286,
+      "micro_auprc": 0.04969519965864835,
+      "micro_auroc": 0.9719343598648706,
+      "n_valid_classes_macro": 244
+    },
+    "6-11": {
+      "n_examples": 9915,
+      "n_patients": 287,
+      "bce": 0.0004379346699497876,
+      "precision@5": 0.1790418591393525,
+      "recall@5": 0.40081759257403354,
+      "micro_auprc": 0.2048640307712885,
+      "micro_auroc": 0.9929532800120395,
+      "n_valid_classes_macro": 435
+    },
+    "<1": {
+      "n_examples": 4080,
+      "n_patients": 278,
+      "bce": 0.000475601398820978,
+      "precision@5": 0.1477941205104192,
+      "recall@5": 0.2988257457264307,
+      "micro_auprc": 0.13474323919018802,
+      "micro_auroc": 0.9918246626848259,
+      "n_valid_classes_macro": 433
+    }
+  },
+  "test": {
+    "1-5": {
+      "n_examples": 14038,
+      "n_patients": 407,
+      "bce": 0.00041326556575187965,
+      "precision@5": 0.193574586982171,
+      "recall@5": 0.4444314764040719,
+      "micro_auprc": 0.22573065444161527,
+      "micro_auroc": 0.9916614962589376,
+      "n_valid_classes_macro": 642
+    },
+    "12-17": {
+      "n_examples": 3120,
+      "n_patients": 128,
+      "bce": 0.00046745671822423106,
+      "precision@5": 0.12179487412079022,
+      "recall@5": 0.2656893151031254,
+      "micro_auprc": 0.06789152287289311,
+      "micro_auroc": 0.984415032994925,
+      "n_valid_classes_macro": 242
+    },
+    "6-11": {
+      "n_examples": 7283,
+      "n_patients": 283,
+      "bce": 0.0004447980617871561,
+      "precision@5": 0.15856103551399245,
+      "recall@5": 0.3668134774181633,
+      "micro_auprc": 0.18655563913374917,
+      "micro_auroc": 0.9927683981412715,
+      "n_valid_classes_macro": 488
+    },
+    "<1": {
+      "n_examples": 3706,
+      "n_patients": 264,
+      "bce": 0.000492590406275597,
+      "precision@5": 0.16842957689385124,
+      "recall@5": 0.3464230900470638,
+      "micro_auprc": 0.11379738453481057,
+      "micro_auroc": 0.9935530960978842,
+      "n_valid_classes_macro": 360
+    }
+  }
+}

@@ -92,8 +92,10 @@ def param_l2_delta(model, init_state: dict[str, torch.Tensor],
         out[f"rel_l2_{pref}"] = float((num ** 0.5) / ((den ** 0.5) + 1e-12))
     if "temporal.lambda0" in cur and "temporal.lambda0" in init_state:
         out["delta_lambda0"] = float(
-            (cur["temporal.lambda0"] - init_state["temporal.lambda0"]).abs().cpu())
+            (cur["temporal.lambda0"].detach().cpu()
+             - init_state["temporal.lambda0"].detach().cpu()).abs())
     if "temporal.beta" in cur and "temporal.beta" in init_state:
         out["delta_beta"] = float(
-            (cur["temporal.beta"] - init_state["temporal.beta"]).abs().cpu())
+            (cur["temporal.beta"].detach().cpu()
+             - init_state["temporal.beta"].detach().cpu()).abs())
     return out

@@ -1,10 +1,10 @@
 {
-  "run_id": "adkm_nch_s0",
+  "run_id": "nint_nch_s0",
   "git_commit": "d3a08d4ad477352e882b336e9449df2eddfc04cc",
   "git_dirty": true,
   "seed": 0,
-  "arm": "age_temporal",
-  "timestamp": "2026-09-21T19:19:16",
+  "arm": "no_interaction",
+  "timestamp": "2026-09-21T21:44:32",
   "stage1": {
     "stage1_ckpt": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage1_mimic_pretrain/run/adkm_s0/checkpoint_best.pt",
     "transferred": {
@@ -29,7 +29,7 @@
       "beta": 0.0,
       "age_mean": 9.0,
       "age_sd": 9.0,
-      "beta_requires_grad": true,
+      "beta_requires_grad": false,
       "lambda0_requires_grad": true,
       "embedding_frozen": true
     },
@@ -60,7 +60,7 @@
     "interpretation": "Positive \u03bb0 decreases attention from the last event to the distant (t=0) event relative to \u03bb0=0 (recency). Negative \u03bb0 increases that mass (long-range preference). Stage-1 learned \u03bb0<0, so the transferred prior is long-range, not recency."
   },
   "model": {
-    "arm": "age_temporal",
+    "arm": "no_interaction",
     "attention_equation": "s_ij^(h) = q_i^(h)^T k_j^(h) / sqrt(d_h) - [lambda0 + beta * z(a_i)] * tau_ij",
     "lambda0_beta": "single scalars shared across all attention heads (not per-head)",
     "d_model": 256,
@@ -131,12 +131,12 @@
   },
   "params": {
     "backbone": 1644160,
-    "age": 2,
+    "age": 1,
     "head": 9936555,
     "frozen_embedding": 31372288,
-    "total_trainable": 11580717,
+    "total_trainable": 11580716,
     "lambda0_trainable": 1,
-    "beta_trainable": 1
+    "beta_trainable": 0
   },
   "optim": {
     "lr_backbone": 0.0001,
@@ -144,12 +144,12 @@
     "lr_head": 0.001,
     "n_tensors": {
       "backbone": 20,
-      "age": 2,
+      "age": 1,
       "head": 4
     },
     "n_params": {
       "backbone": 1644160,
-      "age": 2,
+      "age": 1,
       "head": 9936555
     },
     "batch_size": 16,
@@ -237,65 +237,7 @@
         "val&test": 0
       }
     },
-    "tensorize": {
-      "representation": "diagnoses_only",
-      "modalities": [
-        "diagnosis"
-      ],
-      "events_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/processed/canonical_events_clean.parquet",
-      "index_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/processed/sleep_studies_pediatric_first.parquet",
-      "vocab_size": 30635,
-      "unk_vocab_index": 30635,
-      "horizon": "next NCH encounter_id after a strict time cut; pre first sleep-study index",
-      "age_out_of_range": {
-        "n_age_lt0": 0,
-        "n_age_gt18": 0,
-        "n_clipped_to_0_18": 0,
-        "clip_applied": false,
-        "note": "No pre-index pediatric diagnosis ages outside [0, 18]; z_P is unclipped."
-      },
-      "oov": {
-        "n_mapped": 956093,
-        "n_oov_as_unk": 109402,
-        "event_weighted_mapped_pct": 89.73228405576751,
-        "target_drops_unk": true
-      },
-      "patient_splits": {
-        "train": 2433,
-        "val": 522,
-        "test": 520
-      },
-      "overlap": {
-        "train&val": 0,
-        "train&test": 0,
-        "val&test": 0
-      },
-      "n_patients_lt2_encounters": 52,
-      "splits": {
-        "train": {
-          "n_patients_written": 2397,
-          "n_events": 732973,
-          "n_patients_with_ge2_encounters": 2397,
-          "n_forecast_windows_upper_bound": 137714,
-          "shard": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/tensorized_forecast/diagnoses_only/train/shard_000.npz"
-        },
-        "val": {
-          "n_patients_written": 512,
-          "n_events": 178483,
-          "n_patients_with_ge2_encounters": 512,
-          "n_forecast_windows_upper_bound": 33321,
-          "shard": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/tensorized_forecast/diagnoses_only/val/shard_000.npz"
-        },
-        "test": {
-          "n_patients_written": 511,
-          "n_events": 152183,
-          "n_patients_with_ge2_encounters": 511,
-          "n_forecast_windows_upper_bound": 28215,
-          "shard": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/nch_stage2/v2/tensorized_forecast/diagnoses_only/test/shard_000.npz"
-        }
-      },
-      "clip_applied": false
-    },
+    "tensorize": {},
     "compatibility": {
       "passed": true
     }

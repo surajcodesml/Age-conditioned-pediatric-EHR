@@ -1,0 +1,16 @@
+{
+  "adkm_best_auprc_epoch": 4,
+  "adkm_best_auprc": 0.1709152579659209,
+  "adkm_best_bce_epoch": 3,
+  "adkm_best_bce": 0.0004381712922757,
+  "adkm_final_lambda0": -1.0336750745773315,
+  "adkm_final_beta": 0.1264061331748962,
+  "adkm_primary_lambda0": -1.0228570699691772,
+  "adkm_primary_beta": 0.0923615992069244,
+  "nint_best_auprc_epoch": 4,
+  "nint_best_auprc": 0.1661900380136012,
+  "nint_best_bce_epoch": 3,
+  "nint_best_bce": 0.0004389441326998,
+  "nint_primary_lambda0": -1.07020103931427,
+  "nint_primary_beta": 0.0
+}

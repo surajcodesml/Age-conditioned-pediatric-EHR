@@ -1,0 +1,39 @@
+{
+  "adkm_ckpt": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage2_nch/run/adkm_nch_s0/checkpoint_best_auprc.pt",
+  "nint_ckpt": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage2_nch/run/nint_nch_s0/checkpoint_best_auprc.pt",
+  "n_windows": 28147,
+  "n_patients": 510,
+  "n_active_classes": 2616,
+  "active_class_rule": "codes with \u22651 positive label in the held-out test set",
+  "metric": "micro-AUPRC (_safe_auprc / project multilabel_metrics definition)",
+  "bootstrap": {
+    "n_boot": 100,
+    "seed": 0,
+    "unit": "patient"
+  },
+  "min_patients": 20,
+  "history_bins_days": {
+    "<3 months": [
+      0.0,
+      90.0
+    ],
+    "3\u201312 months": [
+      90.0,
+      365.0
+    ],
+    "1\u20133 years": [
+      365.0,
+      1095.0
+    ],
+    ">3 years": [
+      1095.0,
+      1000000000000.0
+    ]
+  },
+  "age_bands": [
+    "<1",
+    "1-5",
+    "6-11",
+    "12-17"
+  ]
+}

@@ -1,0 +1,68 @@
+[
+  {
+    "metric": "recall@5",
+    "adkm_point": 0.3914593890381076,
+    "nint_point": 0.39369713316618,
+    "delta_point": -0.0022377441280723538,
+    "ci_lo": -0.00543840804130785,
+    "ci_hi": 0.0010353037145545828,
+    "n_patients": 510,
+    "n_windows": 28147,
+    "ci_excludes_zero": false
+  },
+  {
+    "metric": "recall@10",
+    "adkm_point": 0.4764271690886162,
+    "nint_point": 0.47541366951323655,
+    "delta_point": 0.0010134995753796692,
+    "ci_lo": -0.0020041330249158905,
+    "ci_hi": 0.004244591432700672,
+    "n_patients": 510,
+    "n_windows": 28147,
+    "ci_excludes_zero": false
+  },
+  {
+    "metric": "recall@20",
+    "adkm_point": 0.566703228737367,
+    "nint_point": 0.5643222907478695,
+    "delta_point": 0.002380937989497406,
+    "ci_lo": -0.0011494209484196524,
+    "ci_hi": 0.005543703879677831,
+    "n_patients": 510,
+    "n_windows": 28147,
+    "ci_excludes_zero": false
+  },
+  {
+    "metric": "precision@5",
+    "adkm_point": 0.17385867388607507,
+    "nint_point": 0.17429921815258725,
+    "delta_point": -0.0004405442665121918,
+    "ci_lo": -0.00175671697872521,
+    "ci_hi": 0.000960448734816919,
+    "n_patients": 510,
+    "n_windows": 28147,
+    "ci_excludes_zero": false
+  },
+  {
+    "metric": "bce",
+    "adkm_point": 0.0004437576694364826,
+    "nint_point": 0.0004440422258734096,
+    "delta_point": -2.8455643692697326e-07,
+    "ci_lo": -1.3298377064558108e-06,
+    "ci_hi": 8.062245447864914e-07,
+    "n_patients": 510,
+    "n_windows": 28147,
+    "ci_excludes_zero": false
+  },
+  {
+    "metric": "brier",
+    "adkm_point": 7.739234780078507e-05,
+    "nint_point": 7.745451968958844e-05,
+    "delta_point": -6.217188880336463e-08,
+    "ci_lo": -1.9932548809800782e-07,
+    "ci_hi": 7.12781346933322e-08,
+    "n_patients": 510,
+    "n_windows": 28147,
+    "ci_excludes_zero": false
+  }
+]

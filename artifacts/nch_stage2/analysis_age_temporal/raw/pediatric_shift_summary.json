@@ -1,0 +1,36 @@
+{
+  "primary_checkpoint": "checkpoint_best_auprc.pt",
+  "final_params": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage2_nch/run/adkm_nch_s0/checkpoint_best_auprc.pt",
+    "kind": "best_auprc",
+    "epoch": 4,
+    "val_bce": 0.000442263406862185,
+    "val_micro_auprc": 0.17091525796592097,
+    "lambda0": -1.0228570699691772,
+    "beta": 0.09236159920692444,
+    "age_mean": 9.0,
+    "age_sd": 9.0
+  },
+  "init_params": {
+    "lambda0": -1.616810917854309,
+    "beta": 0.0,
+    "age_mean": 9.0,
+    "age_sd": 9.0,
+    "note": "Stage-2 init after transfer: keep lambda0, reset beta\u21920, age\u2192z_P(9,9)"
+  },
+  "delta_lambda_range": [
+    0.5015922486782074,
+    0.6863154470920563
+  ],
+  "delta_K_max": {
+    "value": -0.06697831149566691,
+    "age": 0.0,
+    "lag_days": 1.0
+  },
+  "delta_K_min": {
+    "value": -4.295297174523685,
+    "age": 18.0,
+    "lag_days": 3650.0
+  },
+  "interpretation_note": "Init has beta=0 so K_init is age-independent. Final beta>0 with lambda0<0 makes |lambda| decrease with age (lambda remains negative), so long-range bias weakens toward adolescence relative to Stage-2 initialization."
+}

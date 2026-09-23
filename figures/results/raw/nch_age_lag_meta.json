@@ -1,0 +1,29 @@
+{
+  "adkm": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage2_nch/run/adkm_nch_s0/checkpoint_best_auprc.pt",
+    "epoch": 4,
+    "val_bce": 0.000442263406862185,
+    "val_micro_auprc": 0.17091525796592097,
+    "arm": "age_temporal",
+    "lambda0": -1.0228570699691772,
+    "beta": 0.09236159920692444,
+    "age_mean": 9.0,
+    "age_sd": 9.0
+  },
+  "nint": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage2_nch/run/nint_nch_s0/checkpoint_best_auprc.pt",
+    "epoch": 4,
+    "val_bce": 0.00044339923064077067,
+    "val_micro_auprc": 0.16619003801360127,
+    "arm": "no_interaction",
+    "lambda0": -1.07020103931427,
+    "beta": 0.0,
+    "age_mean": 9.0,
+    "age_sd": 9.0
+  },
+  "quantity": "K(a,\u0394t)=\u2212\u03bb(a)\u00b7\u03c4(\u0394t) with \u03c4=log1p(|\u0394t|/7); via lambda_of + lag_to_tau",
+  "age_unit": "years",
+  "lag_unit": "days",
+  "lag_grid": "geomspace(1, 3650, 120)",
+  "age_grid": "linspace(0, 18, 181)"
+}

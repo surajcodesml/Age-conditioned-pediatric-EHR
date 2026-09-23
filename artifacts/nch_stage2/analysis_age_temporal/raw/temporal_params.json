@@ -1,0 +1,53 @@
+{
+  "best_auprc": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage2_nch/run/adkm_nch_s0/checkpoint_best_auprc.pt",
+    "kind": "best_auprc",
+    "epoch": 4,
+    "val_bce": 0.000442263406862185,
+    "val_micro_auprc": 0.17091525796592097,
+    "lambda0": -1.0228570699691772,
+    "beta": 0.09236159920692444,
+    "age_mean": 9.0,
+    "age_sd": 9.0
+  },
+  "best_bce": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage2_nch/run/adkm_nch_s0/checkpoint_best_bce.pt",
+    "kind": "best_bce",
+    "epoch": 3,
+    "val_bce": 0.00043817129227574224,
+    "val_micro_auprc": 0.1592801320440573,
+    "lambda0": -1.0078048706054688,
+    "beta": 0.09599041938781738,
+    "age_mean": 9.0,
+    "age_sd": 9.0
+  },
+  "checkpoint_final": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage2_nch/run/adkm_nch_s0/checkpoint_final.pt",
+    "kind": "final",
+    "epoch": 7,
+    "val_bce": 0.0004509780594898114,
+    "val_micro_auprc": 0.15796064529807458,
+    "lambda0": -1.0336750745773315,
+    "beta": 0.12640613317489624,
+    "age_mean": 9.0,
+    "age_sd": 9.0
+  },
+  "stage1_adult": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage1_mimic_pretrain/run/adkm_s0/checkpoint_best.pt",
+    "kind": "best",
+    "epoch": 7,
+    "val_bce": 0.009129779955837875,
+    "val_micro_auprc": null,
+    "lambda0": -1.616810917854309,
+    "beta": -0.08273673802614212,
+    "age_mean": 63.33600997924805,
+    "age_sd": 16.574804306030273
+  },
+  "stage2_init": {
+    "lambda0": -1.616810917854309,
+    "beta": 0.0,
+    "age_mean": 9.0,
+    "age_sd": 9.0,
+    "note": "Stage-2 init after transfer: keep lambda0, reset beta\u21920, age\u2192z_P(9,9)"
+  }
+}

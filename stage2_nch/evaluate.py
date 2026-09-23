@@ -157,6 +157,20 @@ def summarize_strata(rows: list[dict[str, Any]], logits: torch.Tensor | None,
     return out
 
 
+def _masked_pair_quantiles(values: torch.Tensor, qs: tuple[float, ...] = (0.1, 0.5, 0.9)) -> list[float]:
+    """Percentiles over kept attention-pair values.
+
+    ``torch.quantile`` refuses inputs larger than its internal limit (~2^24 elements).
+    Content logits are ``[B, H, L, L]`` (or ``[B, L, L]``) after masking and routinely
+    exceed that, so use NumPy percentiles — same approach as ``model_new.preflight``.
+    This is diagnostics-only and does not affect training or gradients.
+    """
+    if values.numel() == 0:
+        return [float("nan")] * len(qs)
+    arr = values.detach().float().cpu().numpy()
+    return [float(np.percentile(arr, 100.0 * q)) for q in qs]
+
+
 @torch.no_grad()
 def epoch_diagnostics(model, batch: dict, device: torch.device) -> dict[str, Any]:
     b = {k: (v.to(device) if isinstance(v, torch.Tensor) else v) for k, v in batch.items()}
@@ -169,10 +183,10 @@ def epoch_diagnostics(model, batch: dict, device: torch.device) -> dict[str, Any
         keep = out["pair_mask"].bool()
         kept = bias[keep]
         if kept.numel():
-            q = torch.quantile(kept.float(), torch.tensor([0.1, 0.5, 0.9], device=kept.device))
-            stats["temporal_bias_q10"] = float(q[0])
-            stats["temporal_bias_q50"] = float(q[1])
-            stats["temporal_bias_q90"] = float(q[2])
+            q10, q50, q90 = _masked_pair_quantiles(kept)
+            stats["temporal_bias_q10"] = q10
+            stats["temporal_bias_q50"] = q50
+            stats["temporal_bias_q90"] = q90
         content = out["content_logits"].float()
         if content.ndim == 4:
             keep_h = keep.unsqueeze(1).expand_as(content)
@@ -180,10 +194,10 @@ def epoch_diagnostics(model, batch: dict, device: torch.device) -> dict[str, Any
         else:
             ck = content[keep]
         if ck.numel():
-            q = torch.quantile(ck, torch.tensor([0.1, 0.5, 0.9], device=ck.device))
-            stats["content_q10"] = float(q[0])
-            stats["content_q50"] = float(q[1])
-            stats["content_q90"] = float(q[2])
+            q10, q50, q90 = _masked_pair_quantiles(ck)
+            stats["content_q10"] = q10
+            stats["content_q50"] = q50
+            stats["content_q90"] = q90
     stats["lambda0"] = float(model.temporal.lambda0.detach().cpu())
     stats["beta"] = float(model.temporal.beta.detach().cpu())
     stats["lambda_at_ages"] = model.temporal.lambda_at_ages(PROBE_AGES_YEARS)

@@ -1,0 +1,33 @@
+{
+  "adkm": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage1_mimic_pretrain/run/adkm_s0/epoch_005.pt",
+    "epoch": 5,
+    "val_bce": 0.009201501603238285,
+    "val_micro_auprc": null,
+    "arm": "age_temporal",
+    "lambda0": -1.4983670711517334,
+    "beta": -0.18022188544273376,
+    "age_mean": 63.33600997924805,
+    "age_sd": 16.574804306030273
+  },
+  "nint": {
+    "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage1_mimic_pretrain/run/nint_s0/epoch_005.pt",
+    "epoch": 5,
+    "val_bce": 0.009169819029048086,
+    "val_micro_auprc": null,
+    "arm": "no_interaction",
+    "lambda0": -1.4483740329742432,
+    "beta": 0.0,
+    "age_mean": 63.33600997924805,
+    "age_sd": 16.574804306030273
+  },
+  "age_range_years": [
+    16.64940269934976,
+    100.0
+  ],
+  "age_transform": "z(a)=(a-\u03bc)/\u03c3 with frozen MIMIC train event-level \u03bc,\u03c3",
+  "mu": 63.33601047086648,
+  "sigma": 16.574804662346914,
+  "n_event_ages_sampled": 3453323,
+  "quantity": "\u03bb(a)=\u03bb0+\u03b2 z(a) via AgeTemporalBias.lambda_of"
+}
