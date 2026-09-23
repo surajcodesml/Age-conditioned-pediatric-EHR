@@ -2,7 +2,10 @@ import json
 import os
 import torch
 import numpy as np
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, IterableDataset
+import math
+import glob
+import json
 import pandas as pd
 from typing import List, Dict, Optional
 
@@ -67,7 +70,8 @@ class CehrBertTokenizer:
 def create_cehrbert_sequence(
     events_df: pd.DataFrame, 
     tokenizer: CehrBertTokenizer, 
-    max_seq_len: int = 300
+    max_seq_len: int = 300,
+    is_pretraining: bool = False
 ) -> Dict[str, np.ndarray]:
     """
     Given a dataframe of events for a single patient, ordered by time,
@@ -75,24 +79,56 @@ def create_cehrbert_sequence(
     """
     # events_df should have columns: code_id, timestamp_days, age_at_event_days, hadm_id (optional)
     
-    # Sort just in case
-    events_df = events_df.sort_values('timestamp_days')
+    # Identify time column
+    time_col = 'timestamp_days'
+    if time_col not in events_df.columns:
+        if 'age_at_event_days' in events_df.columns:
+            time_col = 'age_at_event_days'
+        elif 'age_in_days' in events_df.columns:
+            time_col = 'age_in_days'
+        else:
+            # Fallback to any column with 'time' or 'age'
+            candidates = [c for c in events_df.columns if 'time' in c or 'age' in c]
+            if candidates:
+                time_col = candidates[0]
+                
+    # Identify age column
+    age_col = 'age_at_event_days'
+    if age_col not in events_df.columns:
+        if 'age_in_days' in events_df.columns:
+            age_col = 'age_in_days'
+        else:
+            age_col = time_col
+            
+    events_df = events_df.sort_values(time_col)
     
     tokens = [tokenizer.cls_id]
     segment_ids = [0]
-    time_stamps = [events_df.iloc[0]['timestamp_days'] if len(events_df)>0 else 0.0]
-    ages = [events_df.iloc[0]['age_at_event_days'] if len(events_df)>0 else 0.0]
+    time_stamps = [events_df.iloc[0][time_col] if len(events_df)>0 else 0.0]
+    ages = [events_df.iloc[0][age_col] if len(events_df)>0 else 0.0]
     
     # Group by hadm_id for visit segmentation. If missing, treat same day as same visit.
     if 'hadm_id' in events_df.columns:
+        # Step 1: Recover missing hadm_ids using admission intervals
+        has_hadm = events_df['hadm_id'].notna()
+        if has_hadm.any():
+            admissions = events_df[has_hadm].groupby('hadm_id')[time_col].agg(['min', 'max']).to_dict(orient='index')
+            grace_period = 1.0 # 1 day
+            for idx, row in events_df[~has_hadm].iterrows():
+                t = row[time_col]
+                for hadm, bounds in admissions.items():
+                    if bounds['min'] - grace_period <= t <= bounds['max'] + grace_period:
+                        events_df.at[idx, 'hadm_id'] = hadm
+                        break
+                        
         events_df['visit_group'] = events_df['hadm_id'].fillna(-1).astype(str)
         # For missing hadm_id (-1), group by day
         missing_mask = events_df['visit_group'] == '-1.0'
         if missing_mask.any():
-            events_df.loc[missing_mask, 'visit_group'] = 'day_' + (events_df.loc[missing_mask, 'timestamp_days'] // 1).astype(str)
+            events_df.loc[missing_mask, 'visit_group'] = 'day_' + (events_df.loc[missing_mask, time_col] // 1).astype(str)
     else:
         # If no hadm_id, group by day
-        events_df['visit_group'] = 'day_' + (events_df['timestamp_days'] // 1).astype(str)
+        events_df['visit_group'] = 'day_' + (events_df[time_col] // 1).astype(str)
         
     visit_groups = events_df.groupby('visit_group', sort=False)
     
@@ -100,8 +136,8 @@ def create_cehrbert_sequence(
     last_visit_end_time = None
     
     for visit_id, group in visit_groups:
-        visit_start_time = group['timestamp_days'].min()
-        visit_age = group['age_at_event_days'].min()
+        visit_start_time = group[time_col].min()
+        visit_age = group[age_col].min()
         
         # Insert ATT if not the first visit
         if last_visit_end_time is not None:
@@ -123,14 +159,21 @@ def create_cehrbert_sequence(
         
         # Clinical events
         for _, row in group.iterrows():
-            tokens.append(tokenizer.encode(row['code_id']))
+            # For NCH, the column might be code instead of code_id
+            code = row['code_id'] if 'code_id' in row else row.get('code', None)
+            if code is None:
+                # find a column named code
+                candidates = [c for c in row.index if 'code' in c]
+                code = row[candidates[0]] if candidates else str(row.iloc[0])
+                
+            tokens.append(tokenizer.encode(code))
             segment_ids.append(current_segment)
-            time_stamps.append(row['timestamp_days'])
-            ages.append(row['age_at_event_days'])
+            time_stamps.append(row[time_col])
+            ages.append(row[age_col])
             
         # [VE] token
-        visit_end_time = group['timestamp_days'].max()
-        visit_end_age = group['age_at_event_days'].max()
+        visit_end_time = group[time_col].max()
+        visit_end_age = group[age_col].max()
         tokens.append(tokenizer.ve_id)
         segment_ids.append(current_segment)
         time_stamps.append(visit_end_time)
@@ -138,19 +181,85 @@ def create_cehrbert_sequence(
         
         last_visit_end_time = visit_end_time
         
-        if len(tokens) >= max_seq_len:
-            break
+        if max_seq_len is not None and len(tokens) >= max_seq_len and not is_pretraining:
+            # We don't break early for pretraining because we need the full sequence to sample from
+            pass
             
-    # Truncate
-    if len(tokens) > max_seq_len:
-        # CEHR-BERT paper randomly crops subsequences for long patients, or tail truncate
-        # For simplicity in this function, we will tail truncate, but training script can implement random crop
-        tokens = tokens[-max_seq_len:]
-        segment_ids = segment_ids[-max_seq_len:]
-        time_stamps = time_stamps[-max_seq_len:]
-        ages = ages[-max_seq_len:]
+    # Truncate and Sample
+    if max_seq_len is not None and len(tokens) > max_seq_len:
+        vs_indices = [i for i, t in enumerate(tokens) if t == tokenizer.vs_id]
+        if is_pretraining:
+            import random
+            if vs_indices:
+                # Pick a random VS token as the start
+                start_idx = random.choice(vs_indices)
+                # If the chosen start_idx leaves fewer than max_seq_len tokens, we could just pad,
+                # but to maximize token usage, we can shift start_idx back if possible, 
+                # or just use it as is (CEHR-BERT usually just takes [start_idx : start_idx + max_seq_len]).
+                # Let's just use it as is to strictly obey "beginning at a valid visit boundary".
+            else:
+                start_idx = random.randint(0, len(tokens) - max_seq_len)
+        else:
+            # Deterministic for validation/finetuning: most recent history
+            start_idx = len(tokens) - max_seq_len
+            valid_vs = [i for i in vs_indices if i >= start_idx]
+            if valid_vs:
+                start_idx = valid_vs[0]
+                
+        end_idx = start_idx + max_seq_len
+        tokens = tokens[start_idx:end_idx]
+        segment_ids = segment_ids[start_idx:end_idx]
+        time_stamps = time_stamps[start_idx:end_idx]
+        ages = ages[start_idx:end_idx]
         
     # Pad
+    if max_seq_len is not None:
+        pad_len = max_seq_len - len(tokens)
+        attention_mask = [1] * len(tokens) + [0] * pad_len
+        
+        tokens = tokens + [tokenizer.pad_id] * pad_len
+        segment_ids = segment_ids + [0] * pad_len
+        time_stamps = time_stamps + [0.0] * pad_len
+        ages = ages + [0.0] * pad_len
+    else:
+        attention_mask = [1] * len(tokens)
+    
+
+    return {
+        "input_ids": np.array(tokens, dtype=np.int64),
+        "segment_ids": np.array(segment_ids, dtype=np.int64),
+        "time_stamps": np.array(time_stamps, dtype=np.float32),
+        "ages": np.array(ages, dtype=np.float32),
+        "attention_mask": np.array(attention_mask, dtype=np.int64)
+    }
+
+def pad_and_crop(seq_dict, max_seq_len, tokenizer, is_pretraining, seed=None):
+    tokens = seq_dict["input_ids"].tolist()
+    segment_ids = seq_dict["segment_ids"].tolist()
+    time_stamps = seq_dict["time_stamps"].tolist()
+    ages = seq_dict["ages"].tolist()
+    
+    if len(tokens) > max_seq_len:
+        vs_indices = [i for i, t in enumerate(tokens) if t == tokenizer.vs_id]
+        if is_pretraining:
+            import random
+            rng = random.Random(seed)
+            if vs_indices:
+                start_idx = rng.choice(vs_indices)
+            else:
+                start_idx = rng.randint(0, len(tokens) - max_seq_len)
+        else:
+            start_idx = len(tokens) - max_seq_len
+            valid_vs = [i for i in vs_indices if i >= start_idx]
+            if valid_vs:
+                start_idx = valid_vs[0]
+                
+        end_idx = start_idx + max_seq_len
+        tokens = tokens[start_idx:end_idx]
+        segment_ids = segment_ids[start_idx:end_idx]
+        time_stamps = time_stamps[start_idx:end_idx]
+        ages = ages[start_idx:end_idx]
+        
     pad_len = max_seq_len - len(tokens)
     attention_mask = [1] * len(tokens) + [0] * pad_len
     
@@ -160,42 +269,47 @@ def create_cehrbert_sequence(
     ages = ages + [0.0] * pad_len
     
     return {
-        "input_ids": np.array(tokens, dtype=np.int64),
-        "segment_ids": np.array(segment_ids, dtype=np.int64),
-        "time_stamps": np.array(time_stamps, dtype=np.float32),
-        "ages": np.array(ages, dtype=np.float32),
-        "attention_mask": np.array(attention_mask, dtype=np.int64)
+        "input_ids": torch.tensor(tokens, dtype=torch.long),
+        "segment_ids": torch.tensor(segment_ids, dtype=torch.long),
+        "time_stamps": torch.tensor(time_stamps, dtype=torch.float),
+        "ages": torch.tensor(ages, dtype=torch.float),
+        "attention_mask": torch.tensor(attention_mask, dtype=torch.long)
     }
 
-class CehrBertDataset(Dataset):
-    def __init__(self, parquet_path, vocab_path, max_seq_len=300):
-        self.df = pd.read_parquet(parquet_path)
+class CehrBertIterableDataset(IterableDataset):
+    def __init__(self, shards_dir, vocab_path, max_seq_len=300, is_pretraining=False, seed=42, epoch=0):
+        self.shards_dir = shards_dir
         self.tokenizer = CehrBertTokenizer(vocab_path)
         self.max_seq_len = max_seq_len
+        self.is_pretraining = is_pretraining
+        self.seed = seed
+        self.epoch = epoch
         
-        if 'subject_id' in self.df.columns:
-            self.subject_col = 'subject_id'
-        else:
-            self.subject_col = 'patient_id'
+        self.shards = sorted(glob.glob(os.path.join(shards_dir, "shard_*.pt")))
+        
+    def __iter__(self):
+        worker_info = torch.utils.data.get_worker_info()
+        import random
+        
+        # Seed logic per epoch and worker
+        worker_id = worker_info.id if worker_info is not None else 0
+        rng = random.Random(self.seed + self.epoch + worker_id)
+        
+        # Partition shards
+        shards = list(self.shards)
+        if self.is_pretraining:
+            rng.shuffle(shards)
             
-        self.subject_ids = self.df[self.subject_col].unique()
-        # Create an index mapping for fast groupby retrieval if memory allows
-        # Or just use grouped objects
-        self.grouped = self.df.groupby(self.subject_col)
-
-    def __len__(self):
-        return len(self.subject_ids)
-
-    def __getitem__(self, idx):
-        subject_id = self.subject_ids[idx]
-        patient_df = self.grouped.get_group(subject_id)
-        
-        seq_dict = create_cehrbert_sequence(patient_df, self.tokenizer, self.max_seq_len)
-        
-        return {
-            "input_ids": torch.tensor(seq_dict["input_ids"]),
-            "segment_ids": torch.tensor(seq_dict["segment_ids"]),
-            "time_stamps": torch.tensor(seq_dict["time_stamps"]),
-            "ages": torch.tensor(seq_dict["ages"]),
-            "attention_mask": torch.tensor(seq_dict["attention_mask"])
-        }
+        if worker_info is not None:
+            num_workers = worker_info.num_workers
+            shards = [s for i, s in enumerate(shards) if i % num_workers == worker_id]
+            
+        for shard_path in shards:
+            shard_data = torch.load(shard_path, map_location='cpu', weights_only=False)
+            if self.is_pretraining:
+                rng.shuffle(shard_data)
+                
+            for seq_dict in shard_data:
+                # Seed for random crop so it varies by epoch and patient
+                patient_seed = rng.randint(0, 2**32 - 1)
+                yield pad_and_crop(seq_dict, self.max_seq_len, self.tokenizer, self.is_pretraining, patient_seed)

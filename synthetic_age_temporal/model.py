@@ -305,6 +305,45 @@ class BenchmarkModel(nn.Module):
             u = ctx
         return self.head(u)
 
+    @torch.no_grad()
+    def extract_repr(
+        self,
+        code_ids: torch.Tensor,
+        type_ids: torch.Tensor,
+        tau: torch.Tensor,
+        padding_mask: torch.Tensor,
+        is_query: torch.Tensor,
+        age: torch.Tensor,
+        lag_days: torch.Tensor | None = None,
+    ) -> dict[str, torch.Tensor]:
+        """Frozen-model representations for age-decoding probes."""
+        x = self.encode(code_ids, type_ids)
+        event_ages = None
+        if self.arm == "historical_age":
+            assert lag_days is not None
+            event_ages = (age.unsqueeze(-1) - (lag_days / 365.25)).clamp(min=0.0)
+        h = x
+        for layer in self.layers:
+            h = self._content_self_attn(layer, h, padding_mask)
+        hist_mask = (~padding_mask) & (~is_query)
+        w = hist_mask.to(h.dtype)
+        denom = w.sum(dim=1, keepdim=True).clamp(min=1.0)
+        pre_pool = (h * w.unsqueeze(-1)).sum(dim=1) / denom
+        ctx, attn = self.prediction_attention(
+            h, padding_mask, is_query, tau, age, event_ages=event_ages
+        )
+        # Per-head context from prediction attention: [B, H, d_head]
+        # attn is [B, H, 1, L]; v from h
+        b, l, _ = h.shape
+        v = h.view(b, l, self.n_heads, self.head_dim).transpose(1, 2)
+        head_ctx = torch.matmul(attn, v).squeeze(2)  # [B, H, d_head]
+        return {
+            "pre_pool": pre_pool.detach(),
+            "pooled": ctx.detach(),
+            "head_ctx": head_ctx.detach(),
+            "attn": attn.detach(),
+        }
+
     def age_parameters(self) -> list[nn.Parameter]:
         return self.temporal.age_parameters()
 

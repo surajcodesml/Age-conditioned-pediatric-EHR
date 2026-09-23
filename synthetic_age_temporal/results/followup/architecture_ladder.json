@@ -1,0 +1,27 @@
+{
+  "GLM": {
+    "delta_auroc": 0.02747382768622106,
+    "delta_bce_shuffle": NaN,
+    "delta_bce_beta0": NaN
+  },
+  "M1_additive": {
+    "delta_auroc": 0.02074811098891538,
+    "delta_bce_shuffle": 0.2257791685416628,
+    "delta_bce_beta0": 0.05537078458358469
+  },
+  "M2": {
+    "delta_auroc": 0.009417239897497098,
+    "delta_bce_shuffle": 0.13016044476747468,
+    "delta_bce_beta0": 0.04403040588743412
+  },
+  "M3": {
+    "delta_auroc": 0.009417239897497098,
+    "delta_bce_shuffle": 0.13016044476747468,
+    "delta_bce_beta0": 0.04403040588743412
+  },
+  "Transformer": {
+    "delta_auroc": 0.00017609441679045101,
+    "delta_bce_shuffle": 0.00650148653360183,
+    "delta_bce_beta0": 0.0027545007738986604
+  }
+}

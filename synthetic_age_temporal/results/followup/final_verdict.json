@@ -1,0 +1,8 @@
+{
+  "verdict": "MECHANISM FUNCTIONALLY RECOVERED \u2014 READY FOR MULTI-SEED",
+  "selected": "M3",
+  "m1_pass": true,
+  "m2_pass": true,
+  "m3_pass": true,
+  "primary_aggregation": "additive"
+}

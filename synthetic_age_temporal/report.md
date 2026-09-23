@@ -459,3 +459,129 @@ cd synthetic_age_temporal
 /home/suraj/miniconda3/envs/ehr/bin/python audit_visibility.py
 /home/suraj/miniconda3/envs/ehr/bin/python run_followup.py --skip-multiseed --skip-seqlen
 ```
+
+## Mechanism-identifiability and factorized architecture investigation
+
+Goal: identify and remove the architectural bypass that allows prediction without
+functionally using age×time. Generator / splits / S0–S3 ground truth unchanged.
+
+### 1. Age-decoding probe (A1)
+
+Linear probe on frozen representations → cutoff age $a_*$ (TRAIN fit, TEST eval).
+Artifacts: `results/followup_age_probe.json`, fig13.
+
+| Arm | site | MAE (y) | RMSE | R² | band acc |
+|---|---|---|---|---|---|
+| no_age | pre_pool | 0.780 | 1.034 | 0.952 | 0.981 |
+| no_age | pooled | 0.802 | 1.081 | 0.948 | 0.981 |
+| no_age | head_mean | 0.916 | 1.215 | 0.934 | 0.971 |
+| temporal_only | pre_pool | 0.752 | 1.017 | 0.954 | 0.985 |
+| temporal_only | pooled | 0.704 | 0.990 | 0.956 | 0.985 |
+| temporal_only | head_mean | 0.866 | 1.172 | 0.938 | 0.971 |
+| age_temporal | pre_pool | 0.731 | 1.007 | 0.955 | 0.987 |
+| age_temporal | pooled | 0.689 | 0.973 | 0.958 | 0.986 |
+| age_temporal | head_mean | 0.848 | 1.128 | 0.943 | 0.977 |
+
+**Interpretation:** high predictability from `no_age` / `temporal_only` (R²≈0.95) implies
+the content/history pathway reconstructs developmental age — age leakage / bypass.
+
+### 2. Counterfactual age sensitivity (A2)
+
+Fixed history; vary only $a_*\in\{2,5,9,13,17\}$. Artifacts: `results/counterfactual_age_sensitivity.json`, fig14.
+
+| Model | mean ΔP(17−2) |
+|---|---|
+| temporal_only | 0.0000 |
+| age_temporal | -0.0183 |
+| oracle | 0.3590 |
+
+`temporal_only` is flat (no age input). `age_temporal` Transformer barely moves vs oracle —
+predictions do not route through the age×time gate despite representations encoding age.
+
+### 3. Background-content ablation (A3)
+
+**Decision: `BYPASS CONFIRMED: CONTENT PATH ENCODES AGE/DEVELOPMENTAL STATE`**
+
+- full shuffle ΔBCE = 0.0072
+- signal-only shuffle ΔBCE = 0.1743
+
+| Variant | arm | AUROC | AUPRC | β̂ | shuffle ΔBCE | β=0 ΔBCE | age-probe R² |
+|---|---|---|---|---|---|---|---|
+| full | temporal_only | 0.9130 | 0.8319 | 0.000 | 0.0000 | 0.0000 | 0.955 |
+| full | age_temporal | 0.9130 | 0.8337 | -0.643 | 0.0072 | 0.0029 | 0.955 |
+| signal_only | temporal_only | 0.8174 | 0.5862 | 0.000 | 0.0000 | 0.0000 | -0.077 |
+| signal_only | age_temporal | 0.8807 | 0.7411 | -4.468 | 0.1743 | 0.1571 | 0.578 |
+| bg_randomized | temporal_only | 0.8631 | 0.7122 | 0.000 | 0.0000 | 0.0000 | 0.357 |
+| bg_randomized | age_temporal | 0.8724 | 0.7534 | 1.654 | 0.0730 | 0.0291 | 0.563 |
+
+Removing Synthea background restores large functional interaction sensitivity
+(signal-only age_temporal: ΔAUROC≈0.06 vs temporal_only; shuffle ΔBCE≈0.17).
+Figure: `fig15_background_ablation`.
+
+### 4. M1 kernel-only (no Transformer)
+
+Primary aggregation: **additive** $\sum_j g_j e_j$. Matched $\beta{=}0$ control = temporal_only.
+
+| Aggregation | passed | ΔAUROC | ΔAUPRC | ΔBCE shuffle | ΔBCE β=0 | corr λ | β̂ |
+|---|---|---|---|---|---|---|---|
+| additive | True | 0.0207 | 0.0353 | 0.2258 | 0.0554 | 0.999 | -1.916 |
+| softmax | False | -0.0019 | -0.0052 | 0.1597 | 0.0001 | -0.961 | 0.042 |
+| additive_mass | True | 0.0176 | 0.0366 | 0.2028 | 0.0482 | 1.000 | -1.926 |
+
+**SOFTMAX NORMALIZATION DESTROYS ABSOLUTE TEMPORAL EVIDENCE MAGNITUDE**
+
+Additive and additive_mass pass the mechanism gate; softmax fails sign/β=0/λ correlation.
+Ground truth uses a SUM of weighted relevance — softmax cancels absolute mass.
+
+### 5. Additive vs normalized aggregation
+
+Figure 19. Finding above stands: prefer unnormalized additive evidence for this mechanism.
+
+### 6. M2 — content relevance × temporal gate
+
+Passed: **True**. ΔAUROC=0.0094, ΔAUPRC=0.0191,
+shuffle ΔBCE=0.1302, β=0 ΔBCE=0.0440,
+β̂=-1.785, corr λ=1.000.
+Content score $u_j=q^\top k_j$ does not see age/τ; age×time only via $g_j$.
+
+### 7. M3 — encounter encoder + developmental temporal retrieval
+
+Passed: **True** (same gate metrics as M2 under event-as-encounter encoding).
+β̂=-1.785.
+Selected as real-EHR candidate architecture (global β, additive aggregation).
+
+### 8. S0–S3 validation (M3)
+
+| Scenario | β_true | β̂ | AUROC | shuffle ΔBCE | β=0 ΔBCE | gate |
+|---|---|---|---|---|---|---|
+| S0 | 0.0 | -0.007 | 0.7315 | 0.0041 | 0.0000 | n/a |
+| S1 | 0.0 | 0.063 | 0.7431 | 0.0134 | 0.0002 | n/a |
+| S2 | -2.5 | -1.785 | 0.9180 | 0.1302 | 0.0440 | True |
+| S3 | 2.5 | 1.792 | 0.8531 | 0.1397 | 0.0601 | True |
+
+S0/S1: $\hat\beta\approx 0$, small shuffle. S2: $\hat\beta<0$ + functional sensitivity. S3: $\hat\beta>0$ (falsification).
+
+### 9. Final selected architecture
+
+**M3** = encounter content encoder (no age/τ) + developmental temporal retrieval
+$g_m=\exp[-\lambda(a_*)\tau_{*m}]$ with $\lambda=\mathrm{softplus}(\theta_0+\beta z)$, **additive** aggregation.
+Do not use softmax temporal normalization for this mechanism.
+
+Figure 16 ladder (GLM / M1 / M2 / M3 / Transformer):
+- GLM: ΔAUROC=0.0275, shuffle=n/a, β0=n/a
+- M1_additive: ΔAUROC=0.0207, shuffle=0.2258, β0=0.0554
+- M2: ΔAUROC=0.0094, shuffle=0.1302, β0=0.0440
+- M3: ΔAUROC=0.0094, shuffle=0.1302, β0=0.0440
+- Transformer: ΔAUROC=0.0002, shuffle=0.0065, β0=0.0028
+
+### 10. Functional mechanism recovery
+
+Yes — under factorized additive architectures (M1→M3). The Transformer bypass was
+background-content age encoding + softmax-style normalization that destroys absolute
+temporal evidence mass. Removing the bypass recovers sign, $\lambda(a)$, and ablation sensitivity.
+
+**MECHANISM FUNCTIONALLY RECOVERED — READY FOR MULTI-SEED**
+
+Figures: fig13–fig19 under `results/figures/`.
+Artifacts: `results/followup/`, `outputs/runs/controlled/factorized/`, `results/followup_age_probe.json`,
+`results/counterfactual_age_sensitivity.json`.

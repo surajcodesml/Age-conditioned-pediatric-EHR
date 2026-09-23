@@ -71,7 +71,7 @@ class CehrBertPretrainModel(nn.Module):
         self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=n_layers)
         self.mlm_head = nn.Linear(d_model, vocab_size)
         
-    def forward(self, input_ids, segment_ids, time_stamps, ages, attention_mask):
+    def forward(self, input_ids, segment_ids, time_stamps, ages, attention_mask, labels=None):
         # attention_mask: [B, L] where 1 is real, 0 is pad
         # nn.TransformerEncoder expects src_key_padding_mask where True means pad
         src_key_padding_mask = ~(attention_mask.bool())
@@ -79,8 +79,15 @@ class CehrBertPretrainModel(nn.Module):
         emb = self.embeddings(input_ids, segment_ids, time_stamps, ages)
         hidden_states = self.encoder(emb, src_key_padding_mask=src_key_padding_mask)
         
-        mlm_logits = self.mlm_head(hidden_states)
-        return hidden_states, mlm_logits
+        if labels is not None:
+            mask = labels != -100
+            masked_hidden = hidden_states[mask]
+            mlm_logits = self.mlm_head(masked_hidden)
+            masked_labels = labels[mask]
+            return hidden_states, mlm_logits, masked_labels
+        else:
+            mlm_logits = self.mlm_head(hidden_states)
+            return hidden_states, mlm_logits
 
 class CehrBertPooledClassifier(nn.Module):
     def __init__(self, encoder, d_model, num_classes):
