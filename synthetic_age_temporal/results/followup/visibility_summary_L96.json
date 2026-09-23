@@ -1,0 +1,258 @@
+{
+  "S0": {
+    "scenario": "S0",
+    "max_seq_len": 96,
+    "max_background": 48,
+    "n_examples": 7007,
+    "n_injected_signals": 42064,
+    "mean_n_signal_before": 6.003139717425432,
+    "mean_n_signal_after": 6.003139717425432,
+    "frac_examples_any_visible": 1.0,
+    "frac_examples_all_visible": 1.0,
+    "frac_examples_truncated": 0.0,
+    "P_visible_given_lag": {
+      "7": 1.0,
+      "30": 1.0,
+      "90": 1.0,
+      "180": 1.0,
+      "365": 1.0,
+      "730": 1.0
+    },
+    "P_visible_given_lag_by_age_group": {
+      "<1": {
+        "7": NaN,
+        "30": NaN,
+        "90": NaN,
+        "180": NaN,
+        "365": NaN,
+        "730": NaN
+      },
+      "1-5": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      },
+      "6-11": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      },
+      "12-17": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      }
+    },
+    "visibility_by_raw_sequence_length": {
+      "[50,100)": {
+        "n_examples": 7007,
+        "frac_any_visible": 1.0,
+        "frac_all_visible": 1.0,
+        "mean_n_signal_after": 6.003139717425432,
+        "mean_n_signal_before": 6.003139717425432
+      }
+    },
+    "overall_signal_visibility": 1.0
+  },
+  "S1": {
+    "scenario": "S1",
+    "max_seq_len": 96,
+    "max_background": 48,
+    "n_examples": 7007,
+    "n_injected_signals": 41948,
+    "mean_n_signal_before": 5.986584843727701,
+    "mean_n_signal_after": 5.986584843727701,
+    "frac_examples_any_visible": 1.0,
+    "frac_examples_all_visible": 1.0,
+    "frac_examples_truncated": 0.0,
+    "P_visible_given_lag": {
+      "7": 1.0,
+      "30": 1.0,
+      "90": 1.0,
+      "180": 1.0,
+      "365": 1.0,
+      "730": 1.0
+    },
+    "P_visible_given_lag_by_age_group": {
+      "<1": {
+        "7": NaN,
+        "30": NaN,
+        "90": NaN,
+        "180": NaN,
+        "365": NaN,
+        "730": NaN
+      },
+      "1-5": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      },
+      "6-11": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      },
+      "12-17": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      }
+    },
+    "visibility_by_raw_sequence_length": {
+      "[50,100)": {
+        "n_examples": 7007,
+        "frac_any_visible": 1.0,
+        "frac_all_visible": 1.0,
+        "mean_n_signal_after": 5.986584843727701,
+        "mean_n_signal_before": 5.986584843727701
+      }
+    },
+    "overall_signal_visibility": 1.0
+  },
+  "S2": {
+    "scenario": "S2",
+    "max_seq_len": 96,
+    "max_background": 48,
+    "n_examples": 7007,
+    "n_injected_signals": 42048,
+    "mean_n_signal_before": 6.000856286570572,
+    "mean_n_signal_after": 6.000856286570572,
+    "frac_examples_any_visible": 1.0,
+    "frac_examples_all_visible": 1.0,
+    "frac_examples_truncated": 0.0,
+    "P_visible_given_lag": {
+      "7": 1.0,
+      "30": 1.0,
+      "90": 1.0,
+      "180": 1.0,
+      "365": 1.0,
+      "730": 1.0
+    },
+    "P_visible_given_lag_by_age_group": {
+      "<1": {
+        "7": NaN,
+        "30": NaN,
+        "90": NaN,
+        "180": NaN,
+        "365": NaN,
+        "730": NaN
+      },
+      "1-5": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      },
+      "6-11": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      },
+      "12-17": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      }
+    },
+    "visibility_by_raw_sequence_length": {
+      "[50,100)": {
+        "n_examples": 7007,
+        "frac_any_visible": 1.0,
+        "frac_all_visible": 1.0,
+        "mean_n_signal_after": 6.000856286570572,
+        "mean_n_signal_before": 6.000856286570572
+      }
+    },
+    "overall_signal_visibility": 1.0
+  },
+  "S3": {
+    "scenario": "S3",
+    "max_seq_len": 96,
+    "max_background": 48,
+    "n_examples": 7007,
+    "n_injected_signals": 42065,
+    "mean_n_signal_before": 6.003282431853861,
+    "mean_n_signal_after": 6.003282431853861,
+    "frac_examples_any_visible": 1.0,
+    "frac_examples_all_visible": 1.0,
+    "frac_examples_truncated": 0.0,
+    "P_visible_given_lag": {
+      "7": 1.0,
+      "30": 1.0,
+      "90": 1.0,
+      "180": 1.0,
+      "365": 1.0,
+      "730": 1.0
+    },
+    "P_visible_given_lag_by_age_group": {
+      "<1": {
+        "7": NaN,
+        "30": NaN,
+        "90": NaN,
+        "180": NaN,
+        "365": NaN,
+        "730": NaN
+      },
+      "1-5": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      },
+      "6-11": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      },
+      "12-17": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      }
+    },
+    "visibility_by_raw_sequence_length": {
+      "[50,100)": {
+        "n_examples": 7007,
+        "frac_any_visible": 1.0,
+        "frac_all_visible": 1.0,
+        "mean_n_signal_after": 6.003282431853861,
+        "mean_n_signal_before": 6.003282431853861
+      }
+    },
+    "overall_signal_visibility": 1.0
+  }
+}

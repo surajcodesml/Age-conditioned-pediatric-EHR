@@ -1,0 +1,1899 @@
+{
+  "visibility": {
+    "S0": {
+      "scenario": "S0",
+      "max_seq_len": 96,
+      "max_background": 48,
+      "n_examples": 7007,
+      "n_injected_signals": 42064,
+      "mean_n_signal_before": 6.003139717425432,
+      "mean_n_signal_after": 6.003139717425432,
+      "frac_examples_any_visible": 1.0,
+      "frac_examples_all_visible": 1.0,
+      "frac_examples_truncated": 0.0,
+      "P_visible_given_lag": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      },
+      "P_visible_given_lag_by_age_group": {
+        "<1": {
+          "7": NaN,
+          "30": NaN,
+          "90": NaN,
+          "180": NaN,
+          "365": NaN,
+          "730": NaN
+        },
+        "1-5": {
+          "7": 1.0,
+          "30": 1.0,
+          "90": 1.0,
+          "180": 1.0,
+          "365": 1.0,
+          "730": 1.0
+        },
+        "6-11": {
+          "7": 1.0,
+          "30": 1.0,
+          "90": 1.0,
+          "180": 1.0,
+          "365": 1.0,
+          "730": 1.0
+        },
+        "12-17": {
+          "7": 1.0,
+          "30": 1.0,
+          "90": 1.0,
+          "180": 1.0,
+          "365": 1.0,
+          "730": 1.0
+        }
+      },
+      "visibility_by_raw_sequence_length": {
+        "[50,100)": {
+          "n_examples": 7007,
+          "frac_any_visible": 1.0,
+          "frac_all_visible": 1.0,
+          "mean_n_signal_after": 6.003139717425432,
+          "mean_n_signal_before": 6.003139717425432
+        }
+      },
+      "overall_signal_visibility": 1.0
+    },
+    "S1": {
+      "scenario": "S1",
+      "max_seq_len": 96,
+      "max_background": 48,
+      "n_examples": 7007,
+      "n_injected_signals": 41948,
+      "mean_n_signal_before": 5.986584843727701,
+      "mean_n_signal_after": 5.986584843727701,
+      "frac_examples_any_visible": 1.0,
+      "frac_examples_all_visible": 1.0,
+      "frac_examples_truncated": 0.0,
+      "P_visible_given_lag": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      },
+      "P_visible_given_lag_by_age_group": {
+        "<1": {
+          "7": NaN,
+          "30": NaN,
+          "90": NaN,
+          "180": NaN,
+          "365": NaN,
+          "730": NaN
+        },
+        "1-5": {
+          "7": 1.0,
+          "30": 1.0,
+          "90": 1.0,
+          "180": 1.0,
+          "365": 1.0,
+          "730": 1.0
+        },
+        "6-11": {
+          "7": 1.0,
+          "30": 1.0,
+          "90": 1.0,
+          "180": 1.0,
+          "365": 1.0,
+          "730": 1.0
+        },
+        "12-17": {
+          "7": 1.0,
+          "30": 1.0,
+          "90": 1.0,
+          "180": 1.0,
+          "365": 1.0,
+          "730": 1.0
+        }
+      },
+      "visibility_by_raw_sequence_length": {
+        "[50,100)": {
+          "n_examples": 7007,
+          "frac_any_visible": 1.0,
+          "frac_all_visible": 1.0,
+          "mean_n_signal_after": 5.986584843727701,
+          "mean_n_signal_before": 5.986584843727701
+        }
+      },
+      "overall_signal_visibility": 1.0
+    },
+    "S2": {
+      "scenario": "S2",
+      "max_seq_len": 96,
+      "max_background": 48,
+      "n_examples": 7007,
+      "n_injected_signals": 42048,
+      "mean_n_signal_before": 6.000856286570572,
+      "mean_n_signal_after": 6.000856286570572,
+      "frac_examples_any_visible": 1.0,
+      "frac_examples_all_visible": 1.0,
+      "frac_examples_truncated": 0.0,
+      "P_visible_given_lag": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      },
+      "P_visible_given_lag_by_age_group": {
+        "<1": {
+          "7": NaN,
+          "30": NaN,
+          "90": NaN,
+          "180": NaN,
+          "365": NaN,
+          "730": NaN
+        },
+        "1-5": {
+          "7": 1.0,
+          "30": 1.0,
+          "90": 1.0,
+          "180": 1.0,
+          "365": 1.0,
+          "730": 1.0
+        },
+        "6-11": {
+          "7": 1.0,
+          "30": 1.0,
+          "90": 1.0,
+          "180": 1.0,
+          "365": 1.0,
+          "730": 1.0
+        },
+        "12-17": {
+          "7": 1.0,
+          "30": 1.0,
+          "90": 1.0,
+          "180": 1.0,
+          "365": 1.0,
+          "730": 1.0
+        }
+      },
+      "visibility_by_raw_sequence_length": {
+        "[50,100)": {
+          "n_examples": 7007,
+          "frac_any_visible": 1.0,
+          "frac_all_visible": 1.0,
+          "mean_n_signal_after": 6.000856286570572,
+          "mean_n_signal_before": 6.000856286570572
+        }
+      },
+      "overall_signal_visibility": 1.0
+    },
+    "S3": {
+      "scenario": "S3",
+      "max_seq_len": 96,
+      "max_background": 48,
+      "n_examples": 7007,
+      "n_injected_signals": 42065,
+      "mean_n_signal_before": 6.003282431853861,
+      "mean_n_signal_after": 6.003282431853861,
+      "frac_examples_any_visible": 1.0,
+      "frac_examples_all_visible": 1.0,
+      "frac_examples_truncated": 0.0,
+      "P_visible_given_lag": {
+        "7": 1.0,
+        "30": 1.0,
+        "90": 1.0,
+        "180": 1.0,
+        "365": 1.0,
+        "730": 1.0
+      },
+      "P_visible_given_lag_by_age_group": {
+        "<1": {
+          "7": NaN,
+          "30": NaN,
+          "90": NaN,
+          "180": NaN,
+          "365": NaN,
+          "730": NaN
+        },
+        "1-5": {
+          "7": 1.0,
+          "30": 1.0,
+          "90": 1.0,
+          "180": 1.0,
+          "365": 1.0,
+          "730": 1.0
+        },
+        "6-11": {
+          "7": 1.0,
+          "30": 1.0,
+          "90": 1.0,
+          "180": 1.0,
+          "365": 1.0,
+          "730": 1.0
+        },
+        "12-17": {
+          "7": 1.0,
+          "30": 1.0,
+          "90": 1.0,
+          "180": 1.0,
+          "365": 1.0,
+          "730": 1.0
+        }
+      },
+      "visibility_by_raw_sequence_length": {
+        "[50,100)": {
+          "n_examples": 7007,
+          "frac_any_visible": 1.0,
+          "frac_all_visible": 1.0,
+          "mean_n_signal_after": 6.003282431853861,
+          "mean_n_signal_before": 6.003282431853861
+        }
+      },
+      "overall_signal_visibility": 1.0
+    }
+  },
+  "visible_oracle": {
+    "S0": {
+      "scenario": "S0",
+      "max_seq_len": 96,
+      "full_oracle": {
+        "correct": {
+          "bce": 0.46663167938569,
+          "micro_auroc": 0.7549303093761328,
+          "micro_auprc": 0.5517134793846503,
+          "interaction": {
+            "bce": 0.38261405424714884,
+            "micro_auroc": 0.8526413075416066,
+            "micro_auprc": 0.7142889695069448
+          }
+        },
+        "shuffle_age": {
+          "bce": 0.47684516721123116,
+          "micro_auroc": 0.7326058166993916,
+          "micro_auprc": 0.5324462391269278,
+          "interaction": {
+            "bce": 0.38261405424714884,
+            "micro_auroc": 0.8526413075416066,
+            "micro_auprc": 0.7142889695069448
+          }
+        },
+        "shuffle_lag": {
+          "bce": 0.5639864392525321,
+          "micro_auroc": 0.6772150498227177,
+          "micro_auprc": 0.41481802940701584,
+          "interaction": {
+            "bce": 0.6347893093579416,
+            "micro_auroc": 0.692272379389401,
+            "micro_auprc": 0.4463621627797691
+          }
+        },
+        "no_interaction": {
+          "bce": 0.46663167938569,
+          "micro_auroc": 0.7549303093761328,
+          "micro_auprc": 0.5517134793846503,
+          "interaction": {
+            "bce": 0.38261405424714884,
+            "micro_auroc": 0.8526413075416066,
+            "micro_auprc": 0.7142889695069448
+          }
+        },
+        "delta_bce_shuffle_age": 0.010213487825541157,
+        "delta_bce_shuffle_lag": 0.09735475986684211,
+        "delta_bce_no_interaction": 0.0,
+        "delta_bce_shuffle_age_interaction": 0.0,
+        "delta_bce_no_interaction_interaction": 0.0
+      },
+      "visible_oracle": {
+        "correct": {
+          "bce": 0.46663167938569,
+          "micro_auroc": 0.7549303093761328,
+          "micro_auprc": 0.5517134793846503,
+          "interaction": {
+            "bce": 0.38261405424714884,
+            "micro_auroc": 0.8526413075416066,
+            "micro_auprc": 0.7142889695069448
+          }
+        },
+        "shuffle_age": {
+          "bce": 0.47684516721123116,
+          "micro_auroc": 0.7326058166993916,
+          "micro_auprc": 0.5324462391269278,
+          "interaction": {
+            "bce": 0.38261405424714884,
+            "micro_auroc": 0.8526413075416066,
+            "micro_auprc": 0.7142889695069448
+          }
+        },
+        "shuffle_lag": {
+          "bce": 0.5639864392525321,
+          "micro_auroc": 0.6772150498227177,
+          "micro_auprc": 0.41481802940701584,
+          "interaction": {
+            "bce": 0.6347893093579416,
+            "micro_auroc": 0.692272379389401,
+            "micro_auprc": 0.4463621627797691
+          }
+        },
+        "no_interaction": {
+          "bce": 0.46663167938569,
+          "micro_auroc": 0.7549303093761328,
+          "micro_auprc": 0.5517134793846503,
+          "interaction": {
+            "bce": 0.38261405424714884,
+            "micro_auroc": 0.8526413075416066,
+            "micro_auprc": 0.7142889695069448
+          }
+        },
+        "delta_bce_shuffle_age": 0.010213487825541157,
+        "delta_bce_shuffle_lag": 0.09735475986684211,
+        "delta_bce_no_interaction": 0.0,
+        "delta_bce_shuffle_age_interaction": 0.0,
+        "delta_bce_no_interaction_interaction": 0.0
+      }
+    },
+    "S1": {
+      "scenario": "S1",
+      "max_seq_len": 96,
+      "full_oracle": {
+        "correct": {
+          "bce": 0.4577825641470748,
+          "micro_auroc": 0.7701865752652792,
+          "micro_auprc": 0.5691575414136091,
+          "interaction": {
+            "bce": 0.3944618618344781,
+            "micro_auroc": 0.848973475185451,
+            "micro_auprc": 0.7025773397575257
+          }
+        },
+        "shuffle_age": {
+          "bce": 0.4907146132489379,
+          "micro_auroc": 0.7207879553306691,
+          "micro_auprc": 0.5142823076257821,
+          "interaction": {
+            "bce": 0.4364256671972943,
+            "micro_auroc": 0.8084486042249655,
+            "micro_auprc": 0.6466231533795752
+          }
+        },
+        "shuffle_lag": {
+          "bce": 0.5348236157916912,
+          "micro_auroc": 0.7023878163319874,
+          "micro_auprc": 0.44556571931006705,
+          "interaction": {
+            "bce": 0.5680083721746959,
+            "micro_auroc": 0.7214410146470325,
+            "micro_auprc": 0.4792607246915427
+          }
+        },
+        "no_interaction": {
+          "bce": 0.4577825641470748,
+          "micro_auroc": 0.7701865752652792,
+          "micro_auprc": 0.5691575414136091,
+          "interaction": {
+            "bce": 0.3944618618344781,
+            "micro_auroc": 0.848973475185451,
+            "micro_auprc": 0.7025773397575257
+          }
+        },
+        "delta_bce_shuffle_age": 0.03293204910186309,
+        "delta_bce_shuffle_lag": 0.07704105164461644,
+        "delta_bce_no_interaction": 0.0,
+        "delta_bce_shuffle_age_interaction": 0.04196380536281619,
+        "delta_bce_no_interaction_interaction": 0.0
+      },
+      "visible_oracle": {
+        "correct": {
+          "bce": 0.4577825641470748,
+          "micro_auroc": 0.7701865752652792,
+          "micro_auprc": 0.5691575414136091,
+          "interaction": {
+            "bce": 0.3944618618344781,
+            "micro_auroc": 0.848973475185451,
+            "micro_auprc": 0.7025773397575257
+          }
+        },
+        "shuffle_age": {
+          "bce": 0.4907146132489379,
+          "micro_auroc": 0.7207879553306691,
+          "micro_auprc": 0.5142823076257821,
+          "interaction": {
+            "bce": 0.4364256671972943,
+            "micro_auroc": 0.8084486042249655,
+            "micro_auprc": 0.6466231533795752
+          }
+        },
+        "shuffle_lag": {
+          "bce": 0.5348236157916912,
+          "micro_auroc": 0.7023878163319874,
+          "micro_auprc": 0.44556571931006705,
+          "interaction": {
+            "bce": 0.5680083721746959,
+            "micro_auroc": 0.7214410146470325,
+            "micro_auprc": 0.4792607246915427
+          }
+        },
+        "no_interaction": {
+          "bce": 0.4577825641470748,
+          "micro_auroc": 0.7701865752652792,
+          "micro_auprc": 0.5691575414136091,
+          "interaction": {
+            "bce": 0.3944618618344781,
+            "micro_auroc": 0.848973475185451,
+            "micro_auprc": 0.7025773397575257
+          }
+        },
+        "delta_bce_shuffle_age": 0.03293204910186309,
+        "delta_bce_shuffle_lag": 0.07704105164461644,
+        "delta_bce_no_interaction": 0.0,
+        "delta_bce_shuffle_age_interaction": 0.04196380536281619,
+        "delta_bce_no_interaction_interaction": 0.0
+      }
+    },
+    "S2": {
+      "scenario": "S2",
+      "max_seq_len": 96,
+      "full_oracle": {
+        "correct": {
+          "bce": 0.4353754647343924,
+          "micro_auroc": 0.7873823248867371,
+          "micro_auprc": 0.6117230191788949,
+          "interaction": {
+            "bce": 0.2650501957823522,
+            "micro_auroc": 0.9312340920522865,
+            "micro_auprc": 0.864016649803709
+          }
+        },
+        "shuffle_age": {
+          "bce": 0.5595171225389911,
+          "micro_auroc": 0.7069803827597705,
+          "micro_auprc": 0.45882558615268687,
+          "interaction": {
+            "bce": 0.730348103687945,
+            "micro_auroc": 0.7552343559292276,
+            "micro_auprc": 0.5064723894004503
+          }
+        },
+        "shuffle_lag": {
+          "bce": 0.4981800516668355,
+          "micro_auroc": 0.7376399619933784,
+          "micro_auprc": 0.5299302795871774,
+          "interaction": {
+            "bce": 0.37574485485402725,
+            "micro_auroc": 0.8780744209800742,
+            "micro_auprc": 0.7689066367521611
+          }
+        },
+        "no_interaction": {
+          "bce": 0.4938024385128159,
+          "micro_auroc": 0.7363658318591655,
+          "micro_auprc": 0.5189948669304482,
+          "interaction": {
+            "bce": 0.49875809089604556,
+            "micro_auroc": 0.7981404570820188,
+            "micro_auprc": 0.6077688989194645
+          }
+        },
+        "delta_bce_shuffle_age": 0.12414165780459868,
+        "delta_bce_shuffle_lag": 0.06280458693244306,
+        "delta_bce_no_interaction": 0.058426973778423485,
+        "delta_bce_shuffle_age_interaction": 0.4652979079055928,
+        "delta_bce_no_interaction_interaction": 0.23370789511369333
+      },
+      "visible_oracle": {
+        "correct": {
+          "bce": 0.4353754647343924,
+          "micro_auroc": 0.7873823248867371,
+          "micro_auprc": 0.6117230191788949,
+          "interaction": {
+            "bce": 0.2650501957823522,
+            "micro_auroc": 0.9312340920522865,
+            "micro_auprc": 0.864016649803709
+          }
+        },
+        "shuffle_age": {
+          "bce": 0.5595171225389911,
+          "micro_auroc": 0.7069803827597705,
+          "micro_auprc": 0.45882558615268687,
+          "interaction": {
+            "bce": 0.730348103687945,
+            "micro_auroc": 0.7552343559292276,
+            "micro_auprc": 0.5064723894004503
+          }
+        },
+        "shuffle_lag": {
+          "bce": 0.4981800516668355,
+          "micro_auroc": 0.7376399619933784,
+          "micro_auprc": 0.5299302795871774,
+          "interaction": {
+            "bce": 0.37574485485402725,
+            "micro_auroc": 0.8780744209800742,
+            "micro_auprc": 0.7689066367521611
+          }
+        },
+        "no_interaction": {
+          "bce": 0.4938024385128159,
+          "micro_auroc": 0.7363658318591655,
+          "micro_auprc": 0.5189948669304482,
+          "interaction": {
+            "bce": 0.49875809089604556,
+            "micro_auroc": 0.7981404570820188,
+            "micro_auprc": 0.6077688989194645
+          }
+        },
+        "delta_bce_shuffle_age": 0.12414165780459868,
+        "delta_bce_shuffle_lag": 0.06280458693244306,
+        "delta_bce_no_interaction": 0.058426973778423485,
+        "delta_bce_shuffle_age_interaction": 0.4652979079055928,
+        "delta_bce_no_interaction_interaction": 0.23370789511369333
+      }
+    },
+    "S3": {
+      "scenario": "S3",
+      "max_seq_len": 96,
+      "full_oracle": {
+        "correct": {
+          "bce": 0.4603767943171101,
+          "micro_auroc": 0.7625115618866751,
+          "micro_auprc": 0.5673174869928476,
+          "interaction": {
+            "bce": 0.35159396324523384,
+            "micro_auroc": 0.8718162936664549,
+            "micro_auprc": 0.7678970064549485
+          }
+        },
+        "shuffle_age": {
+          "bce": 0.53272048314893,
+          "micro_auroc": 0.6992698172375043,
+          "micro_auprc": 0.4454665721769828,
+          "interaction": {
+            "bce": 0.6009601346794042,
+            "micro_auroc": 0.7454965317466927,
+            "micro_auprc": 0.48777255830763916
+          }
+        },
+        "shuffle_lag": {
+          "bce": 0.5128760676160619,
+          "micro_auroc": 0.7141333933816227,
+          "micro_auprc": 0.4897227547301294,
+          "interaction": {
+            "bce": 0.44863861590577675,
+            "micro_auroc": 0.8040583354412272,
+            "micro_auprc": 0.6580629370357581
+          }
+        },
+        "no_interaction": {
+          "bce": 0.49091167805947955,
+          "micro_auroc": 0.7353939547864936,
+          "micro_auprc": 0.5005006618116403,
+          "interaction": {
+            "bce": 0.4737334982147117,
+            "micro_auroc": 0.7913696217982916,
+            "micro_auprc": 0.5748688210671316
+          }
+        },
+        "delta_bce_shuffle_age": 0.07234368883181985,
+        "delta_bce_shuffle_lag": 0.052499273298951765,
+        "delta_bce_no_interaction": 0.030534883742369456,
+        "delta_bce_shuffle_age_interaction": 0.2493661714341704,
+        "delta_bce_no_interaction_interaction": 0.12213953496947788
+      },
+      "visible_oracle": {
+        "correct": {
+          "bce": 0.4603767943171101,
+          "micro_auroc": 0.7625115618866751,
+          "micro_auprc": 0.5673174869928476,
+          "interaction": {
+            "bce": 0.35159396324523384,
+            "micro_auroc": 0.8718162936664549,
+            "micro_auprc": 0.7678970064549485
+          }
+        },
+        "shuffle_age": {
+          "bce": 0.53272048314893,
+          "micro_auroc": 0.6992698172375043,
+          "micro_auprc": 0.4454665721769828,
+          "interaction": {
+            "bce": 0.6009601346794042,
+            "micro_auroc": 0.7454965317466927,
+            "micro_auprc": 0.48777255830763916
+          }
+        },
+        "shuffle_lag": {
+          "bce": 0.5128760676160619,
+          "micro_auroc": 0.7141333933816227,
+          "micro_auprc": 0.4897227547301294,
+          "interaction": {
+            "bce": 0.44863861590577675,
+            "micro_auroc": 0.8040583354412272,
+            "micro_auprc": 0.6580629370357581
+          }
+        },
+        "no_interaction": {
+          "bce": 0.49091167805947955,
+          "micro_auroc": 0.7353939547864936,
+          "micro_auprc": 0.5005006618116403,
+          "interaction": {
+            "bce": 0.4737334982147117,
+            "micro_auroc": 0.7913696217982916,
+            "micro_auprc": 0.5748688210671316
+          }
+        },
+        "delta_bce_shuffle_age": 0.07234368883181985,
+        "delta_bce_shuffle_lag": 0.052499273298951765,
+        "delta_bce_no_interaction": 0.030534883742369456,
+        "delta_bce_shuffle_age_interaction": 0.2493661714341704,
+        "delta_bce_no_interaction_interaction": 0.12213953496947788
+      }
+    }
+  },
+  "selected": null,
+  "runs": {
+    "followup_S2_age_temporal_d20260922_m0_interonly|S2|age_temporal|inter=True|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/followup_S2_age_temporal_d20260922_m0_interonly",
+      "beta_hat": -0.5795726180076599,
+      "beta_true": -2.5,
+      "test": {
+        "bce": 0.3055301158254978,
+        "micro_auroc": 0.9125303535724875,
+        "macro_auroc": 0.9030996519785331,
+        "micro_auprc": 0.83165484490059,
+        "macro_auprc": 0.8226029779287363,
+        "precision@5": 0.3850630455868089,
+        "recall@5": 0.7731813773035888
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.00650148653360183,
+        "delta_bce_beta0": 0.0027545007738986604,
+        "delta_bce_constant_age": 0.0027545007738986604
+      },
+      "recovery": {
+        "sign_match": true,
+        "corr_lambda": 0.9804640561926024,
+        "RMSE_lambda": 0.6350561868558318,
+        "RMSE_surface": 0.22053787108560946,
+        "beta_vec": [
+          -0.5795726180076599
+        ],
+        "n_heads_nonzero_beta": 1,
+        "beta_std": 0.0
+      },
+      "n_epochs": 21,
+      "n_params": 808458,
+      "n_temporal_params": 2
+    },
+    "S0_no_age_d20260922_m0|S0|no_age|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S0_no_age_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.5181056475392202,
+        "micro_auroc": 0.6846229945787061,
+        "macro_auroc": 0.6664431707413598,
+        "micro_auprc": 0.424698542318875,
+        "macro_auprc": 0.4080763164919902,
+        "precision@5": 0.46420950533462657,
+        "recall@5": 0.2949271673154825
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.6931471805599452,
+        "RMSE_surface": 0.7484666130464638,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 8,
+      "n_params": 814624,
+      "n_temporal_params": null
+    },
+    "followup_S2_temporal_only_d20260922_m0_interonly|S2|temporal_only|inter=True|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/followup_S2_temporal_only_d20260922_m0_interonly",
+      "beta_hat": 0.0,
+      "beta_true": -2.5,
+      "test": {
+        "bce": 0.3085556998325887,
+        "micro_auroc": 0.912354259155697,
+        "macro_auroc": 0.9028420749005232,
+        "micro_auprc": 0.8259515651961964,
+        "macro_auprc": 0.8178616435758713,
+        "precision@5": 0.3862269641125121,
+        "recall@5": 0.7725509214354995
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.8176067006959754,
+        "RMSE_surface": 0.2716945204443133,
+        "beta_vec": [
+          0.0
+        ],
+        "n_heads_nonzero_beta": 0,
+        "beta_std": 0.0
+      },
+      "n_epochs": 18,
+      "n_params": 808457,
+      "n_temporal_params": 1
+    },
+    "arch_S3_age_temporal_per_head_d20260922_m0_interonly|S3|age_temporal_per_head|inter=True|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S3_age_temporal_per_head_d20260922_m0_interonly",
+      "beta_hat": 0.17812640964984894,
+      "beta_true": 2.5,
+      "test": {
+        "bce": 0.39442158256731924,
+        "micro_auroc": 0.8416481550329957,
+        "macro_auroc": 0.8344399674786473,
+        "micro_auprc": 0.7192652210688908,
+        "macro_auprc": 0.7144663412749205,
+        "precision@5": 0.36372453928225024,
+        "recall@5": 0.7605861161147291
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0006380701686344858,
+        "delta_bce_beta0": 0.0002051837949211266,
+        "delta_bce_constant_age": 0.0002051837949211266
+      },
+      "recovery": {
+        "sign_match": true,
+        "corr_lambda": 0.9714049099858146,
+        "RMSE_lambda": 0.7559884989169307,
+        "RMSE_surface": 0.25945709418815294,
+        "beta_vec": [
+          0.1800496131181717,
+          0.35856232047080994,
+          0.0466553270816803,
+          0.12723837792873383
+        ],
+        "n_heads_nonzero_beta": 3,
+        "beta_std": 0.11449350849444019
+      },
+      "n_epochs": 16,
+      "n_params": 808464,
+      "n_temporal_params": 8
+    },
+    "S2_temporal_only_d20260922_m0|S2|temporal_only|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S2_temporal_only_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": -2.5,
+      "test": {
+        "bce": 0.46800652630349265,
+        "micro_auroc": 0.7636054215607231,
+        "macro_auroc": 0.7298122420235524,
+        "micro_auprc": 0.575646650741174,
+        "macro_auprc": 0.5244676994766857,
+        "precision@5": 0.6,
+        "recall@5": 0.37032431031689317
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.8134759864580732,
+        "RMSE_surface": 0.2733028240252704,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 15,
+      "n_params": 814625,
+      "n_temporal_params": null
+    },
+    "arch_S1_age_temporal_per_head_d20260922_m0|S1|age_temporal_per_head|inter=False|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S1_age_temporal_per_head_d20260922_m0",
+      "beta_hat": 0.04674619296565652,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.4796446078634764,
+        "micro_auroc": 0.7485164241447431,
+        "macro_auroc": 0.723052290245217,
+        "micro_auprc": 0.5351075888851744,
+        "macro_auprc": 0.5018463309017567,
+        "precision@5": 0.5608147429679923,
+        "recall@5": 0.35343937298635764
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": -7.972581377413412e-06,
+        "delta_bce_beta0": -2.2778457866190482e-05,
+        "delta_bce_constant_age": -2.2778457866190482e-05
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.16668041549308588,
+        "RMSE_surface": 0.04915091992840984,
+        "beta_vec": [
+          0.018558861687779427,
+          0.16076990962028503,
+          0.10265674442052841,
+          -0.0950007438659668
+        ],
+        "n_heads_nonzero_beta": 3,
+        "beta_std": 0.09619526686568301
+      },
+      "n_epochs": 16,
+      "n_params": 814632,
+      "n_temporal_params": 8
+    },
+    "arch_S2_age_temporal_d20260922_m0_interonly|S2|age_temporal|inter=True|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S2_age_temporal_d20260922_m0_interonly",
+      "beta_hat": -0.642585039138794,
+      "beta_true": -2.5,
+      "test": {
+        "bce": 0.30473977919042594,
+        "micro_auroc": 0.9129743625162667,
+        "macro_auroc": 0.9035582235954064,
+        "micro_auprc": 0.833659218777238,
+        "macro_auprc": 0.8244704689237401,
+        "precision@5": 0.38545101842871005,
+        "recall@5": 0.7697704494018752
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.007186230833269136,
+        "delta_bce_beta0": 0.0029153028021179916,
+        "delta_bce_constant_age": 0.0029153028021179916
+      },
+      "recovery": {
+        "sign_match": true,
+        "corr_lambda": 0.9819340123770934,
+        "RMSE_lambda": 0.6143312358080917,
+        "RMSE_surface": 0.21448276537819527,
+        "beta_vec": [
+          -0.642585039138794
+        ],
+        "n_heads_nonzero_beta": 1,
+        "beta_std": 0.0
+      },
+      "n_epochs": 22,
+      "n_params": 808458,
+      "n_temporal_params": 2
+    },
+    "arch_S0_temporal_only_d20260922_m0|S0|temporal_only|inter=False|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S0_temporal_only_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.48311162698626037,
+        "micro_auroc": 0.7338595865921307,
+        "macro_auroc": 0.7037841252036954,
+        "micro_auprc": 0.5214069110128507,
+        "macro_auprc": 0.4756730375310039,
+        "precision@5": 0.5350145489815712,
+        "recall@5": 0.3386982944722432
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.229669274804282,
+        "RMSE_surface": 0.06412150877958621,
+        "beta_vec": [
+          0.0
+        ],
+        "n_heads_nonzero_beta": 0,
+        "beta_std": 0.0
+      },
+      "n_epochs": 18,
+      "n_params": 814625,
+      "n_temporal_params": 1
+    },
+    "arch_S1_temporal_only_per_head_d20260922_m0|S1|temporal_only_per_head|inter=False|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S1_temporal_only_per_head_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.4796345360309969,
+        "micro_auroc": 0.7485562149431485,
+        "macro_auroc": 0.7231890994751802,
+        "micro_auprc": 0.5350948309191442,
+        "macro_auprc": 0.5018703230153587,
+        "precision@5": 0.5608147429679923,
+        "recall@5": 0.35301063640340186
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.1680250186893223,
+        "RMSE_surface": 0.04956504635880626,
+        "beta_vec": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "n_heads_nonzero_beta": 0,
+        "beta_std": 0.0
+      },
+      "n_epochs": 16,
+      "n_params": 814628,
+      "n_temporal_params": 4
+    },
+    "S0_temporal_only_d20260922_m0|S0|temporal_only|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S0_temporal_only_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.48311162698626037,
+        "micro_auroc": 0.7338595865921307,
+        "macro_auroc": 0.7037841252036954,
+        "micro_auprc": 0.5214069110128507,
+        "macro_auprc": 0.4756730375310039,
+        "precision@5": 0.5350145489815712,
+        "recall@5": 0.3386982944722432
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.229669274804282,
+        "RMSE_surface": 0.06412150877958621,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 8,
+      "n_params": 814625,
+      "n_temporal_params": null
+    },
+    "S1_age_only_d20260922_m0|S1|age_only|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S1_age_only_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.5080410146981049,
+        "micro_auroc": 0.7086038591809241,
+        "macro_auroc": 0.6919969101986976,
+        "micro_auprc": 0.459502629322617,
+        "macro_auprc": 0.4427622749283096,
+        "precision@5": 0.49330746847720663,
+        "recall@5": 0.3078823489133296
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.000552481652460246,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.00043685378885693904
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.6931471805599452,
+        "RMSE_surface": 0.7484666130464638,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 8,
+      "n_params": 814912,
+      "n_temporal_params": null
+    },
+    "S2_no_age_d20260922_m0|S2|no_age|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S2_no_age_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": -2.5,
+      "test": {
+        "bce": 0.48993305185155633,
+        "micro_auroc": 0.7364795305210458,
+        "macro_auroc": 0.7080328785141313,
+        "micro_auprc": 0.5285194159096382,
+        "macro_auprc": 0.4864975997017944,
+        "precision@5": 0.5540252182347236,
+        "recall@5": 0.3403251270641583
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 1.2308952303387484,
+        "RMSE_surface": 0.6966064051722425,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 8,
+      "n_params": 814624,
+      "n_temporal_params": null
+    },
+    "S1_no_age_d20260922_m0|S1|no_age|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S1_no_age_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.509408538961072,
+        "micro_auroc": 0.706027046103,
+        "macro_auroc": 0.6899453015020939,
+        "micro_auprc": 0.45667806881989337,
+        "macro_auprc": 0.4389831266558706,
+        "precision@5": 0.49214354995150345,
+        "recall@5": 0.308214138042403
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.6931471805599452,
+        "RMSE_surface": 0.7484666130464638,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 8,
+      "n_params": 814624,
+      "n_temporal_params": null
+    },
+    "S3_age_only_d20260922_m0|S3|age_only|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S3_age_only_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": 2.5,
+      "test": {
+        "bce": 0.5018607231043466,
+        "micro_auroc": 0.7126247845807566,
+        "macro_auroc": 0.6924917665490292,
+        "micro_auprc": 0.4982097753197972,
+        "macro_auprc": 0.46661460119675746,
+        "precision@5": 0.5171677982541223,
+        "recall@5": 0.31839970569359516
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0020723374689032292,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.001095541236413311
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 1.2308952303387484,
+        "RMSE_surface": 0.6966064051722424,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 8,
+      "n_params": 814912,
+      "n_temporal_params": null
+    },
+    "S0_age_only_d20260922_m0|S0|age_only|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S0_age_only_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.5166048054250589,
+        "micro_auroc": 0.6882923549825389,
+        "macro_auroc": 0.669704216036578,
+        "micro_auprc": 0.4316990522401692,
+        "macro_auprc": 0.4104152223461819,
+        "precision@5": 0.46013579049466535,
+        "recall@5": 0.29020043227409004
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.00012224498683222063,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 6.872151048309405e-05
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.6931471805599452,
+        "RMSE_surface": 0.7484666130464638,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 8,
+      "n_params": 814912,
+      "n_temporal_params": null
+    },
+    "S1_age_temporal_d20260922_m0|S1|age_temporal|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S1_age_temporal_d20260922_m0",
+      "beta_hat": 0.026029085740447044,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.4799483439291731,
+        "micro_auroc": 0.748115039271187,
+        "macro_auroc": 0.7228998817059069,
+        "micro_auprc": 0.5342835005318378,
+        "macro_auprc": 0.5011910129776127,
+        "precision@5": 0.5598448108632397,
+        "recall@5": 0.3523157391032669
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": -2.5116160684512945e-05,
+        "delta_bce_beta0": -2.6828176889537314e-05,
+        "delta_bce_constant_age": -2.6828176889537314e-05
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.21849918897038387,
+        "RMSE_surface": 0.061573383828846334,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 8,
+      "n_params": 814626,
+      "n_temporal_params": null
+    },
+    "S3_temporal_only_d20260922_m0|S3|temporal_only|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S3_temporal_only_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": 2.5,
+      "test": {
+        "bce": 0.4847056261163569,
+        "micro_auroc": 0.7380501199990008,
+        "macro_auroc": 0.7104114155337841,
+        "micro_auprc": 0.5348136054978261,
+        "macro_auprc": 0.49204475249002505,
+        "precision@5": 0.5491755577109602,
+        "recall@5": 0.33865793921565013
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.8103668948848957,
+        "RMSE_surface": 0.27460812879822244,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 13,
+      "n_params": 814625,
+      "n_temporal_params": null
+    },
+    "arch_S3_temporal_only_per_head_d20260922_m0_interonly|S3|temporal_only_per_head|inter=True|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S3_temporal_only_per_head_d20260922_m0_interonly",
+      "beta_hat": 0.0,
+      "beta_true": 2.5,
+      "test": {
+        "bce": 0.3983937195764843,
+        "micro_auroc": 0.8396345307804319,
+        "macro_auroc": 0.8327192994758988,
+        "micro_auprc": 0.7128255646185543,
+        "macro_auprc": 0.7100998526607286,
+        "precision@5": 0.362172647914646,
+        "recall@5": 0.752923652487183
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.8063122764562183,
+        "RMSE_surface": 0.27646329172172635,
+        "beta_vec": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "n_heads_nonzero_beta": 0,
+        "beta_std": 0.0
+      },
+      "n_epochs": 19,
+      "n_params": 808460,
+      "n_temporal_params": 4
+    },
+    "arch_S2_temporal_only_d20260922_m0_interonly|S2|temporal_only|inter=True|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S2_temporal_only_d20260922_m0_interonly",
+      "beta_hat": 0.0,
+      "beta_true": -2.5,
+      "test": {
+        "bce": 0.303713517710429,
+        "micro_auroc": 0.913048704081379,
+        "macro_auroc": 0.9023483278667854,
+        "micro_auprc": 0.8318901855440324,
+        "macro_auprc": 0.820820788155987,
+        "precision@5": 0.38545101842871005,
+        "recall@5": 0.7715486582605885
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.8202535206974918,
+        "RMSE_surface": 0.2707283223697514,
+        "beta_vec": [
+          0.0
+        ],
+        "n_heads_nonzero_beta": 0,
+        "beta_std": 0.0
+      },
+      "n_epochs": 17,
+      "n_params": 808457,
+      "n_temporal_params": 1
+    },
+    "arch_S1_age_temporal_d20260922_m0|S1|age_temporal|inter=False|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S1_age_temporal_d20260922_m0",
+      "beta_hat": 0.026029085740447044,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.4799483439291731,
+        "micro_auroc": 0.748115039271187,
+        "macro_auroc": 0.7228998817059069,
+        "micro_auprc": 0.5342835005318378,
+        "macro_auprc": 0.5011910129776127,
+        "precision@5": 0.5598448108632397,
+        "recall@5": 0.3523157391032669
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": -2.5116160684512945e-05,
+        "delta_bce_beta0": -2.6828176889537314e-05,
+        "delta_bce_constant_age": -2.6828176889537314e-05
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.21849918897038387,
+        "RMSE_surface": 0.061573383828846334,
+        "beta_vec": [
+          0.026029085740447044
+        ],
+        "n_heads_nonzero_beta": 0,
+        "beta_std": 0.0
+      },
+      "n_epochs": 16,
+      "n_params": 814626,
+      "n_temporal_params": 2
+    },
+    "S0_age_temporal_d20260922_m0|S0|age_temporal|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S0_age_temporal_d20260922_m0",
+      "beta_hat": -0.08265724033117294,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.48312912412304243,
+        "micro_auroc": 0.7338557379074572,
+        "macro_auroc": 0.7037714968598641,
+        "micro_auprc": 0.5213726732108577,
+        "macro_auprc": 0.4756799025806214,
+        "precision@5": 0.5350145489815714,
+        "recall@5": 0.33864405945195575
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": -0.00012334840861616403,
+        "delta_bce_beta0": -0.00010392027892475175,
+        "delta_bce_constant_age": -0.00010392027892475175
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.23555260108416018,
+        "RMSE_surface": 0.0651681265287243,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 8,
+      "n_params": 814626,
+      "n_temporal_params": null
+    },
+    "followup_S3_temporal_only_d20260922_m0_interonly|S3|temporal_only|inter=True|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/followup_S3_temporal_only_d20260922_m0_interonly",
+      "beta_hat": 0.0,
+      "beta_true": 2.5,
+      "test": {
+        "bce": 0.40192648924452046,
+        "micro_auroc": 0.8358395296960683,
+        "macro_auroc": 0.8325716412457767,
+        "micro_auprc": 0.7101133844357058,
+        "macro_auprc": 0.7100575514239522,
+        "precision@5": 0.36294859359844817,
+        "recall@5": 0.7565447323449264
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.8085629419799073,
+        "RMSE_surface": 0.275409732642918,
+        "beta_vec": [
+          0.0
+        ],
+        "n_heads_nonzero_beta": 0,
+        "beta_std": 0.0
+      },
+      "n_epochs": 21,
+      "n_params": 808457,
+      "n_temporal_params": 1
+    },
+    "S3_age_temporal_d20260922_m0|S3|age_temporal|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S3_age_temporal_d20260922_m0",
+      "beta_hat": 0.24223065376281738,
+      "beta_true": 2.5,
+      "test": {
+        "bce": 0.48458435144375167,
+        "micro_auroc": 0.7382277179871201,
+        "macro_auroc": 0.7106050133322004,
+        "micro_auprc": 0.5348943158114677,
+        "macro_auprc": 0.49218848223277784,
+        "precision@5": 0.5464597478176528,
+        "recall@5": 0.33723953597862427
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0002617360118875589,
+        "delta_bce_beta0": -0.00013857330060890183,
+        "delta_bce_constant_age": -0.00013857330060890183
+      },
+      "recovery": {
+        "sign_match": true,
+        "corr_lambda": 0.9711975311695826,
+        "RMSE_lambda": 0.7374277700075276,
+        "RMSE_surface": 0.2535403018873774,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 13,
+      "n_params": 814626,
+      "n_temporal_params": null
+    },
+    "S2_age_only_d20260922_m0|S2|age_only|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S2_age_only_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": -2.5,
+      "test": {
+        "bce": 0.48935225203794896,
+        "micro_auroc": 0.7368333406987276,
+        "macro_auroc": 0.7091650133163991,
+        "micro_auprc": 0.5289103446381486,
+        "macro_auprc": 0.48886021049277895,
+        "precision@5": 0.5551891367604268,
+        "recall@5": 0.341094193109655
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.008038550659035859,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0056955284349393676
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 1.2308952303387484,
+        "RMSE_surface": 0.6966064051722425,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 8,
+      "n_params": 814912,
+      "n_temporal_params": null
+    },
+    "S3_no_age_d20260922_m0|S3|no_age|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S3_no_age_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": 2.5,
+      "test": {
+        "bce": 0.5031386060541129,
+        "micro_auroc": 0.710665524952046,
+        "macro_auroc": 0.6871921480436539,
+        "micro_auprc": 0.4942624672450232,
+        "macro_auprc": 0.46028551663535144,
+        "precision@5": 0.5094083414161009,
+        "recall@5": 0.3133970566560285
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 1.2308952303387484,
+        "RMSE_surface": 0.6966064051722424,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 8,
+      "n_params": 814624,
+      "n_temporal_params": null
+    },
+    "followup_S3_age_temporal_d20260922_m0_interonly|S3|age_temporal|inter=True|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/followup_S3_age_temporal_d20260922_m0_interonly",
+      "beta_hat": 0.32540246844291687,
+      "beta_true": 2.5,
+      "test": {
+        "bce": 0.40124171648042706,
+        "micro_auroc": 0.8364015397961397,
+        "macro_auroc": 0.8332192998603816,
+        "micro_auprc": 0.7113851096527678,
+        "macro_auprc": 0.7113478903621475,
+        "precision@5": 0.3631425800193987,
+        "recall@5": 0.7551868273982726
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.002002539749139276,
+        "delta_bce_beta0": 0.0004222759202574533,
+        "delta_bce_constant_age": 0.0004222759202574533
+      },
+      "recovery": {
+        "sign_match": true,
+        "corr_lambda": 0.9736025828263062,
+        "RMSE_lambda": 0.7103198525642664,
+        "RMSE_surface": 0.24664385482508705,
+        "beta_vec": [
+          0.32540246844291687
+        ],
+        "n_heads_nonzero_beta": 1,
+        "beta_std": 0.0
+      },
+      "n_epochs": 21,
+      "n_params": 808458,
+      "n_temporal_params": 2
+    },
+    "arch_S0_temporal_only_per_head_d20260922_m0|S0|temporal_only_per_head|inter=False|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S0_temporal_only_per_head_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.4832318503872475,
+        "micro_auroc": 0.7337413965403183,
+        "macro_auroc": 0.7037089503564491,
+        "micro_auprc": 0.5210802532656162,
+        "macro_auprc": 0.47528082230900515,
+        "precision@5": 0.5328806983511154,
+        "recall@5": 0.33719405994182056
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.17802572440831646,
+        "RMSE_surface": 0.052037177128594736,
+        "beta_vec": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "n_heads_nonzero_beta": 0,
+        "beta_std": 0.0
+      },
+      "n_epochs": 18,
+      "n_params": 814628,
+      "n_temporal_params": 4
+    },
+    "S2_weak_age_temporal_d20260922_m0|S2|age_temporal|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S2_weak_age_temporal_d20260922_m0",
+      "beta_hat": -0.40577834844589233,
+      "beta_true": -1.2,
+      "test": {
+        "bce": 0.4755236271287655,
+        "micro_auroc": 0.7529331494923439,
+        "macro_auroc": 0.7231101133640094,
+        "micro_auprc": 0.5463378051760444,
+        "macro_auprc": 0.5040486174838474,
+        "precision@5": 0.5718719689621726,
+        "recall@5": 0.3588777539824496
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.00120787680241069,
+        "delta_bce_beta0": 0.0005522001624462258,
+        "delta_bce_constant_age": 0.0005522001624462258
+      },
+      "recovery": {
+        "sign_match": true,
+        "corr_lambda": 0.9944518727188878,
+        "RMSE_lambda": 0.2453679994152867,
+        "RMSE_surface": 0.11278363092826378,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 12,
+      "n_params": 814626,
+      "n_temporal_params": null
+    },
+    "arch_S3_temporal_only_d20260922_m0_interonly|S3|temporal_only|inter=True|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S3_temporal_only_d20260922_m0_interonly",
+      "beta_hat": 0.0,
+      "beta_true": 2.5,
+      "test": {
+        "bce": 0.3983396758825416,
+        "micro_auroc": 0.8398760727452984,
+        "macro_auroc": 0.8331346875747287,
+        "micro_auprc": 0.7123896125114707,
+        "macro_auprc": 0.7096099969850549,
+        "precision@5": 0.36003879728419014,
+        "recall@5": 0.7492702415592812
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.8037661344899136,
+        "RMSE_surface": 0.27774029729062083,
+        "beta_vec": [
+          0.0
+        ],
+        "n_heads_nonzero_beta": 0,
+        "beta_std": 0.0
+      },
+      "n_epochs": 19,
+      "n_params": 808457,
+      "n_temporal_params": 1
+    },
+    "arch_S3_age_temporal_d20260922_m0_interonly|S3|age_temporal|inter=True|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S3_age_temporal_d20260922_m0_interonly",
+      "beta_hat": 0.17956435680389404,
+      "beta_true": 2.5,
+      "test": {
+        "bce": 0.39462221463446495,
+        "micro_auroc": 0.8413249372618274,
+        "macro_auroc": 0.834287581879387,
+        "micro_auprc": 0.7188985911762701,
+        "macro_auprc": 0.7143367689098128,
+        "precision@5": 0.3627546071774976,
+        "recall@5": 0.7586462519052237
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0009129200683974936,
+        "delta_bce_beta0": 0.0004262322268827057,
+        "delta_bce_constant_age": 0.0004262322268827057
+      },
+      "recovery": {
+        "sign_match": true,
+        "corr_lambda": 0.9692021782000696,
+        "RMSE_lambda": 0.7527262860756975,
+        "RMSE_surface": 0.2607513250319971,
+        "beta_vec": [
+          0.17956435680389404
+        ],
+        "n_heads_nonzero_beta": 1,
+        "beta_std": 0.0
+      },
+      "n_epochs": 16,
+      "n_params": 808458,
+      "n_temporal_params": 2
+    },
+    "arch_S1_temporal_only_d20260922_m0|S1|temporal_only|inter=False|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S1_temporal_only_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.479912871577816,
+        "micro_auroc": 0.7481546573200091,
+        "macro_auroc": 0.7229090405706002,
+        "micro_auprc": 0.5343628858832503,
+        "macro_auprc": 0.5011722318289211,
+        "precision@5": 0.5604267701260911,
+        "recall@5": 0.35290856959425454
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.21906209182469827,
+        "RMSE_surface": 0.06172842013156598,
+        "beta_vec": [
+          0.0
+        ],
+        "n_heads_nonzero_beta": 0,
+        "beta_std": 0.0
+      },
+      "n_epochs": 16,
+      "n_params": 814625,
+      "n_temporal_params": 1
+    },
+    "arch_S0_age_temporal_d20260922_m0|S0|age_temporal|inter=False|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S0_age_temporal_d20260922_m0",
+      "beta_hat": -0.08265724033117294,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.48312912412304243,
+        "micro_auroc": 0.7338557379074572,
+        "macro_auroc": 0.7037714968598641,
+        "micro_auprc": 0.5213726732108577,
+        "macro_auprc": 0.4756799025806214,
+        "precision@5": 0.5350145489815714,
+        "recall@5": 0.33864405945195575
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": -0.00012334840861616403,
+        "delta_bce_beta0": -0.00010392027892475175,
+        "delta_bce_constant_age": -0.00010392027892475175
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.23555260108416018,
+        "RMSE_surface": 0.0651681265287243,
+        "beta_vec": [
+          -0.08265724033117294
+        ],
+        "n_heads_nonzero_beta": 1,
+        "beta_std": 0.0
+      },
+      "n_epochs": 18,
+      "n_params": 814626,
+      "n_temporal_params": 2
+    },
+    "S2_strong_age_temporal_d20260922_m0|S2|age_temporal|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S2_strong_age_temporal_d20260922_m0",
+      "beta_hat": -0.45368286967277527,
+      "beta_true": -4.0,
+      "test": {
+        "bce": 0.46596289903796395,
+        "micro_auroc": 0.7579274253897654,
+        "macro_auroc": 0.7205855978242146,
+        "micro_auprc": 0.561133712361183,
+        "macro_auprc": 0.5103504288082306,
+        "precision@5": 0.5743937924345296,
+        "recall@5": 0.36687557266592463
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.001447197306617909,
+        "delta_bce_beta0": 0.0005702987079816424,
+        "delta_bce_constant_age": 0.0005702987079816424
+      },
+      "recovery": {
+        "sign_match": true,
+        "corr_lambda": 0.9577117621960332,
+        "RMSE_lambda": 1.2503956028150933,
+        "RMSE_surface": 0.33937225749540506,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 12,
+      "n_params": 814626,
+      "n_temporal_params": null
+    },
+    "arch_S2_age_temporal_per_head_d20260922_m0_interonly|S2|age_temporal_per_head|inter=True|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S2_age_temporal_per_head_d20260922_m0_interonly",
+      "beta_hat": -0.4917950816452503,
+      "beta_true": -2.5,
+      "test": {
+        "bce": 0.30448188098929674,
+        "micro_auroc": 0.9133203530111721,
+        "macro_auroc": 0.9037846421245718,
+        "micro_auprc": 0.8342330509072236,
+        "macro_auprc": 0.8248153951428693,
+        "precision@5": 0.38545101842871005,
+        "recall@5": 0.7717657383030806
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.005971677513998852,
+        "delta_bce_beta0": 0.003442408608943015,
+        "delta_bce_constant_age": 0.003442408608943015
+      },
+      "recovery": {
+        "sign_match": true,
+        "corr_lambda": 0.9860485023299689,
+        "RMSE_lambda": 0.6567573987725902,
+        "RMSE_surface": 0.22525812212214205,
+        "beta_vec": [
+          -0.10367714613676071,
+          -0.09510727971792221,
+          -0.5695877075195312,
+          -1.198808193206787
+        ],
+        "n_heads_nonzero_beta": 4,
+        "beta_std": 0.451086459734065
+      },
+      "n_epochs": 22,
+      "n_params": 808464,
+      "n_temporal_params": 8
+    },
+    "arch_S2_temporal_only_per_head_d20260922_m0_interonly|S2|temporal_only_per_head|inter=True|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S2_temporal_only_per_head_d20260922_m0_interonly",
+      "beta_hat": 0.0,
+      "beta_true": -2.5,
+      "test": {
+        "bce": 0.30330563265436156,
+        "micro_auroc": 0.913332518694536,
+        "macro_auroc": 0.9024467271347549,
+        "micro_auprc": 0.8323421422906189,
+        "macro_auprc": 0.8209612659481194,
+        "precision@5": 0.3856450048496605,
+        "recall@5": 0.7716941480763013
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.8233139958269093,
+        "RMSE_surface": 0.2696659218400634,
+        "beta_vec": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "n_heads_nonzero_beta": 0,
+        "beta_std": 0.0
+      },
+      "n_epochs": 17,
+      "n_params": 808460,
+      "n_temporal_params": 4
+    },
+    "arch_S0_age_temporal_per_head_d20260922_m0|S0|age_temporal_per_head|inter=False|seed=0|L=96": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/arch_S0_age_temporal_per_head_d20260922_m0",
+      "beta_hat": -0.07022028975188732,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.48329308441049157,
+        "micro_auroc": 0.7336683008548331,
+        "macro_auroc": 0.7036380244626572,
+        "micro_auprc": 0.5209641090272256,
+        "macro_auprc": 0.4751573073154761,
+        "precision@5": 0.5346265761396701,
+        "recall@5": 0.33810013468397676
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": -0.0001690004458426153,
+        "delta_bce_beta0": -0.000138599467033651,
+        "delta_bce_constant_age": -0.000138599467033651
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.1835869294339165,
+        "RMSE_surface": 0.05318360597589538,
+        "beta_vec": [
+          -0.13707314431667328,
+          -0.06392021477222443,
+          0.030169948935508728,
+          -0.11005774885416031
+        ],
+        "n_heads_nonzero_beta": 3,
+        "beta_std": 0.06358895006140497
+      },
+      "n_epochs": 18,
+      "n_params": 814632,
+      "n_temporal_params": 8
+    },
+    "S2_age_temporal_d20260922_m0|S2|age_temporal|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S2_age_temporal_d20260922_m0",
+      "beta_hat": -0.6377402544021606,
+      "beta_true": -2.5,
+      "test": {
+        "bce": 0.46710909236569387,
+        "micro_auroc": 0.7644516897626787,
+        "macro_auroc": 0.7305391212422656,
+        "micro_auprc": 0.5769387477833542,
+        "macro_auprc": 0.5259982416027824,
+        "precision@5": 0.6036857419980602,
+        "recall@5": 0.3732090741333624
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0037994373802460735,
+        "delta_bce_beta0": 0.0018964428943091804,
+        "delta_bce_constant_age": 0.0018964428943091804
+      },
+      "recovery": {
+        "sign_match": true,
+        "corr_lambda": 0.9817302124542183,
+        "RMSE_lambda": 0.6131226263435391,
+        "RMSE_surface": 0.21612183037076726,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 15,
+      "n_params": 814626,
+      "n_temporal_params": null
+    },
+    "S1_temporal_only_d20260922_m0|S1|temporal_only|inter=None|seed=0|L=None": {
+      "path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/outputs/runs/controlled/S1_temporal_only_d20260922_m0",
+      "beta_hat": 0.0,
+      "beta_true": 0.0,
+      "test": {
+        "bce": 0.479912871577816,
+        "micro_auroc": 0.7481546573200091,
+        "macro_auroc": 0.7229090405706002,
+        "micro_auprc": 0.5343628858832503,
+        "macro_auprc": 0.5011722318289211,
+        "precision@5": 0.5604267701260911,
+        "recall@5": 0.35290856959425454
+      },
+      "ablations": {
+        "delta_bce_shuffle_age": 0.0,
+        "delta_bce_beta0": 0.0,
+        "delta_bce_constant_age": 0.0
+      },
+      "recovery": {
+        "sign_match": null,
+        "corr_lambda": NaN,
+        "RMSE_lambda": 0.21906209182469827,
+        "RMSE_surface": 0.06172842013156598,
+        "beta_vec": null,
+        "n_heads_nonzero_beta": null,
+        "beta_std": null
+      },
+      "n_epochs": 8,
+      "n_params": 814625,
+      "n_temporal_params": null
+    }
+  }
+}
