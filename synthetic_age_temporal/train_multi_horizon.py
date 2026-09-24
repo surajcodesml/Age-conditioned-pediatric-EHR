@@ -1,3 +1,13 @@
+"""Experimental multi-horizon trainer for DTR.
+
+NOTE: Multi-horizon supervision is currently experimental and is not part of
+the locked canonical architecture because naive joint training with content
+persistence inverted beta on the synthetic S2 benchmark.
+
+Do NOT enable this as the default/canonical trainer. Prefer train_dtr.py.
+Do NOT add horizon-specific persistence offsets (delta_h) here without a
+separate controlled experiment.
+"""
 import argparse
 import json
 import random
@@ -7,6 +17,7 @@ from typing import Any
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from sklearn.metrics import average_precision_score, roc_auc_score
 from torch.nn import BCEWithLogitsLoss
 from torch.optim import AdamW
@@ -14,7 +25,7 @@ from torch.optim import AdamW
 from config import DATA_SEED, AGE_CENTER, AGE_SCALE
 from dataset import build_vocab
 from dataset_dtr import DTRDataset, collate_dtr
-from model_dtr import build_dtr, count_parameters
+from model_dtr import CONTENT_SCORE_EXP_CLAMP, build_dtr, count_parameters
 from evaluate import classification_metrics
 
 HORIZONS = [30, 90, 180, 365]
@@ -36,13 +47,16 @@ def _move(batch, device):
     return out
 
 class MultiHorizonDTR(nn.Module):
+    """Experimental wrapper: shared Content-Persistence encoder + per-horizon heads."""
+
     def __init__(self, base_dtr, num_horizons: int, n_targets: int, d_model: int, aggregation: str):
         super().__init__()
         self.base = base_dtr
         self.num_horizons = num_horizons
-        
-        hist_in = (d_model * self.base.multi_query_K) + (self.base.multi_query_K if aggregation == "weighted_mean_plus_log_mass" else 0)
-        
+        self.aggregation = aggregation
+
+        hist_in = d_model + (1 if aggregation == "weighted_mean_plus_log_mass" else 0)
+
         self.f_history_list = nn.ModuleList([
             nn.Sequential(
                 nn.Linear(hist_in, d_model),
@@ -56,51 +70,70 @@ class MultiHorizonDTR(nn.Module):
     def forward(self, enc_code_ids, enc_code_mask, enc_tau, enc_padding_mask, age, **kwargs):
         v = self.base.encode_encounters(enc_code_ids, enc_code_mask)
         hist = ~enc_padding_mask
-        
-        k = self.base.W_k(v)
-        val = self.base.W_v(v)
-        u = torch.matmul(k, self.base.q.T) / np.sqrt(k.size(-1))
-        u = u.masked_fill(~hist.unsqueeze(-1), 0.0)
+        hist_f = hist.to(v.dtype)
 
-        theta = self.base.W_r(v).squeeze(-1) if self.base.content_persistence else None
-        g = self.base.gate.gate(age, enc_tau, theta) * hist.to(enc_tau.dtype)
+        k = self.base.content_key(v)
+        scale = np.sqrt(k.size(-1))
+        u = torch.einsum("bmd,d->bm", k, self.base.content_query) / scale
+        u = u.masked_fill(~hist, 0.0)
 
-        w = torch.exp(u.clamp(max=20.0)) * g.unsqueeze(-1)
-        w = w * hist.unsqueeze(-1).to(w.dtype)
-
-        M = w.sum(dim=1)
-        weighted = torch.einsum("bmk,bmd->bkd", w, val)
-
-        if self.base.aggregation == "raw_additive":
-            h_hist = weighted.reshape(weighted.size(0), -1)
+        theta_content = self.base.persistence_offset(v) * hist_f
+        theta_m = self.base.theta0 + theta_content
+        z = ((age - AGE_CENTER) / AGE_SCALE)
+        if self.base.age_temporal:
+            lam = F.softplus(theta_m + self.base.beta * z.unsqueeze(-1))
         else:
-            h_bar = weighted / (M.unsqueeze(-1) + 1e-6)
-            log_mass = torch.log1p(M)
-            h_hist = torch.cat([h_bar.reshape(weighted.size(0), -1), log_mass], dim=-1)
+            lam = F.softplus(theta_m)
+        g = torch.exp(-lam * enc_tau) * hist_f
 
-        z = ((age - AGE_CENTER) / AGE_SCALE).unsqueeze(-1)
-        
+        w = torch.exp(u.clamp(max=CONTENT_SCORE_EXP_CLAMP)) * g
+        w = w * hist_f
+
+        M = w.sum(dim=1, keepdim=True)
+        weighted = (w.unsqueeze(-1) * v).sum(dim=1)
+
+        if self.aggregation == "raw_additive":
+            h_hist = weighted
+        else:
+            h_bar = weighted / (M + 1e-6)
+            log_mass = torch.log1p(M)
+            h_hist = torch.cat([h_bar, log_mass], dim=-1)
+
+        z1 = z.unsqueeze(-1)
         logits = []
         for i in range(self.num_horizons):
             h_logit = self.f_history_list[i](h_hist)
-            a_logit = self.f_age_list[i](z)
+            a_logit = self.f_age_list[i](z1)
             logits.append(h_logit + a_logit + self.bias_list[i])
-            
+
         self.base._cache = {
             "u": u.detach(), "g": g.detach(), "w": w.detach(), "M": M.detach(),
-            "lambda": self.base.gate.lambda_of(age).detach(), "h_hist": h_hist.detach()
+            "lambda": lam.detach(), "h_hist": h_hist.detach(),
+            "theta_content": theta_content.detach(),
         }
-            
-        return torch.stack(logits, dim=1) # [B, num_horizons, num_targets]
+        return torch.stack(logits, dim=1)  # [B, num_horizons, num_targets]
 
     def age_parameters(self):
-        return self.base.gate.age_parameters()
+        return self.base.age_parameters()
 
     def zero_all_betas_(self):
         return self.base.zero_all_betas_()
 
     def restore_betas_(self, saved):
-        self.base.restore_betas_(saved)
+        return self.base.restore_betas_(saved)
+
+    @property
+    def beta(self):
+        return self.base.beta
+
+    @property
+    def theta0(self):
+        return self.base.theta0
+
+    @property
+    def gate(self):
+        return self.base.gate
+
 
 def load_forecast_data(scenario_dir, batch_size, target_idx=None, num_workers=0):
     import pandas as pd
@@ -172,11 +205,78 @@ def evaluate_multi(model, loader, device, single_horizon_idx=None):
             
     return res
 
+
+def _flatten_ht(y: np.ndarray, logits: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Collapse [N, H, T] → [N*H, T] for classification_metrics."""
+    if y.ndim == 2:
+        return y, logits
+    n, h, t = y.shape
+    return y.reshape(n * h, t), logits.reshape(n * h, t)
+
+
+@torch.no_grad()
+def ablations_multi(model, loader, device) -> dict[str, Any]:
+    """Age-shuffle and β=0 ablations for multi-horizon logits [B, H, T]."""
+    model.eval()
+
+    def _forward_batches(batches, ages=None, beta0=False):
+        saved = None
+        if beta0:
+            saved = model.zero_all_betas_()
+        ys, logits = [], []
+        for i, batch in enumerate(batches):
+            age = batch["age"] if ages is None else ages[i]
+            out = model(
+                enc_code_ids=batch["enc_code_ids"],
+                enc_code_mask=batch["enc_code_mask"],
+                enc_tau=batch["enc_tau"],
+                enc_padding_mask=batch["enc_padding_mask"],
+                age=age,
+            )
+            ys.append(batch["labels"].cpu().numpy())
+            logits.append(out.cpu().numpy())
+        if saved is not None:
+            model.restore_betas_(saved)
+        return classification_metrics(
+            *_flatten_ht(np.concatenate(ys), np.concatenate(logits))
+        )
+
+    batches = [_move(batch, device) for batch in loader]
+    base = _forward_batches(batches)
+
+    flat = np.concatenate([b["age"].cpu().numpy() for b in batches])
+    shuf = np.random.default_rng(0).permutation(flat)
+    ptr = 0
+    ages_shuf = []
+    for batch in batches:
+        bsz = batch["age"].size(0)
+        ages_shuf.append(
+            torch.tensor(shuf[ptr : ptr + bsz], dtype=torch.float32, device=device)
+        )
+        ptr += bsz
+
+    sh = _forward_batches(batches, ages=ages_shuf)
+    b0 = _forward_batches(batches, beta0=True)
+
+    return {
+        "normal": base,
+        "shuffle_age": sh,
+        "beta0": b0,
+        "delta_bce_shuffle_age": sh["bce"] - base["bce"],
+        "delta_bce_beta0": b0["bce"] - base["bce"],
+        "delta_auroc_shuffle": base["micro_auroc"] - sh["micro_auroc"],
+        "delta_auroc_beta0": base["micro_auroc"] - b0["micro_auroc"],
+        "functional_shuffle": bool(sh["bce"] - base["bce"] > 1e-4),
+        "functional_beta0": bool(b0["bce"] - base["bce"] > 1e-4),
+    }
+
+
 def train_forecast():
     ap = argparse.ArgumentParser()
     ap.add_argument("--scenario-dir", type=Path, required=True)
     ap.add_argument("--run-dir", type=Path, required=True)
     ap.add_argument("--single-horizon", action="store_true")
+    ap.add_argument("--content-persistence", action=argparse.BooleanOptionalAction, default=True)
     ap.add_argument("--epochs", type=int, default=40)
     args = ap.parse_args()
     
@@ -193,13 +293,14 @@ def train_forecast():
     
     train_loader, val_loader, test_loader, vocab, info = load_forecast_data(scenario_dir, 64, target_idx)
     
+    # Experimental multi-horizon path — not part of locked canonical architecture.
     base = build_dtr(
         age_temporal=True,
         n_codes=info["n_codes"],
         n_targets=info["n_targets"],
         d_model=64,
-        aggregation="weighted_mean_plus_log_mass",
-        content_persistence=False,
+        aggregation="raw_additive",
+        content_persistence=args.content_persistence,
         multi_query_K=1,
     )
     
@@ -207,13 +308,14 @@ def train_forecast():
         # train only on horizon 180 (index 2)
         model = base.to(dev)
     else:
-        model = MultiHorizonDTR(base, 4, info["n_targets"], 64, "weighted_mean_plus_log_mass").to(dev)
+        model = MultiHorizonDTR(base, 4, info["n_targets"], 64, "raw_additive").to(dev)
         
     opt = AdamW(model.parameters(), lr=1e-3, weight_decay=1e-2)
     loss_fn = BCEWithLogitsLoss()
     
     best = float("inf")
     patience = 10
+    best_state = None
     
     for epoch in range(1, args.epochs + 1):
         model.train()
@@ -258,6 +360,8 @@ def train_forecast():
             if patience <= 0:
                 break
                 
+    if best_state is None:
+        raise RuntimeError("Training produced no checkpoint")
     model.load_state_dict(best_state)
     test = evaluate_multi(model, test_loader, dev, single_horizon_idx=2 if args.single_horizon else None)
     
@@ -286,19 +390,33 @@ def train_forecast():
                     yield b
         abl = ablations(abl_model, SingleHorizonLoader(test_loader), dev)
     else:
-        # we need custom ablation logic for multi horizon or just average it
-        abl = {}
+        abl = ablations_multi(model, test_loader, dev)
         
     rec = recovery(model if args.single_horizon else model.base, -2.5, 0.0)
+
+    mean_auprc = None
+    if not args.single_horizon:
+        mean_auprc = float(np.mean([test[f"horizon_{h}"]["micro_auprc"] for h in HORIZONS]))
     
     result = {
         "test": test,
         "ablations": abl,
         "recovery": rec,
         "beta_hat": rec["beta_hat"],
+        "n_params": count_parameters(model),
+        "content_persistence": bool(args.content_persistence),
+        "multi_horizon": not args.single_horizon,
+        "multi_horizon_mean_auprc": mean_auprc,
     }
     with (run_dir / "metrics.json").open("w") as f:
         json.dump(result, f, indent=2)
+    torch.save({"model": best_state, "config": result}, run_dir / "checkpoint.pt")
+    print(
+        f"Done. mean_auprc={mean_auprc} beta_hat={rec['beta_hat']:.4f} "
+        f"sign_match={rec['sign_match']} "
+        f"ΔBCE_shuffle={abl.get('delta_bce_shuffle_age')} "
+        f"ΔBCE_β0={abl.get('delta_bce_beta0')}"
+    )
 
 if __name__ == "__main__":
     train_forecast()

@@ -90,34 +90,95 @@ class RenameLoader:
     def __len__(self):
         return len(self.loader)
 
+# DTR / Minimal-DKM ablation arms on MIMIC (age_temporal is the full model).
+DTR_ARMS = ("age_temporal", "no_interaction")
+
+
 class MIMICDTRAdapter(torch.nn.Module):
-    def __init__(self, n_codes, d_model=D_MODEL, n_heads=N_HEADS, n_layers=N_LAYERS):
+    """Minimal-DKM (DTR) wrapper for MIMIC Stage-1 next-visit pretraining."""
+
+    def __init__(
+        self,
+        n_codes,
+        arm: str = "age_temporal",
+        d_model=D_MODEL,
+        n_heads=N_HEADS,
+        n_layers=N_LAYERS,
+    ):
         super().__init__()
         from stage1_mimic_pretrain.model import MinimalDKMModel
         from model_new.data import demo_layout
         demo_dim, demo_channels = demo_layout("one_hot")
+        self.arm = arm
+        self.n_codes = n_codes
+        self.d_model = d_model
+        self.n_heads = n_heads
+        self.n_layers = n_layers
         self.model = MinimalDKMModel(
-            num_codes=n_codes, arm="age_temporal", d_model=d_model, n_layers=n_layers, 
-            n_heads=n_heads, use_residual=True, use_layernorm=True, use_ffn=True,
-            demo_dim=demo_dim, demo_channels=demo_channels, race_encoding="one_hot", demo_hidden=64,
-            embedding_path=REPO_ROOT / "data/processed/bge_embeddings.pt"
+            num_codes=n_codes,
+            arm=arm,
+            d_model=d_model,
+            n_layers=n_layers,
+            n_heads=n_heads,
+            use_residual=True,
+            use_layernorm=True,
+            use_ffn=True,
+            demo_dim=demo_dim,
+            demo_channels=demo_channels,
+            race_encoding="one_hot",
+            demo_hidden=64,
+            embedding_path=REPO_ROOT / "data/processed/bge_embeddings.pt",
         )
+
     @property
-    def model_card(self): return {"name": "dtr_mimic"}
+    def model_card(self):
+        return {
+            "name": f"dtr_{self.arm}",
+            "arm": self.arm,
+            "n_codes": self.n_codes,
+            "d_model": self.d_model,
+            "n_heads": self.n_heads,
+            "n_layers": self.n_layers,
+        }
+
     def training_step(self, batch):
         self.model.train()
         out = self.model(batch)
-        loss = torch.nn.functional.binary_cross_entropy_with_logits(out["code_logits"], batch["labels"])
+        loss = torch.nn.functional.binary_cross_entropy_with_logits(
+            out["code_logits"], batch["labels"]
+        )
         return {"loss": loss}
+
     def predict(self, batch):
         self.model.eval()
         with torch.no_grad():
             out = self.model(batch)
             return {"logits": out["code_logits"]}
-    def save_checkpoint(self, path):
-        pass
 
-def build_model(name: str, n_codes: int) -> Any:
+    def save_checkpoint(self, path):
+        path = Path(path)
+        path.mkdir(parents=True, exist_ok=True)
+        # Prefer best weights from the training loop when present.
+        best = path / "best_checkpoint.pt"
+        state = self.state_dict()
+        if best.exists():
+            # Keep best_checkpoint.pt; also write canonical checkpoint.pt
+            state = torch.load(best, map_location="cpu", weights_only=True)
+            self.load_state_dict(state)
+        torch.save(self.state_dict(), path / "checkpoint.pt")
+        with (path / "config.json").open("w") as f:
+            json.dump(self.model_card, f, indent=2)
+
+    def load_checkpoint(self, path):
+        path = Path(path)
+        ckpt = path / "checkpoint.pt"
+        if not ckpt.exists():
+            ckpt = path / "best_checkpoint.pt"
+        state = torch.load(ckpt, map_location="cpu", weights_only=True)
+        self.load_state_dict(state)
+
+
+def build_model(name: str, n_codes: int, arm: str = "age_temporal") -> Any:
     if name == "count_lightgbm":
         return LightGBMBaseline(n_codes=n_codes, n_targets=n_codes)
     elif name == "retain":
@@ -131,7 +192,7 @@ def build_model(name: str, n_codes: int) -> Any:
     elif name == "cehrbert":
         return CEHRBertAdapter(n_codes=n_codes, n_targets=n_codes, **{**BASELINE_CONFIGS["cehrbert"], "max_seq_len": MAX_SEQ_LEN + 1})
     elif name == "dtr":
-        return MIMICDTRAdapter(n_codes=n_codes)
+        return MIMICDTRAdapter(n_codes=n_codes, arm=arm)
     else:
         raise ValueError(f"Unknown model: {name}")
 
@@ -160,15 +221,16 @@ def train_lightgbm(model, train_loader, val_loader, test_loader, n_codes):
 
     return {"val_metrics": val_metrics, "test_metrics": test_metrics, "train_time_s": train_time}
 
-def run_one_model(model_name, output_dir, train_ds, val_ds, test_ds, batch_size, smoke, device):
-    print(f"\n{'='*60}\nModel: {model_name} | MIMIC Stage-1\n{'='*60}")
+def run_one_model(model_name, output_dir, train_ds, val_ds, test_ds, batch_size, smoke, device, arm: str = "age_temporal"):
+    run_name = f"dtr_{arm}" if model_name == "dtr" else model_name
+    print(f"\n{'='*60}\nModel: {run_name} | MIMIC Stage-1\n{'='*60}")
     n_codes = train_ds.dataset.num_codes if hasattr(train_ds, "dataset") else train_ds.num_codes
     max_ep = 2 if smoke else MAX_EPOCHS
-    run_dir = output_dir / model_name
+    run_dir = output_dir / run_name
     run_dir.mkdir(parents=True, exist_ok=True)
 
     if (run_dir / "result.json").exists() and not smoke:
-        print(f"  Already trained, skipping {model_name}")
+        print(f"  Already trained, skipping {run_name}")
         with (run_dir / "result.json").open() as f:
             return json.load(f)
 
@@ -183,9 +245,16 @@ def run_one_model(model_name, output_dir, train_ds, val_ds, test_ds, batch_size,
     val_loader = mk_ldr(val_ds, False)
     test_loader = mk_ldr(test_ds, False)
 
-    result = {"model": model_name, "seed": MODEL_SEED, "smoke": smoke, "n_codes": n_codes}
+    result = {
+        "model": run_name,
+        "seed": MODEL_SEED,
+        "smoke": smoke,
+        "n_codes": n_codes,
+    }
+    if model_name == "dtr":
+        result["arm"] = arm
 
-    model = build_model(model_name, n_codes)
+    model = build_model(model_name, n_codes, arm=arm)
     if model_name == "count_lightgbm":
         lgb_result = train_lightgbm(model, train_loader, val_loader, test_loader, n_codes)
         result.update(lgb_result)
@@ -204,18 +273,38 @@ def run_one_model(model_name, output_dir, train_ds, val_ds, test_ds, batch_size,
         result["train"] = train_result
         result["test_metrics"] = test_metrics
         result["model_card"] = model.model_card
+        # Persist canonical checkpoint.pt + config.json (best weights already in best_checkpoint.pt)
         model.save_checkpoint(run_dir)
+
+    # Flatten key metrics for quick inspection
+    if "test_metrics" in result:
+        result["AUROC"] = result["test_metrics"].get("micro_auroc")
+        result["AUPRC"] = result["test_metrics"].get("micro_auprc")
+        result["BCE"] = result["test_metrics"].get("bce")
+    if "train" in result:
+        result["best_val_bce"] = result["train"].get("best_val_bce")
+        result["epochs_trained"] = result["train"].get("epochs_trained")
 
     with (run_dir / "result.json").open("w") as f:
         json.dump(result, f, indent=2, default=str)
+
+    # history.json already written by train_neural_baseline; assert artifacts exist
+    for fname in ("result.json", "history.json", "best_checkpoint.pt", "checkpoint.pt"):
+        if model_name != "count_lightgbm" and not (run_dir / fname).exists() and fname != "history.json":
+            # lightgbm has different artifacts; history only for neural
+            if fname in ("best_checkpoint.pt", "checkpoint.pt", "history.json"):
+                print(f"  WARNING: missing artifact {fname} in {run_dir}")
     
     auroc = result.get("test_metrics", {}).get("micro_auroc", "N/A")
     print(f"  Test AUROC={auroc}")
+    print(f"  Artifacts → {run_dir}")
     return result
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--models", default="all")
+    parser.add_argument("--models", default="all",
+                        help="Comma-separated models or 'all'. "
+                             "DTR expands to arms: age_temporal, no_interaction.")
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--tensorized_dir", default="data/processed/tensorized_flat")
@@ -228,7 +317,7 @@ def main():
     tdir = REPO_ROOT / args.tensorized_dir
     if args.smoke:
         from stage1_mimic_pretrain.train import maybe_restrict_tensorized
-        tdir = maybe_restrict_tensorized(tdir, output_dir, max_shards=1, seed=0)
+        tdir = maybe_restrict_tensorized(tdir, output_dir / "_smoke", max_shards=1, seed=0)
 
     train_ds = TensorizedPretrainDataset(tdir / "train", REPO_ROOT / args.vocab_path, max_seq_len=MAX_SEQ_LEN)
     val_ds = TensorizedPretrainDataset(tdir / "val", REPO_ROOT / args.vocab_path, max_seq_len=MAX_SEQ_LEN)
@@ -242,20 +331,46 @@ def main():
         val_ds = subset(val_ds)
         test_ds = subset(test_ds)
     
-    models = ["retain", "ehr_bert", "behrt", "medbert", "cehrbert", "dtr"] if args.models == "all" else args.models.split(",")
+    # DTR / Minimal-DKM first, then other baselines. DTR expands to ablation arms.
+    if args.models == "all":
+        model_specs = [("dtr", arm) for arm in DTR_ARMS] + [
+            ("retain", "age_temporal"),
+            ("ehr_bert", "age_temporal"),
+            ("behrt", "age_temporal"),
+            ("medbert", "age_temporal"),
+            ("cehrbert", "age_temporal"),
+        ]
+    else:
+        model_specs = []
+        for m in args.models.split(","):
+            m = m.strip()
+            if m == "dtr":
+                for arm in DTR_ARMS:
+                    model_specs.append(("dtr", arm))
+            elif m.startswith("dtr_"):
+                model_specs.append(("dtr", m.replace("dtr_", "", 1)))
+            else:
+                model_specs.append((m, "age_temporal"))
+
     all_results = {}
 
-    for m in models:
+    for m, arm in model_specs:
+        key = f"dtr_{arm}" if m == "dtr" else m
         try:
-            res = run_one_model(m, output_dir, train_ds, val_ds, test_ds, 8 if args.smoke else BATCH_SIZE, args.smoke, args.device)
-            all_results[m] = res
+            res = run_one_model(
+                m, output_dir, train_ds, val_ds, test_ds,
+                8 if args.smoke else BATCH_SIZE, args.smoke, args.device, arm=arm,
+            )
+            all_results[key] = res
         except Exception as e:
-            print(f"ERROR on {m}: {e}")
+            print(f"ERROR on {key}: {e}")
             import traceback
             traceback.print_exc()
+            all_results[key] = {"error": str(e)}
 
     with (output_dir / "all_results.json").open("w") as f:
         json.dump(all_results, f, indent=2, default=str)
+    print(f"\nMIMIC results saved to {output_dir / 'all_results.json'}")
 
 if __name__ == "__main__":
     main()

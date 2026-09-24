@@ -1,9 +1,23 @@
-"""Train / evaluate Developmental Temporal Retrieval (DTR)."""
+"""Train / evaluate Content-Persistence Developmental Temporal Retrieval (DTR).
+
+Canonical defaults:
+  content_dependent_persistence=True
+  persistence_projection=linear
+  temporal_aggregation=raw_additive
+  num_content_queries=1
+  age_conditioning=linear_softplus
+  beta_scope=global
+
+NOTE: Multi-horizon supervision is currently experimental and is not part of
+the locked canonical architecture because naive joint training with content
+persistence inverted beta on the synthetic S2 benchmark.
+"""
 from __future__ import annotations
 
 import argparse
 import json
 import random
+import warnings
 from pathlib import Path
 from typing import Any
 
@@ -24,7 +38,22 @@ from config import (
 )
 from dataset_dtr import make_dtr_loaders
 from evaluate import classification_metrics
-from model_dtr import build_dtr, count_parameters
+from model_dtr import (
+    CANONICAL_AGGREGATION,
+    CONTENT_SCORE_EXP_CLAMP,
+    build_dtr,
+    count_parameters,
+    load_legacy_dtr_checkpoint,
+    matched_arm_init_check,
+)
+
+
+# Evaluation-only persistence groups for synthetic S5 (never model inputs).
+S5_PERSISTENCE_GROUPS = {
+    "acute": ["SYN_SIGNAL_A", "SYN_SIGNAL_B", "SYN_SIGNAL_C", "SYN_SIGNAL_D"],
+    "intermediate": ["SYN_SIGNAL_E", "SYN_SIGNAL_F", "SYN_SIGNAL_G", "SYN_SIGNAL_H"],
+    "chronic": ["SYN_SIGNAL_I", "SYN_SIGNAL_J", "SYN_SIGNAL_K", "SYN_SIGNAL_L"],
+}
 
 
 def set_seed(seed: int) -> None:
@@ -94,21 +123,15 @@ def evaluate(model, loader, device) -> dict[str, float]:
 def ablations(model, loader, device) -> dict[str, Any]:
     base_pred = predict(model, loader, device)
     base = classification_metrics(base_pred["y"], base_pred["logits"])
-    ages = base_pred["age"]
 
-    def run(age_arr=None, beta0=False, lag_shuffle=False):
+    def run(beta0=False, lag_shuffle=False):
         model.eval()
         ys, logits = [], []
         saved = None
         if beta0:
             saved = model.zero_all_betas_()
-        # For lag shuffle we permute enc_tau within each example
         for batch in loader:
             batch = _move(batch, device)
-            age = batch["age"]
-            if age_arr is not None:
-                # Map by iterating — use shuffled ages matching batch size from global pool
-                pass
             tau = batch["enc_tau"]
             if lag_shuffle:
                 tau = tau.clone()
@@ -118,13 +141,12 @@ def ablations(model, loader, device) -> dict[str, Any]:
                     if len(idx) > 1:
                         perm = idx[torch.randperm(len(idx), device=device)]
                         tau[i, idx] = batch["enc_tau"][i, perm]
-            age_use = age
             out = model(
                 enc_code_ids=batch["enc_code_ids"],
                 enc_code_mask=batch["enc_code_mask"],
                 enc_tau=tau,
                 enc_padding_mask=batch["enc_padding_mask"],
-                age=age_use,
+                age=batch["age"],
             )
             ys.append(batch["labels"].cpu().numpy())
             logits.append(out.cpu().numpy())
@@ -132,10 +154,8 @@ def ablations(model, loader, device) -> dict[str, Any]:
             model.restore_betas_(saved)
         return classification_metrics(np.concatenate(ys), np.concatenate(logits))
 
-    # Age shuffle: permute ages across the loader in one pass
     def run_age_shuffle():
         model.eval()
-        # collect all ages then shuffle assignment by patient-example order
         all_ages = []
         batches = []
         for batch in loader:
@@ -197,14 +217,124 @@ def ablations(model, loader, device) -> dict[str, Any]:
     }
 
 
+@torch.no_grad()
+def content_persistence_diagnostics(
+    model, loader, device, vocab_stoi: dict[str, int] | None = None
+) -> dict[str, Any]:
+    """Canonical content-persistence diagnostics on a loader."""
+    model.eval()
+    offsets = []
+    lambdas = []
+    gates = []
+    us = []
+    ws = []
+    for batch in loader:
+        batch = _move(batch, device)
+        out = model(
+            enc_code_ids=batch["enc_code_ids"],
+            enc_code_mask=batch["enc_code_mask"],
+            enc_tau=batch["enc_tau"],
+            enc_padding_mask=batch["enc_padding_mask"],
+            age=batch["age"],
+            return_parts=True,
+        )
+        hist = ~batch["enc_padding_mask"]
+        tc = out["theta_content"][hist].detach().cpu().numpy()
+        lm = out["lambda"][hist].detach().cpu().numpy()
+        gg = out["g"][hist].detach().cpu().numpy()
+        uu = out["u"][hist].detach().cpu().numpy()
+        ww = out["w"][hist].detach().cpu().numpy()
+        if tc.size:
+            offsets.append(tc)
+            lambdas.append(lm)
+            gates.append(gg)
+            us.append(uu)
+            ws.append(ww)
+
+    if not offsets:
+        return {"empty": True}
+
+    off = np.concatenate(offsets)
+    qs = [5, 25, 50, 75, 95]
+    quantiles = {str(q): float(np.percentile(off, q)) for q in qs}
+    beta_hat = float(model.beta.detach().cpu())
+    theta0_hat = float(model.theta0.detach().cpu())
+
+    # λ at probe ages for low / median / high persistence offsets
+    probe_ages = list(PROBE_AGES) if PROBE_AGES else [1, 5, 10, 15, 18]
+    lo, mid, hi = quantiles["5"], quantiles["50"], quantiles["95"]
+    decay_by_quantile: dict[str, dict[str, float]] = {}
+    for name, offset in (
+        ("low_persistence", lo),
+        ("median_persistence", mid),
+        ("high_persistence", hi),
+    ):
+        decay_by_quantile[name] = {}
+        for a in probe_ages:
+            age_t = torch.tensor([float(a)], device=device)
+            off_t = torch.tensor([float(offset)], device=device)
+            lam = float(model.lambda_of(age_t, persistence_offset=off_t)[0].item())
+            decay_by_quantile[name][str(a)] = lam
+
+    # Global λ(a) using θ₀ only (mean content offset ≈ 0 at init; report both)
+    probe_lambda_theta0 = {
+        str(a): float(
+            model.lambda_of(torch.tensor([float(a)], device=device))[0].item()
+        )
+        for a in probe_ages
+    }
+
+    out: dict[str, Any] = {
+        "beta_hat": beta_hat,
+        "theta0_hat": theta0_hat,
+        "theta_content": {
+            "mean": float(off.mean()),
+            "std": float(off.std()),
+            "min": float(off.min()),
+            "max": float(off.max()),
+            "quantiles": quantiles,
+        },
+        "mean_lambda": float(np.concatenate(lambdas).mean()),
+        "mean_gate": float(np.concatenate(gates).mean()),
+        "mean_content_score": float(np.concatenate(us).mean()),
+        "mean_abs_history_weight": float(np.abs(np.concatenate(ws)).mean()),
+        "lambda_by_probe_age_theta0": probe_lambda_theta0,
+        "lambda_by_persistence_quantile": decay_by_quantile,
+    }
+
+    if vocab_stoi is not None:
+        out["s5_group_persistence"] = s5_group_mean_persistence(
+            model, vocab_stoi, device
+        )
+    return out
+
+
+@torch.no_grad()
+def s5_group_mean_persistence(
+    model, vocab_stoi: dict[str, int], device
+) -> dict[str, float]:
+    """Evaluation-only: mean learned persistence offset per S5 signal group."""
+    model.eval()
+    result = {}
+    for group, codes in S5_PERSISTENCE_GROUPS.items():
+        ids = [int(vocab_stoi.get(c, 0)) for c in codes]
+        # One encounter per code: [G, 1, 1]
+        ids_t = torch.tensor(ids, device=device).view(-1, 1, 1)
+        mask_t = torch.ones_like(ids_t, dtype=torch.bool)
+        v = model.encode_encounters(ids_t, mask_t)
+        offset = model.persistence_offset(v).squeeze(-1)  # [G]
+        result[group] = float(offset.mean().cpu())
+    return result
+
+
 def recovery(model, beta_true: float, theta0_true: float = 0.0) -> dict[str, Any]:
-    gate = model.gate
-    device = gate.theta0.device
+    """Surface recovery using global θ₀ (content offset = 0 reference)."""
+    device = model.theta0.device
     ages = np.asarray(SURFACE_AGES, dtype=np.float64)
     lam_true = lambda_true(ages, theta0_true, beta_true)
     lam_learned = np.array(
         [
-            float(gate.lambda_of(torch.tensor([float(a)], device=device))[0].item())
+            float(model.lambda_of(torch.tensor([float(a)], device=device))[0].item())
             for a in ages
         ]
     )
@@ -219,10 +349,10 @@ def recovery(model, beta_true: float, theta0_true: float = 0.0) -> dict[str, Any
         for d in SURFACE_LAGS_DAYS:
             t = float(tau_from_days(d))
             errs.append((np.exp(-lam_l * t) - relevance(a, t, theta0_true, beta_true)) ** 2)
-    beta_hat = float(gate.beta.detach().cpu())
-    theta0_hat = float(gate.theta0.detach().cpu())
+    beta_hat = float(model.beta.detach().cpu())
+    theta0_hat = float(model.theta0.detach().cpu())
     probe = {
-        str(a): float(gate.lambda_of(torch.tensor([float(a)], device=device))[0].item())
+        str(a): float(model.lambda_of(torch.tensor([float(a)], device=device))[0].item())
         for a in PROBE_AGES
     }
     return {
@@ -256,10 +386,8 @@ def patient_bootstrap_deltas(
 ) -> dict[str, Any]:
     """Patient-level bootstrap CIs for primary deltas (not model-seed uncertainty)."""
     rng = np.random.default_rng(seed)
-    # unique patients
     pids = np.asarray(patient_ids)
     uniq = np.unique(pids)
-    # map patient -> row indices
     groups = {p: np.where(pids == p)[0] for p in uniq}
 
     def metrics_on(idx):
@@ -302,7 +430,6 @@ def patient_bootstrap_deltas(
 @torch.no_grad()
 def collect_ablation_logits(model, loader, device) -> dict[str, np.ndarray]:
     """Logits under shuffle-age and beta0 for bootstrap pairing."""
-    # shuffle
     batches = []
     all_ages = []
     for batch in loader:
@@ -349,7 +476,6 @@ def dtr_gate(at: dict, to: dict, beta_true: float) -> dict[str, Any]:
     d_shuf = at["ablations"]["delta_bce_shuffle_age"]
     d_b0 = at["ablations"]["delta_bce_beta0"]
     if abs(beta_true) < 1e-8:
-        # S0/S1: expect inert interaction
         passed = abs(at["beta_hat"]) < 0.3 and abs(d_b0) < 0.02 and abs(d_shuf) < 0.03
         sign_ok = abs(at["beta_hat"]) < 0.3
     else:
@@ -371,6 +497,40 @@ def dtr_gate(at: dict, to: dict, beta_true: float) -> dict[str, Any]:
     }
 
 
+def _epoch_persistence_stats(model, batch) -> dict[str, float]:
+    """Quick persistence stats from the last forward cache (padded → excluded)."""
+    c = model._cache
+    if c is None or batch is None:
+        return {}
+    hist = ~batch["enc_padding_mask"]
+    tc = c["theta_content"][hist]
+    lam_v = c["lambda"][hist]
+    g_v = c["g"][hist]
+    u_v = c["u"][hist]
+    w_v = c["w"][hist]
+    if tc.numel() == 0:
+        return {
+            "mean_persistence_offset": 0.0,
+            "std_persistence_offset": 0.0,
+            "min_persistence_offset": 0.0,
+            "max_persistence_offset": 0.0,
+            "mean_lambda": 0.0,
+            "mean_gate": 0.0,
+            "mean_content_score": 0.0,
+            "mean_abs_history_weight": 0.0,
+        }
+    return {
+        "mean_persistence_offset": float(tc.mean().cpu()),
+        "std_persistence_offset": float(tc.std(unbiased=False).cpu()),
+        "min_persistence_offset": float(tc.min().cpu()),
+        "max_persistence_offset": float(tc.max().cpu()),
+        "mean_lambda": float(lam_v.mean().cpu()),
+        "mean_gate": float(g_v.mean().cpu()),
+        "mean_content_score": float(u_v.mean().cpu()),
+        "mean_abs_history_weight": float(w_v.abs().mean().cpu()),
+    }
+
+
 def train_dtr(
     *,
     age_temporal: bool,
@@ -378,9 +538,9 @@ def train_dtr(
     run_dir: Path,
     beta_true: float,
     theta0_true: float = 0.0,
-    aggregation: str = "weighted_mean_plus_log_mass",
+    aggregation: str = CANONICAL_AGGREGATION,
     interaction_only: bool = True,
-    content_persistence: bool = False,
+    content_persistence: bool = True,
     multi_query_k: int = 1,
     max_epochs: int = 40,
     patience: int = 10,
@@ -389,7 +549,7 @@ def train_dtr(
     lr: float = 1e-3,
     seed: int = 0,
     device: str = "cuda",
-    model_class = None,
+    model_class=None,
 ) -> dict[str, Any]:
     set_seed(seed)
     dev = torch.device(device if torch.cuda.is_available() else "cpu")
@@ -404,8 +564,9 @@ def train_dtr(
     )
     if model_class is None:
         from model_dtr import DevelopmentalTemporalRetrieval
+
         model_class = DevelopmentalTemporalRetrieval
-    
+
     model = model_class(
         n_codes=info["n_codes"],
         n_targets=info["n_targets"],
@@ -416,6 +577,32 @@ def train_dtr(
         multi_query_K=multi_query_k,
     ).to(dev)
 
+    # Matched-arm init: β=0 for both arms; verify on first batch if age-temporal.
+    if age_temporal:
+        twin = model_class(
+            n_codes=info["n_codes"],
+            n_targets=info["n_targets"],
+            d_model=d_model,
+            age_temporal=False,
+            aggregation=aggregation,
+            content_persistence=content_persistence,
+            multi_query_K=multi_query_k,
+        ).to(dev)
+        # Copy weights so arms share identical init (except β requires_grad).
+        twin.load_state_dict(model.state_dict(), strict=False)
+        with torch.no_grad():
+            twin.beta.zero_()
+            model.beta.zero_()
+        first = _move(next(iter(train_loader)), dev)
+        max_diff = matched_arm_init_check(model, twin, first)
+        if max_diff >= 1e-6:
+            warnings.warn(
+                f"Matched-arm init logit diff {max_diff} >= 1e-6",
+                stacklevel=2,
+            )
+        del twin
+
+    # Explicit parameter groups covering all canonical modules.
     temporal_ids = {id(p) for p in model.age_parameters()}
     decay, temporal = [], []
     for p in model.parameters():
@@ -431,6 +618,21 @@ def train_dtr(
     loss_fn = BCEWithLogitsLoss()
     run_dir.mkdir(parents=True, exist_ok=True)
 
+    arch_cfg = (
+        model.architecture_config()
+        if hasattr(model, "architecture_config")
+        else {
+            "model": "Content-Persistence DTR",
+            "content_dependent_persistence": content_persistence,
+            "persistence_projection": "linear",
+            "temporal_aggregation": aggregation,
+            "num_content_queries": multi_query_k,
+            "age_conditioning": "linear_softplus",
+            "beta_scope": "global",
+        }
+    )
+    (run_dir / "config.json").write_text(json.dumps(arch_cfg, indent=2))
+
     best = float("inf")
     best_state = None
     patience_left = patience
@@ -439,9 +641,11 @@ def train_dtr(
     for epoch in range(1, max_epochs + 1):
         model.train()
         total, n = 0.0, 0
-        grad_theta = grad_beta = None
+        grad_theta = grad_beta = grad_persist = None
+        last_batch = None
         for batch in train_loader:
             batch = _move(batch, dev)
+            last_batch = batch
             opt.zero_grad(set_to_none=True)
             logits = model(
                 enc_code_ids=batch["enc_code_ids"],
@@ -452,14 +656,31 @@ def train_dtr(
             )
             loss = loss_fn(logits, batch["labels"])
             loss.backward()
-            if model.gate.theta0.grad is not None:
-                grad_theta = float(model.gate.theta0.grad.norm().cpu())
-            if model.gate.beta.requires_grad and model.gate.beta.grad is not None:
-                grad_beta = float(model.gate.beta.grad.norm().cpu())
+            if model.theta0.grad is not None:
+                grad_theta = float(model.theta0.grad.norm().cpu())
+            if model.beta.requires_grad and model.beta.grad is not None:
+                grad_beta = float(model.beta.grad.norm().cpu())
+            if (
+                hasattr(model, "persistence_projection")
+                and model.persistence_projection.weight.grad is not None
+            ):
+                g = model.persistence_projection.weight.grad.norm()
+                if model.persistence_projection.bias is not None and model.persistence_projection.bias.grad is not None:
+                    g = g + model.persistence_projection.bias.grad.norm()
+                grad_persist = float(g.cpu())
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             opt.step()
             total += float(loss.item()) * batch["labels"].size(0)
             n += batch["labels"].size(0)
+
+        # Probe-age λ from θ₀ reference
+        probe_lam = {
+            str(a): float(
+                model.lambda_of(torch.tensor([float(a)], device=dev))[0].item()
+            )
+            for a in PROBE_AGES
+        }
+        persist_stats = _epoch_persistence_stats(model, last_batch) if last_batch else {}
         val = evaluate(model, val_loader, dev)
         row = {
             "epoch": epoch,
@@ -467,16 +688,20 @@ def train_dtr(
             "val_bce": val["bce"],
             "val_auroc": val["micro_auroc"],
             "val_auprc": val["micro_auprc"],
-            "beta": float(model.gate.beta.detach().cpu()),
-            "theta0": float(model.gate.theta0.detach().cpu()),
+            "beta": float(model.beta.detach().cpu()),
+            "theta0": float(model.theta0.detach().cpu()),
             "grad_theta0": grad_theta,
             "grad_beta": grad_beta,
+            "grad_persistence_projection": grad_persist,
+            "lambda_by_probe_age": probe_lam,
+            **persist_stats,
         }
         history.append(row)
         print(
             f"{arm}/{aggregation} ep{epoch} "
             f"train={row['train_loss']:.4f} val_auroc={val['micro_auroc']:.3f} "
-            f"beta={row['beta']:.3f}",
+            f"beta={row['beta']:.3f} theta0={row['theta0']:.3f} "
+            f"persist_mean={row.get('mean_persistence_offset', float('nan')):.4f}",
             flush=True,
         )
         if val["bce"] < best - 1e-5:
@@ -500,6 +725,8 @@ def train_dtr(
             "content_persistence": content_persistence,
             "multi_query_K": multi_query_k,
             "vocab_stoi": vocab.stoi,
+            "architecture": arch_cfg,
+            "content_score_exp_clamp": CONTENT_SCORE_EXP_CLAMP,
         },
         run_dir / "model.pt",
     )
@@ -507,7 +734,10 @@ def train_dtr(
     test = evaluate(model, test_loader, dev)
     abl = ablations(model, test_loader, dev)
     rec = recovery(model, beta_true, theta0_true)
-    # weight magnitude diagnostics
+    persist = content_persistence_diagnostics(
+        model, test_loader, dev, vocab_stoi=vocab.stoi
+    )
+
     mag = {"u_abs_mean": None, "g_mean": None, "w_mean": None, "M_mean": None}
     model.eval()
     with torch.no_grad():
@@ -523,24 +753,30 @@ def train_dtr(
             c = model._cache
             mag = {
                 "u_abs_mean": float(c["u"].abs().mean().cpu()),
-                "exp_u_mean": float(torch.exp(c["u"].clamp(max=20)).mean().cpu()),
+                "exp_u_mean": float(
+                    torch.exp(c["u"].clamp(max=CONTENT_SCORE_EXP_CLAMP)).mean().cpu()
+                ),
                 "g_mean": float(c["g"].mean().cpu()),
                 "w_mean": float(c["w"].mean().cpu()),
                 "M_mean": float(c["M"].mean().cpu()),
+                "content_score_exp_clamp": CONTENT_SCORE_EXP_CLAMP,
             }
             break
 
     result = {
         "arm": arm,
+        "model": "Content-Persistence DTR",
         "age_temporal": age_temporal,
         "aggregation": aggregation,
         "interaction_only": interaction_only,
         "content_persistence": content_persistence,
         "multi_query_k": multi_query_k,
+        "architecture": arch_cfg,
         "n_params": count_parameters(model),
         "test": test,
         "ablations": abl,
         "recovery": rec,
+        "content_persistence_diagnostics": persist,
         "history": history,
         "beta_hat": rec["beta_hat"],
         "theta0_hat": rec["theta0_hat"],
@@ -554,27 +790,54 @@ def train_dtr(
     return result
 
 
-def load_dtr_model(run_dir: Path, device: torch.device):
+def load_dtr_model(run_dir: Path, device: torch.device, *, migrate_legacy: bool = True):
     ckpt = torch.load(run_dir / "model.pt", map_location=device, weights_only=False)
     model = build_dtr(
         age_temporal=ckpt["age_temporal"],
         n_codes=ckpt["n_codes"],
         n_targets=ckpt["n_targets"],
         d_model=ckpt["d_model"],
-        aggregation=ckpt["aggregation"],
-        content_persistence=ckpt.get("content_persistence", False),
+        aggregation=ckpt.get("aggregation", CANONICAL_AGGREGATION),
+        content_persistence=ckpt.get("content_persistence", True),
         multi_query_K=ckpt.get("multi_query_K", 1),
     ).to(device)
-    model.load_state_dict(ckpt["state_dict"])
+    sd = ckpt["state_dict"]
+    # Detect legacy checkpoints (gate.theta0 / W_r / bare code_emb).
+    legacy = any(
+        k.startswith("gate.") or k.startswith("W_r.") or k.startswith("code_emb.")
+        for k in sd
+    )
+    if legacy and migrate_legacy:
+        missing, unexpected = load_legacy_dtr_checkpoint(model, sd, strict=False)
+        print(
+            f"Loaded legacy DTR checkpoint via migration "
+            f"(missing={missing}, unexpected={unexpected})",
+            flush=True,
+        )
+    else:
+        try:
+            model.load_state_dict(sd, strict=True)
+        except RuntimeError:
+            if migrate_legacy:
+                missing, unexpected = load_legacy_dtr_checkpoint(model, sd, strict=False)
+                print(
+                    f"Strict load failed; migrated "
+                    f"(missing={missing}, unexpected={unexpected})",
+                    flush=True,
+                )
+            else:
+                raise
     model.eval()
     return model, ckpt
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(
+        description="Train Content-Persistence Developmental Temporal Retrieval (canonical)."
+    )
     ap.add_argument("--age-temporal", action="store_true")
     ap.add_argument("--temporal-only", action="store_true")
-    ap.add_argument("--aggregation", default="weighted_mean_plus_log_mass")
+    ap.add_argument("--aggregation", default=CANONICAL_AGGREGATION)
     ap.add_argument("--scenario-dir", type=Path, required=True)
     ap.add_argument("--run-dir", type=Path, required=True)
     ap.add_argument("--beta-true", type=float, default=-2.5)
@@ -585,7 +848,13 @@ def main() -> None:
     ap.add_argument("--d-model", type=int, default=64)
     ap.add_argument("--interaction-only", action="store_true", default=True)
     ap.add_argument("--all-labels", action="store_true")
-    ap.add_argument("--content-persistence", action="store_true")
+    # Content persistence is ON by default (canonical); allow opt-out for baseline.
+    ap.add_argument(
+        "--content-persistence",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Content-dependent persistence (default: True). Use --no-content-persistence for global-only.",
+    )
     ap.add_argument("--multi-query-k", type=int, default=1)
     args = ap.parse_args()
     age_temporal = True

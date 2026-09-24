@@ -138,7 +138,11 @@ def full_counterfactual_report(
     oracle_surface_fn: Callable[[float, float], np.ndarray],
     cf_age_rmse_s0: float | None = None,
 ) -> dict[str, Any]:
-    """Compute all counterfactual metrics for one model."""
+    """Compute all counterfactual metrics for one model (S0–S3 style).
+
+    S5 heterogeneous-persistence metrics are added separately via
+    ``baselines.synthetic.s5_eval.full_s5_counterfactual_report``.
+    """
     cf_age = cf_rmse_age(predict_age_fn, oracle_age_fn)
     cf_lag = cf_rmse_lag(predict_lag_fn, oracle_lag_fn)
     srmse = surface_rmse(predict_surface_fn, oracle_surface_fn)
@@ -148,7 +152,16 @@ def full_counterfactual_report(
         "cf_rmse_age": cf_age,
         "cf_rmse_lag": cf_lag,
         "surface_rmse": srmse,
+        "CF_RMSE_age": cf_age,
+        "CF_RMSE_lag": cf_lag,
+        "Surface_RMSE": srmse,
         "mechanism_classification": classification,
+        # S5-specific fields (null for S0–S3)
+        "S5_Surface_RMSE_acute": None,
+        "S5_Surface_RMSE_intermediate": None,
+        "S5_Surface_RMSE_chronic": None,
+        "S5_Surface_RMSE_mean": None,
+        "persistence_order_correct": None,
         "thresholds": {
             "functional": FUNCTIONAL_SURFACE_RMSE,
             "partial": PARTIAL_SURFACE_RMSE,

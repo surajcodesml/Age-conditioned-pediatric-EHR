@@ -1,13 +1,21 @@
 #!/usr/bin/env python3
-"""Synthetic benchmark runner — train and evaluate all baselines on S0–S3.
+"""Synthetic benchmark runner — train and evaluate baselines on S0–S3 and S5.
 
 Usage:
     python -m baselines.synthetic.runner --scenario S2 --models all
-    python -m baselines.synthetic.runner --scenario S2 --models retain,behrt
-    python -m baselines.synthetic.runner --scenario S2 --models count_lightgbm --smoke
+    python -m baselines.synthetic.runner --scenario S5 --models retain,behrt
+    python -m baselines.synthetic.runner --scenario all --models count_lightgbm --smoke
+    python -m baselines.synthetic.runner --scenario core --models all
 
-All neural baselines train from scratch on the synthetic benchmark prediction task.
-No MIMIC pretraining. Same splits, targets, optimizer budget, early stopping.
+Organization:
+    S0–S3 = core age × temporal mechanism benchmark
+    S5    = heterogeneous temporal persistence benchmark
+    (S6 / multi-horizon are NOT part of this runner.)
+
+All neural baselines train from scratch on the synthetic prediction task.
+No MIMIC pretraining. Same splits, targets, optimizer budget, early stopping,
+seed, and BCEWithLogitsLoss. Evaluation-only fields (persistence groups,
+is_signal, oracle metadata) never enter model inputs.
 """
 from __future__ import annotations
 
@@ -30,12 +38,20 @@ from synthetic_age_temporal.config import (
     BATCH_SIZE, D_MODEL, DROPOUT, GRAD_CLIP, LR, MAX_EPOCHS, MAX_SEQ_LEN,
     MODEL_SEED, N_HEADS, N_LAYERS, PATIENCE, WEIGHT_DECAY, Config,
 )
-from synthetic_age_temporal.dataset import make_loaders, collate_batch
 from baselines.common.metrics import multilabel_metrics
 from baselines.common.training import (
     evaluate_loader, set_seed, get_device, train_neural_baseline,
 )
 from baselines.common.capacity_report import count_parameters
+
+from baselines.synthetic.data_adapter import (
+    BENCHMARK_SCENARIOS,
+    CORE_SCENARIOS,
+    make_baseline_loaders,
+    model_batch,
+    resolve_scenarios,
+)
+from baselines.synthetic.result_schema import from_train_and_cf
 
 # Import all baselines to register them
 from baselines.lightgbm.model import LightGBMBaseline, build_features_from_batch
@@ -46,7 +62,7 @@ from baselines.medbert.model import MedBERTModel
 from baselines.cehrbert_adapter.adapter import CEHRBertAdapter
 from baselines.dtr_adapter.adapter import DTRAdapter
 
-from baselines.common.registry import REGISTRY
+from baselines.common.registry import REGISTRY  # noqa: F401
 
 
 BASELINE_CONFIGS: dict[str, dict[str, Any]] = {
@@ -64,6 +80,29 @@ BASELINE_CONFIGS: dict[str, dict[str, Any]] = {
 
 # DTR arms to evaluate
 DTR_ARMS = ("no_age", "age_only", "temporal_only", "age_temporal")
+
+
+def _wrap_model_batch(raw_batch: dict[str, Any]) -> dict[str, Any]:
+    """Strip evaluation-only keys before any model call."""
+    return model_batch(raw_batch)
+
+
+class _SafeLoader:
+    """DataLoader wrapper that strips eval-only keys on iteration."""
+
+    def __init__(self, loader):
+        self._loader = loader
+
+    def __iter__(self):
+        for batch in self._loader:
+            yield _wrap_model_batch(batch)
+
+    def __len__(self):
+        return len(self._loader)
+
+    @property
+    def dataset(self):
+        return self._loader.dataset
 
 
 def build_model(
@@ -109,7 +148,6 @@ def train_lightgbm(
     n_codes: int,
 ) -> dict[str, Any]:
     """Train LightGBM on extracted features."""
-    # Extract features and labels from all loaders
     def extract(loader):
         Xs, Ys = [], []
         for batch in loader:
@@ -129,7 +167,6 @@ def train_lightgbm(
     model.fit(X_train, y_train, X_val, y_val)
     train_time = time.time() - t0
 
-    # Evaluate
     logits_test = model.predict_logits(X_test)
     test_metrics = multilabel_metrics(y_test, logits_test)
 
@@ -176,9 +213,25 @@ def train_neural(
 def evaluate_test(model, test_loader, device) -> dict[str, float]:
     """Evaluate on test set."""
     dev = get_device(device)
-    if hasattr(model, 'to'):
+    if hasattr(model, "to"):
         model.to(dev)
     return evaluate_loader(model, model.predict, test_loader, dev)
+
+
+def _attach_schema_fields(result: dict[str, Any]) -> dict[str, Any]:
+    """Attach flat schema fields (CF null until counterfactual_eval runs)."""
+    schema = from_train_and_cf(
+        scenario=result.get("scenario", ""),
+        model=result.get("model", ""),
+        test_metrics=result.get("test_metrics"),
+        cf_report=result.get("cf_report"),
+    )
+    result["benchmark_record"] = schema
+    # Mirror top-level convenience keys used by paper tables
+    for k, v in schema.items():
+        if k not in ("scenario", "model"):
+            result.setdefault(k, v)
+    return result
 
 
 def run_one_model(
@@ -191,19 +244,27 @@ def run_one_model(
     max_epochs: int = MAX_EPOCHS,
     device: str = "cuda",
     smoke: bool = False,
+    data_seed: int = 20260922,
 ) -> dict[str, Any]:
-    """Train and evaluate one model on one scenario."""
+    """Train and evaluate one model on one scenario (S0–S3 or S5)."""
     print(f"\n{'='*60}")
     print(f"Model: {model_name} | Scenario: {scenario}")
     print(f"{'='*60}")
 
-    # Load data
     batch_size = 8 if smoke else BATCH_SIZE
     max_ep = 2 if smoke else max_epochs
 
-    train_loader, val_loader, test_loader, vocab, info = make_loaders(
-        scenario_dir, batch_size=batch_size, max_seq_len=MAX_SEQ_LEN,
+    train_raw, val_raw, test_raw, vocab, info = make_baseline_loaders(
+        scenario,
+        data_seed=data_seed,
+        batch_size=batch_size,
+        max_seq_len=MAX_SEQ_LEN,
     )
+    # Strip eval-only keys for all model training/eval
+    train_loader = _SafeLoader(train_raw)
+    val_loader = _SafeLoader(val_raw)
+    test_loader = _SafeLoader(test_raw)
+
     n_codes = info["n_codes"]
     n_types = info["n_types"]
     n_targets = info["n_targets"]
@@ -225,6 +286,22 @@ def run_one_model(
         "n_codes": n_codes,
         "n_targets": n_targets,
         "smoke": smoke,
+        "benchmark_family": (
+            "heterogeneous_persistence" if scenario == "S5" else "age_temporal_core"
+        ),
+        # Schema placeholders (CF filled by counterfactual_eval)
+        "AUROC": None,
+        "AUPRC": None,
+        "BCE": None,
+        "CF_RMSE_age": None,
+        "CF_RMSE_lag": None,
+        "Surface_RMSE": None,
+        "S5_Surface_RMSE_acute": None,
+        "S5_Surface_RMSE_intermediate": None,
+        "S5_Surface_RMSE_chronic": None,
+        "S5_Surface_RMSE_mean": None,
+        "persistence_order_correct": None,
+        "mechanism_classification": None,
     }
 
     if model_name == "count_lightgbm":
@@ -234,16 +311,15 @@ def run_one_model(
         result["model_card"] = model.model_card
         model.save_checkpoint(run_dir)
     elif model_name == "dtr":
-        # Run all DTR arms
         for arm in DTR_ARMS:
             arm_name = f"dtr_{arm}"
             arm_dir = output_dir / arm_name / scenario
             arm_dir.mkdir(parents=True, exist_ok=True)
-            
+
             if (arm_dir / "result.json").exists() and not smoke:
                 print(f"  Already trained, skipping {arm_name} {scenario}")
                 continue
-                
+
             model = build_model("dtr", n_codes, n_types, n_targets, arm=arm)
             train_result = train_neural(
                 model, train_loader, val_loader,
@@ -254,17 +330,26 @@ def run_one_model(
                 "model": arm_name,
                 "arm": arm,
                 "scenario": scenario,
+                "seed": seed,
                 "train": train_result,
                 "test_metrics": test_metrics,
                 "model_card": model.model_card,
+                "benchmark_family": result["benchmark_family"],
+                "S5_Surface_RMSE_acute": None,
+                "S5_Surface_RMSE_intermediate": None,
+                "S5_Surface_RMSE_chronic": None,
+                "S5_Surface_RMSE_mean": None,
+                "persistence_order_correct": None,
+                "mechanism_classification": None,
             }
+            _attach_schema_fields(arm_result)
             with (arm_dir / "result.json").open("w") as f:
                 json.dump(arm_result, f, indent=2, default=str)
             print(f"  {arm_name}: test AUROC={test_metrics.get('micro_auroc', 'N/A'):.4f}")
-        return result  # DTR results saved per-arm
+        return result
     else:
         model = build_model(model_name, n_codes, n_types, n_targets)
-        if hasattr(model, 'to'):
+        if hasattr(model, "to"):
             model.to(get_device(device))
         if isinstance(model, torch.nn.Module):
             result["param_counts"] = count_parameters(model)
@@ -278,7 +363,8 @@ def run_one_model(
         result["model_card"] = model.model_card
         model.save_checkpoint(run_dir)
 
-    # Save result
+    _attach_schema_fields(result)
+
     with (run_dir / "result.json").open("w") as f:
         json.dump(result, f, indent=2, default=str)
 
@@ -295,8 +381,13 @@ ALL_MODELS = ["count_lightgbm", "retain", "ehr_bert", "behrt", "medbert", "cehrb
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Synthetic baseline runner")
-    parser.add_argument("--scenario", default="S2", choices=["S0", "S1", "S2", "S3", "all"])
+    parser = argparse.ArgumentParser(description="Synthetic baseline runner (S0–S3 + S5)")
+    parser.add_argument(
+        "--scenario",
+        default="S2",
+        choices=list(BENCHMARK_SCENARIOS) + ["all", "core"],
+        help="Scenario, 'core' (S0–S3), or 'all' (S0–S3 + S5). S6 excluded.",
+    )
     parser.add_argument("--models", default="all",
                         help="Comma-separated model names or 'all'")
     parser.add_argument("--seed", type=int, default=MODEL_SEED)
@@ -314,7 +405,7 @@ def main():
     else:
         output_dir = REPO_ROOT / "results" / "baselines" / "synthetic"
 
-    scenarios = ["S0", "S1", "S2", "S3"] if args.scenario == "all" else [args.scenario]
+    scenarios = resolve_scenarios(args.scenario)
     models = ALL_MODELS if args.models == "all" else args.models.split(",")
 
     all_results: dict[str, dict[str, Any]] = {}
@@ -331,6 +422,7 @@ def main():
                 result = run_one_model(
                     model_name, scenario, scenario_dir, output_dir,
                     seed=args.seed, device=args.device, smoke=args.smoke,
+                    data_seed=args.data_seed,
                 )
                 all_results[key] = result
             except Exception as e:
@@ -339,12 +431,14 @@ def main():
                 traceback.print_exc()
                 all_results[key] = {"error": str(e)}
 
-    # Save combined results
     combined_path = output_dir / "all_results.json"
     combined_path.parent.mkdir(parents=True, exist_ok=True)
     with combined_path.open("w") as f:
         json.dump(all_results, f, indent=2, default=str)
     print(f"\nResults saved to {combined_path}")
+    print(f"Scenarios run: {scenarios}")
+    print(f"Core scenarios: {list(CORE_SCENARIOS)}")
+    print("S5 included:" , "S5" in scenarios)
 
 
 if __name__ == "__main__":

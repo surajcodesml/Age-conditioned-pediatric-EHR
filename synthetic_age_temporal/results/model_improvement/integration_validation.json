@@ -1,0 +1,17 @@
+{
+  "task": "S2 multi-horizon forecasting",
+  "model": "Content-persistence DTR + multi-horizon objective",
+  "run_dir": "outputs/runs/controlled/S2_DTR_content_persistence_multi_horizon",
+  "trains_normally": true,
+  "multi_horizon_mean_auprc": 0.7825377968553497,
+  "multi_horizon_only_mean_auprc": 0.784291862443338,
+  "auprc_delta_vs_mh_only": -0.001754065587988296,
+  "beta_hat": 1.356493353843689,
+  "beta_true": -2.5,
+  "sign_match": false,
+  "delta_bce_shuffle_age": 0.05465767896869789,
+  "delta_bce_beta0": 0.020584993154420583,
+  "functional_shuffle": true,
+  "functional_beta0": true,
+  "verdict": "FAIL \u2014 \u03b2 sign inverted under joint training"
+}
