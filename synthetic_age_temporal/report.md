@@ -585,3 +585,123 @@ temporal evidence mass. Removing the bypass recovers sign, $\lambda(a)$, and abl
 Figures: fig13–fig19 under `results/figures/`.
 Artifacts: `results/followup/`, `outputs/runs/controlled/factorized/`, `results/followup_age_probe.json`,
 `results/counterfactual_age_sensitivity.json`.
+
+## Final Developmental Temporal Retrieval validation
+
+### 1. Final architecture
+
+Encounter DeepSets encoder (no age/τ) → content relevance $u_m=q^\top k_m$ →
+developmental gate $g_m=\exp[-\lambda(a_*)\tau_m]$ →
+**raw_additive** aggregation → $\ell=f_{\mathrm{history}}(h)+f_{\mathrm{age}}(z)+b$.
+
+Preferred `weighted_mean_plus_log_mass` did not clear the predictive-gain gate; `raw_additive` selected. Diagnosis: weighted_mean_plus_log_mass failed predictive ΔAUROC/AUPRC gate (got ΔAUROC=0.0040, ΔAUPRC=0.0087); raw_additive selected as validated encounter-level aggregation.
+
+### 2. Encounter construction
+
+Controlled encounters/patient mean=24.74; codes/encounter mean=2.83; signal encounters mean=5.90.
+Full: encounters mean=20.61.
+
+### 3. Aggregation validation
+
+- raw_additive passed: True
+- weighted_mean_plus_log_mass passed: False
+- selected: `raw_additive`
+
+### 4. Controlled S0–S3
+
+| Scenario | ΔAUROC | ΔAUPRC | β̂ | shuffle ΔBCE | β=0 ΔBCE | corr λ | passed |
+|---|---|---|---|---|---|---|---|
+| S0 | 0.0027 | 0.0008 | -0.034 | 0.0054 | 0.0000 | n/a | True |
+| S1 | 0.0000 | -0.0000 | 0.058 | 0.0098 | 0.0002 | n/a | True |
+| S2 | 0.0106 | 0.0238 | -1.912 | 0.1926 | 0.0917 | 1.000 | True |
+| S3 | 0.0257 | 0.0420 | 2.092 | 0.1502 | 0.0735 | 1.000 | True |
+
+### 5. Full-realism
+
+| Scenario | ΔAUROC | β̂ | shuffle ΔBCE | β=0 ΔBCE | passed |
+|---|---|---|---|---|---|
+| S0 | -0.0002 | -0.045 | 0.0091 | 0.0000 | True |
+| S1 | 0.0003 | -0.117 | 0.0252 | 0.0002 | True |
+| S2 | 0.0237 | -2.225 | 0.2702 | 0.1463 | True |
+| S3 | 0.0113 | 1.786 | 0.1601 | 0.0699 | True |
+
+### 6. Mechanism recovery
+
+Controlled S2 β̂=-1.912, corr λ=1.000, surface RMSE=0.0457.
+Controlled S3 β̂=2.092.
+Full S2 β̂=-2.225, shuffle=0.2702.
+
+### 7. Counterfactual test
+
+- temporal-only history invariant: True
+- age-temporal history varies via gate: True
+- structural identifiability OK: True
+
+### 8. Strength sensitivity
+
+- |β|=1.2: β̂=-1.158, ΔAUROC=0.0142, shuffle=0.0693
+- |β|=2.5: β̂=-1.912, ΔAUROC=0.0106, shuffle=0.1926
+- |β|=4.0: β̂=-3.349, ΔAUROC=0.0189, shuffle=0.2512
+
+### 9. Architecture comparison
+
+| Model | ΔAUROC | shuffle ΔBCE | β=0 ΔBCE | recovered? |
+|---|---|---|---|---|
+| Original Transformer | 0.0002 | 0.0065 | 0.0028 | False |
+| GLM interaction | 0.0275 | n/a | n/a | True |
+| M1 additive | 0.0207 | 0.2258 | 0.0554 | True |
+| M2 | 0.0094 | 0.1302 | 0.0440 | True |
+| event-M3 | 0.0094 | 0.1302 | 0.0440 | True |
+| Final encounter-level DTR | 0.0106 | 0.1926 | 0.0917 | True |
+
+### 10. Paper-ready figure/table index
+
+Figures: `results/figures/final/figA`–`figH` (PNG+SVG).
+Tables/artifacts: `results/final_validation/`.
+
+### 11. Final verdict
+
+**FINAL SYNTHETIC ARCHITECTURE VALIDATED — READY FOR MIMIC IMPLEMENTATION**
+
+#### Paper-level claims
+
+- claim1_identifiable: **SUPPORTED**
+- claim2_transformer_bypass: **SUPPORTED**
+- claim3_factorization_restores: **SUPPORTED**
+- claim4_mass_preserving: **SUPPORTED**
+- claim5_full_realism: **SUPPORTED**
+- claim6_falsifiable: **SUPPORTED**
+
+
+## Model improvement experiments
+### Experiment 1: Content-dependent temporal persistence
+Result: Improved S5 AUPRC
+
+### Experiment 2: Multi-query / target-aware content retrieval
+Result: Failed to improve S6 AUPRC
+
+### Experiment 3: Multi-horizon temporal supervision
+Result: Improved mean forecasting AUPRC
+
+RECOMMENDED FOR MIMIC:
+Final combination
+
+REJECTED:
+Multi-query retrieval
+
+
+## Model improvement experiments
+### Experiment 1: Content-dependent temporal persistence
+Result: Improved S5 AUPRC
+
+### Experiment 2: Multi-query / target-aware content retrieval
+Result: Failed to improve S6 AUPRC
+
+### Experiment 3: Multi-horizon temporal supervision
+Result: Improved mean forecasting AUPRC
+
+RECOMMENDED FOR MIMIC:
+Final combination
+
+REJECTED:
+Multi-query retrieval

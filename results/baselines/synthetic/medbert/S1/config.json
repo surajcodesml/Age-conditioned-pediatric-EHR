@@ -1,0 +1,12 @@
+{
+  "trainable_params": 2821280,
+  "embedding_params": 145536,
+  "layers": 6,
+  "heads": 6,
+  "hidden_size": 192,
+  "ffn_size": 768,
+  "max_seq_len": 112,
+  "age_representation": "none",
+  "time_representation": "none",
+  "pooling": "mean_pool"
+}

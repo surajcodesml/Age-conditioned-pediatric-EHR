@@ -1,0 +1,9 @@
+{
+  "trainable_params": 18941867,
+  "embedding_params": 7842816,
+  "layers": 4,
+  "heads": 4,
+  "hidden_size": 256,
+  "ffn_size": 1024,
+  "max_seq_len": 257
+}

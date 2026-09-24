@@ -1,0 +1,11 @@
+{
+  "trainable_params": 8922923,
+  "embedding_params": 3921408,
+  "layers": 5,
+  "heads": 8,
+  "hidden_size": 128,
+  "ffn_size": 512,
+  "max_seq_len": 257,
+  "age_representation": "time2vec",
+  "time_representation": "time2vec"
+}

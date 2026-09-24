@@ -1,0 +1,132 @@
+{
+  "count_lightgbm": {
+    "cf_rmse_age": 0.25596961677668795,
+    "cf_rmse_lag": 0.2584565089073907,
+    "surface_rmse": 0.2558781496842733,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "count_lightgbm",
+    "scenario": "S0"
+  },
+  "retain": {
+    "cf_rmse_age": 0.19774555739590266,
+    "cf_rmse_lag": 0.1923471304379613,
+    "surface_rmse": 0.19795231851711753,
+    "mechanism_classification": "PARTIAL_RECOVERY",
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "retain",
+    "scenario": "S0"
+  },
+  "ehr_bert": {
+    "cf_rmse_age": 0.24680137252784265,
+    "cf_rmse_lag": 0.24204988847870745,
+    "surface_rmse": 0.2469795503423804,
+    "mechanism_classification": "PARTIAL_RECOVERY",
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "ehr_bert",
+    "scenario": "S0"
+  },
+  "behrt": {
+    "cf_rmse_age": 0.24547324734454523,
+    "cf_rmse_lag": 0.24453304585431013,
+    "surface_rmse": 0.2442019277779798,
+    "mechanism_classification": "PARTIAL_RECOVERY",
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "behrt",
+    "scenario": "S0"
+  },
+  "medbert": {
+    "cf_rmse_age": 0.266196255018587,
+    "cf_rmse_lag": 0.26398859018218934,
+    "surface_rmse": 0.2661222854604584,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "medbert",
+    "scenario": "S0"
+  },
+  "cehrbert": {
+    "cf_rmse_age": 0.2676513826882122,
+    "cf_rmse_lag": 0.26664879724642493,
+    "surface_rmse": 0.2659432083201803,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "cehrbert",
+    "scenario": "S0"
+  },
+  "dtr_no_age": {
+    "cf_rmse_age": 0.26891675501001167,
+    "cf_rmse_lag": 0.2638579504132329,
+    "surface_rmse": 0.2691521851658266,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "dtr_no_age",
+    "scenario": "S0"
+  },
+  "dtr_age_only": {
+    "cf_rmse_age": 0.2566874334008382,
+    "cf_rmse_lag": 0.2535368688778147,
+    "surface_rmse": 0.2568293744123257,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "dtr_age_only",
+    "scenario": "S0"
+  },
+  "dtr_temporal_only": {
+    "cf_rmse_age": 0.27671789545595205,
+    "cf_rmse_lag": 0.267872409771176,
+    "surface_rmse": 0.2719222569156003,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "dtr_temporal_only",
+    "scenario": "S0"
+  },
+  "dtr_age_temporal": {
+    "cf_rmse_age": 0.26947587963706215,
+    "cf_rmse_lag": 0.26329208199399484,
+    "surface_rmse": 0.26779836812118823,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "dtr_age_temporal",
+    "scenario": "S0"
+  }
+}

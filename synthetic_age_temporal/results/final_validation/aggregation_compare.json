@@ -1,0 +1,26 @@
+{
+  "raw_additive": {
+    "passed": true,
+    "sign_ok": true,
+    "delta_auroc": 0.010629265352110617,
+    "delta_auprc": 0.023847788077657528,
+    "delta_bce_shuffle": 0.19258943451234767,
+    "delta_bce_beta0": 0.09169834769447643,
+    "corr_lambda": 0.9996928559531021,
+    "RMSE_surface": 0.045660400882434345,
+    "beta_hat": -1.9121733903884888
+  },
+  "weighted_mean_plus_log_mass": {
+    "passed": false,
+    "sign_ok": true,
+    "delta_auroc": 0.003984184303634897,
+    "delta_auprc": 0.008722472320584873,
+    "delta_bce_shuffle": 0.04459148200806373,
+    "delta_bce_beta0": 0.014728635798600787,
+    "corr_lambda": 0.9949163171636629,
+    "RMSE_surface": 0.1491964089531099,
+    "beta_hat": -0.9934535026550293
+  },
+  "selected": "raw_additive",
+  "mass_diagnosis": "weighted_mean_plus_log_mass failed predictive \u0394AUROC/AUPRC gate (got \u0394AUROC=0.0040, \u0394AUPRC=0.0087); raw_additive selected as validated encounter-level aggregation."
+}

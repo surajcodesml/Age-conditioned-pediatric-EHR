@@ -1,0 +1,13 @@
+{
+  "cf_rmse_age": 0.26921335921386497,
+  "cf_rmse_lag": 0.26772378653958484,
+  "surface_rmse": 0.26364172069862274,
+  "mechanism_classification": "NO_MECHANISM_RECOVERY",
+  "thresholds": {
+    "functional": 0.1,
+    "partial": 0.25,
+    "s0_max_cf_age": 0.05
+  },
+  "model": "cehrbert",
+  "scenario": "S1"
+}

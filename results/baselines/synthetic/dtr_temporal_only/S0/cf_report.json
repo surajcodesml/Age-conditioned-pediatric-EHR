@@ -1,0 +1,13 @@
+{
+  "cf_rmse_age": 0.27671789545595205,
+  "cf_rmse_lag": 0.267872409771176,
+  "surface_rmse": 0.2719222569156003,
+  "mechanism_classification": "NO_MECHANISM_RECOVERY",
+  "thresholds": {
+    "functional": 0.1,
+    "partial": 0.25,
+    "s0_max_cf_age": 0.05
+  },
+  "model": "dtr_temporal_only",
+  "scenario": "S0"
+}

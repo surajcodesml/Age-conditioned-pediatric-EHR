@@ -96,7 +96,7 @@ ARMS = (
     "temporal_only_per_head",
     "age_temporal_per_head",
 )
-SCENARIOS = ("S0", "S1", "S2", "S3")
+SCENARIOS = ("S0", "S1", "S2", "S3", "S5", "S6")
 
 # Training (matched across arms).
 D_MODEL = 256
@@ -227,6 +227,20 @@ SCENARIO_SPECS: dict[str, ScenarioSpec] = {
         has_interaction=True,
         age_main_effect=0.0,
         description="Reversed interaction: β>0 (older decays faster).",
+    ),
+    "S5": ScenarioSpec(
+        name="S5",
+        beta_true=-2.5,
+        has_interaction=True,
+        age_main_effect=0.0,
+        description="Heterogeneous persistence",
+    ),
+    "S6": ScenarioSpec(
+        name="S6",
+        beta_true=-2.5,
+        has_interaction=True,
+        age_main_effect=0.0,
+        description="Target-selective history",
     ),
 }
 

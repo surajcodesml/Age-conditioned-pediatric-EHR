@@ -1,0 +1,11 @@
+{
+  "trainable_params": 23759531,
+  "embedding_params": 8827200,
+  "layers": 6,
+  "heads": 12,
+  "hidden_size": 288,
+  "ffn_size": 1152,
+  "max_seq_len": 257,
+  "age_representation": "learnable_bucket_embedding",
+  "n_age_buckets": 14
+}

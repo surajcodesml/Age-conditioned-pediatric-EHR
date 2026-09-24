@@ -302,6 +302,7 @@ def test_mlm_optimization():
     print("Running test_mlm_optimization...")
     vocab_size = 100
     model = CehrBertPretrainModel(vocab_size=vocab_size, d_model=32, n_layers=2, n_heads=2, max_seq_len=10)
+    model.eval()  # Disable dropout so both forward passes produce identical hidden states
     
     input_ids = torch.randint(0, vocab_size, (2, 10))
     segment_ids = torch.zeros(2, 10, dtype=torch.long)

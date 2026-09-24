@@ -1,0 +1,10 @@
+{
+  "figA": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/results/figures/final/figA_benchmark_mechanism.png",
+  "figB": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/results/figures/final/figB_architecture_ladder.png",
+  "figC": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/results/figures/final/figC_lambda_curves.png",
+  "figD": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/results/figures/final/figD_age_lag_surface.png",
+  "figE": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/results/figures/final/figE_ablations_by_scenario.png",
+  "figF": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/results/figures/final/figF_controlled_vs_full.png",
+  "figG": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/results/figures/final/figG_strength_sensitivity.png",
+  "figH": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/results/figures/final/figH_counterfactual_retrieval.png"
+}

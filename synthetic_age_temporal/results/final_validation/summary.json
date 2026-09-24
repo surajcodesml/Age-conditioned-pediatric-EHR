@@ -1,0 +1,176 @@
+{
+  "verdict": "FINAL SYNTHETIC ARCHITECTURE VALIDATED \u2014 READY FOR MIMIC IMPLEMENTATION",
+  "final_aggregation": "raw_additive",
+  "mass_diagnosis": "weighted_mean_plus_log_mass failed predictive \u0394AUROC/AUPRC gate (got \u0394AUROC=0.0040, \u0394AUPRC=0.0087); raw_additive selected as validated encounter-level aggregation.",
+  "controlled_gates": {
+    "S0": {
+      "passed": true,
+      "sign_ok": true,
+      "delta_auroc": 0.002728868937307505,
+      "delta_auprc": 0.0008166471744848192,
+      "delta_bce_shuffle": 0.005363058960342393,
+      "delta_bce_beta0": 2.2534805590390672e-05,
+      "corr_lambda": NaN,
+      "RMSE_surface": 0.020391528963317307,
+      "beta_hat": -0.033639464527368546
+    },
+    "S1": {
+      "passed": true,
+      "sign_ok": true,
+      "delta_auroc": 3.488325038136786e-05,
+      "delta_auprc": -1.1137370640512678e-05,
+      "delta_bce_shuffle": 0.009793968953257237,
+      "delta_bce_beta0": 0.0002446053712845675,
+      "corr_lambda": NaN,
+      "RMSE_surface": 0.04950232534628456,
+      "beta_hat": 0.057582493871450424
+    },
+    "S2": {
+      "passed": true,
+      "sign_ok": true,
+      "delta_auroc": 0.010629265352110617,
+      "delta_auprc": 0.023847788077657528,
+      "delta_bce_shuffle": 0.19258943451234767,
+      "delta_bce_beta0": 0.09169834769447643,
+      "corr_lambda": 0.9996928559531021,
+      "RMSE_surface": 0.045660400882434345,
+      "beta_hat": -1.9121733903884888
+    },
+    "S3": {
+      "passed": true,
+      "sign_ok": true,
+      "delta_auroc": 0.02567304117483049,
+      "delta_auprc": 0.04201457754587967,
+      "delta_bce_shuffle": 0.150191834552223,
+      "delta_bce_beta0": 0.07348316028390584,
+      "corr_lambda": 0.9998626299555128,
+      "RMSE_surface": 0.03019119778913034,
+      "beta_hat": 2.0915632247924805
+    }
+  },
+  "full_gates": {
+    "S0": {
+      "passed": true,
+      "sign_ok": true,
+      "delta_auroc": -0.00021202583061818991,
+      "delta_auprc": -0.00013963589168763946,
+      "delta_bce_shuffle": 0.009081419666992163,
+      "delta_bce_beta0": 3.576524741821796e-05,
+      "corr_lambda": NaN,
+      "RMSE_surface": 0.028235624100770705,
+      "beta_hat": -0.04465186595916748
+    },
+    "S1": {
+      "passed": true,
+      "sign_ok": true,
+      "delta_auroc": 0.00026022485943200113,
+      "delta_auprc": -6.074423193580536e-05,
+      "delta_bce_shuffle": 0.025175456174347133,
+      "delta_bce_beta0": 0.00015778648902625703,
+      "corr_lambda": NaN,
+      "RMSE_surface": 0.03520963557976656,
+      "beta_hat": -0.11688662320375443
+    },
+    "S2": {
+      "passed": true,
+      "sign_ok": true,
+      "delta_auroc": 0.02366997962262296,
+      "delta_auprc": 0.03692673182625772,
+      "delta_bce_shuffle": 0.2702091194292024,
+      "delta_bce_beta0": 0.1462800844216598,
+      "corr_lambda": 0.9999230555127899,
+      "RMSE_surface": 0.019743940609957884,
+      "beta_hat": -2.2252438068389893
+    },
+    "S3": {
+      "passed": true,
+      "sign_ok": true,
+      "delta_auroc": 0.01125431528716947,
+      "delta_auprc": 0.017365605565746622,
+      "delta_bce_shuffle": 0.1601304761125127,
+      "delta_bce_beta0": 0.06987881640136889,
+      "corr_lambda": 0.999695239473085,
+      "RMSE_surface": 0.06753009997227111,
+      "beta_hat": 1.785554051399231
+    }
+  },
+  "counterfactual": {
+    "structural_identifiability_ok": true,
+    "temporal_only_history_invariant": true,
+    "age_temporal_history_varies": true
+  },
+  "claims": {
+    "claim1_identifiable": "SUPPORTED",
+    "claim2_transformer_bypass": "SUPPORTED",
+    "claim3_factorization_restores": "SUPPORTED",
+    "claim4_mass_preserving": "SUPPORTED",
+    "claim5_full_realism": "SUPPORTED",
+    "claim6_falsifiable": "SUPPORTED"
+  },
+  "encounter_stats": {
+    "controlled": {
+      "n_examples": 7007,
+      "encounters_per_patient": {
+        "mean": 24.737690880548023,
+        "median": 24.0,
+        "p90": 34.0,
+        "max": 50.0,
+        "min": 8.0
+      },
+      "codes_per_encounter": {
+        "mean": 2.829724755822473,
+        "median": 1.0,
+        "p90": 8.0,
+        "max": 39.0,
+        "min": 1.0
+      },
+      "event_history_length": {
+        "mean": 70.00085628657057,
+        "median": 70.0,
+        "p90": 72.0,
+        "max": 72.0,
+        "min": 68.0
+      },
+      "signal_encounters_per_patient": {
+        "mean": 5.903239617525331,
+        "median": 6.0,
+        "p90": 8.0,
+        "max": 8.0,
+        "min": 2.0
+      },
+      "grouping_rule": "round(lag_days, 3); oldest\u2192newest; signals share co-timed groups or form synthetic encounters"
+    },
+    "full": {
+      "n_examples": 10000,
+      "encounters_per_patient": {
+        "mean": 20.6149,
+        "median": 20.0,
+        "p90": 33.0,
+        "max": 50.0,
+        "min": 2.0
+      },
+      "codes_per_encounter": {
+        "mean": 3.2929725586832825,
+        "median": 1.0,
+        "p90": 13.0,
+        "max": 39.0,
+        "min": 1.0
+      },
+      "event_history_length": {
+        "mean": 67.8843,
+        "median": 70.0,
+        "p90": 72.0,
+        "max": 72.0,
+        "min": 28.0
+      },
+      "signal_encounters_per_patient": {
+        "mean": 5.7066,
+        "median": 6.0,
+        "p90": 8.0,
+        "max": 8.0,
+        "min": 0.0
+      },
+      "grouping_rule": "round(lag_days, 3); oldest\u2192newest; signals share co-timed groups or form synthetic encounters"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "model": "count_lightgbm",
+  "scenario": "S2",
+  "seed": 0,
+  "n_codes": 566,
+  "n_targets": 32,
+  "smoke": true,
+  "val_metrics": {
+    "bce": 0.48483484538868243,
+    "micro_auroc": 0.7270643417928141,
+    "macro_auroc": 0.6997363800847877,
+    "micro_auprc": 0.5139795032116843,
+    "macro_auprc": 0.47302021226669627,
+    "precision@5": 0.5130841121495328,
+    "recall@5": 0.32502695894600786,
+    "precision@10": 0.4176635514018691,
+    "recall@10": 0.5264615524662254,
+    "precision@20": 0.3312616822429906,
+    "recall@20": 0.8348361106092003
+  },
+  "test_metrics": {
+    "bce": 0.48418906170608894,
+    "micro_auroc": 0.7287378904539711,
+    "macro_auroc": 0.6953406033500669,
+    "micro_auprc": 0.5204211769741867,
+    "macro_auprc": 0.4673548279455627,
+    "precision@5": 0.5202715809893307,
+    "recall@5": 0.32689348847775845,
+    "precision@10": 0.4208535402521823,
+    "recall@10": 0.5275919414134739,
+    "precision@20": 0.33283220174587774,
+    "recall@20": 0.8361723866302517
+  },
+  "train_time_s": 1.6558573246002197,
+  "n_features": 568,
+  "model_card": {
+    "trainable_params": "N/A (tree model)",
+    "embedding_params": 0,
+    "layers": "N/A",
+    "heads": "N/A",
+    "hidden_size": "N/A",
+    "ffn_size": "N/A",
+    "max_seq_len": "unlimited",
+    "n_targets": 32,
+    "n_features": 568,
+    "lgb_params": {
+      "objective": "binary",
+      "metric": "binary_logloss",
+      "verbosity": -1,
+      "num_leaves": 31,
+      "learning_rate": 0.1,
+      "n_estimators": 300,
+      "min_child_samples": 20,
+      "seed": 0
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "controlled": {
+    "n_examples": 7007,
+    "encounters_per_patient": {
+      "mean": 24.737690880548023,
+      "median": 24.0,
+      "p90": 34.0,
+      "max": 50.0,
+      "min": 8.0
+    },
+    "codes_per_encounter": {
+      "mean": 2.829724755822473,
+      "median": 1.0,
+      "p90": 8.0,
+      "max": 39.0,
+      "min": 1.0
+    },
+    "event_history_length": {
+      "mean": 70.00085628657057,
+      "median": 70.0,
+      "p90": 72.0,
+      "max": 72.0,
+      "min": 68.0
+    },
+    "signal_encounters_per_patient": {
+      "mean": 5.903239617525331,
+      "median": 6.0,
+      "p90": 8.0,
+      "max": 8.0,
+      "min": 2.0
+    },
+    "grouping_rule": "round(lag_days, 3); oldest\u2192newest; signals share co-timed groups or form synthetic encounters"
+  },
+  "full": {
+    "n_examples": 10000,
+    "encounters_per_patient": {
+      "mean": 20.6149,
+      "median": 20.0,
+      "p90": 33.0,
+      "max": 50.0,
+      "min": 2.0
+    },
+    "codes_per_encounter": {
+      "mean": 3.2929725586832825,
+      "median": 1.0,
+      "p90": 13.0,
+      "max": 39.0,
+      "min": 1.0
+    },
+    "event_history_length": {
+      "mean": 67.8843,
+      "median": 70.0,
+      "p90": 72.0,
+      "max": 72.0,
+      "min": 28.0
+    },
+    "signal_encounters_per_patient": {
+      "mean": 5.7066,
+      "median": 6.0,
+      "p90": 8.0,
+      "max": 8.0,
+      "min": 0.0
+    },
+    "grouping_rule": "round(lag_days, 3); oldest\u2192newest; signals share co-timed groups or form synthetic encounters"
+  }
+}

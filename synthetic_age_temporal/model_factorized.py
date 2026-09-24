@@ -32,15 +32,22 @@ class TemporalGate(nn.Module):
     def z_of(self, age: torch.Tensor) -> torch.Tensor:
         return (age - AGE_CENTER) / AGE_SCALE
 
-    def lambda_of(self, age: torch.Tensor) -> torch.Tensor:
+    def lambda_of(self, age: torch.Tensor, theta: torch.Tensor | None = None) -> torch.Tensor:
         z = self.z_of(age)
+        th = self.theta0 if theta is None else theta
+        if th.dim() > z.dim():
+            z = z.view(z.shape + (1,) * (th.dim() - z.dim()))
         if self.age_temporal:
-            return F.softplus(self.theta0 + self.beta * z)
-        return F.softplus(self.theta0).expand_as(age)
+            return F.softplus(th + self.beta * z)
+        if th.dim() > age.dim():
+            return F.softplus(th).expand_as(th)
+        return F.softplus(th).expand_as(age)
 
-    def gate(self, age: torch.Tensor, tau: torch.Tensor) -> torch.Tensor:
+    def gate(self, age: torch.Tensor, tau: torch.Tensor, theta: torch.Tensor | None = None) -> torch.Tensor:
         """g_j = exp(-λ(a*) τ_j), shape [B, L]."""
-        lam = self.lambda_of(age).unsqueeze(-1)
+        lam = self.lambda_of(age, theta)
+        if lam.dim() < tau.dim():
+            lam = lam.unsqueeze(-1)
         return torch.exp(-lam * tau)
 
     def age_parameters(self) -> list[nn.Parameter]:

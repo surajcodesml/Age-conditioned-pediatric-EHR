@@ -1,0 +1,5 @@
+scenario,theta0,beta_true,mechanism,purpose
+S0,0.0,0.0,temporal only,no interaction
+S1,0.0,0.0,age main effect,no age×time
+S2,0.0,-2.5,developmental interaction,younger→faster decay
+S3,0.0,2.5,reversed interaction,falsification

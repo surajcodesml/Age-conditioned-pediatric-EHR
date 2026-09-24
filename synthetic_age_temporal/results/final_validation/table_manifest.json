@@ -1,0 +1,8 @@
+{
+  "table1": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/results/final_validation/table1_cohort.csv",
+  "table2": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/results/final_validation/scenario_table.csv",
+  "table3": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/results/final_validation/controlled_metrics.csv",
+  "table4": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/results/final_validation/full_realism_metrics.csv",
+  "table5": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/results/final_validation/architecture_comparison.csv",
+  "strength": "/home/suraj/Git/Age-conditioned-pediatric-EHR/synthetic_age_temporal/results/final_validation/strength_sweep.csv"
+}

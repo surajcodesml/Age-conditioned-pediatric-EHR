@@ -1,0 +1,13 @@
+{
+  "cf_rmse_age": 0.24226818498226016,
+  "cf_rmse_lag": 0.2417578079115155,
+  "surface_rmse": 0.242111902745658,
+  "mechanism_classification": "NO_MECHANISM_RECOVERY",
+  "thresholds": {
+    "functional": 0.1,
+    "partial": 0.25,
+    "s0_max_cf_age": 0.05
+  },
+  "model": "behrt",
+  "scenario": "S2"
+}

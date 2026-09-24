@@ -233,11 +233,17 @@ def create_cehrbert_sequence(
         "attention_mask": np.array(attention_mask, dtype=np.int64)
     }
 
+def _to_list(x):
+    """Convert numpy arrays / tensors to plain lists; pass through if already a list."""
+    if isinstance(x, list):
+        return x
+    return x.tolist()
+
 def pad_and_crop(seq_dict, max_seq_len, tokenizer, is_pretraining, seed=None):
-    tokens = seq_dict["input_ids"].tolist()
-    segment_ids = seq_dict["segment_ids"].tolist()
-    time_stamps = seq_dict["time_stamps"].tolist()
-    ages = seq_dict["ages"].tolist()
+    tokens = _to_list(seq_dict["input_ids"])
+    segment_ids = _to_list(seq_dict["segment_ids"])
+    time_stamps = _to_list(seq_dict["time_stamps"])
+    ages = _to_list(seq_dict["ages"])
     
     if len(tokens) > max_seq_len:
         vs_indices = [i for i, t in enumerate(tokens) if t == tokenizer.vs_id]

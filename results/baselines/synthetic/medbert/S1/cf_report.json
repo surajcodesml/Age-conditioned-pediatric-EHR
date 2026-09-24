@@ -1,0 +1,13 @@
+{
+  "cf_rmse_age": 0.23954375430813685,
+  "cf_rmse_lag": 0.23464844339382196,
+  "surface_rmse": 0.23975301222350076,
+  "mechanism_classification": "NO_MECHANISM_RECOVERY",
+  "thresholds": {
+    "functional": 0.1,
+    "partial": 0.25,
+    "s0_max_cf_age": 0.05
+  },
+  "model": "medbert",
+  "scenario": "S1"
+}

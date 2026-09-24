@@ -201,7 +201,7 @@ def build_scenario(
     train_mask = df["patient_id"].astype(str).map(pid_to_split).to_numpy() == "train"
 
     # Target specs + bias calibration on train only.
-    specs = build_target_specs(rng)
+    specs = build_target_specs(rng, scenario=scenario)
     specs = calibrate_target_biases(
         ages=ages[train_mask],
         signal_list=[signal_list[i] for i in range(len(df)) if train_mask[i]],
@@ -220,7 +220,7 @@ def build_scenario(
     Y = np.zeros((n, n_t), dtype=np.float32)
     logits_all = np.zeros((n, n_t), dtype=np.float64)
     probs_all = np.zeros((n, n_t), dtype=np.float64)
-    true_lambdas = np.zeros(n, dtype=np.float64)
+    true_lambdas = np.zeros(n, dtype=object)
     noise = rng.normal(0.0, NOISE_STD, size=(n, n_t))
 
     gt_rows: list[dict[str, Any]] = []
@@ -250,6 +250,8 @@ def build_scenario(
         logits_all[i] = logits
         probs_all[i] = probs
         true_lambdas[i] = lam
+        
+        lam_events = lam if isinstance(lam, np.ndarray) else np.full(sig.codes.size, lam)
 
         # Model-visible history: background (strictly before cutoff) + signals.
         hist_codes: list[str] = []
@@ -304,7 +306,7 @@ def build_scenario(
                     "signal_event_time": str(pd.Timestamp(sig.times[j])),
                     "lag_days": float(sig.lag_days[j]),
                     "tau": float(sig.tau[j]),
-                    "true_lambda": float(lam),
+                    "true_lambda": float(lam_events[j]) if len(lam_events) > j else float("nan"),
                     "true_event_relevance": float(R_int[j]) if R_int.size else float("nan"),
                     "scenario": scenario,
                     "generation_seed": data_seed,
@@ -326,7 +328,7 @@ def build_scenario(
                     "signal_event_time": None,
                     "lag_days": None,
                     "tau": None,
-                    "true_lambda": float(lam),
+                    "true_lambda": float(lam_events[0]) if len(lam_events) > 0 else float("nan"),
                     "true_event_relevance": None,
                     "true_target_logit": float(logits[k]),
                     "true_target_probability": float(probs[k]),

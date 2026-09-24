@@ -1,0 +1,55 @@
+{
+  "model": "dtr",
+  "seed": 0,
+  "smoke": true,
+  "n_codes": 30635,
+  "param_counts": {
+    "trainable_params": 13949997,
+    "total_params": 13949997,
+    "embedding_params": 0,
+    "non_embedding_trainable": 13949997
+  },
+  "train": {
+    "best_val_bce": 0.0014128904783149304,
+    "epochs_trained": 2,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.0012626522438949905,
+        "val_bce": 0.0014128904783149304,
+        "val_micro_auroc": 0.5675518579342698,
+        "val_macro_auroc": 0.4904844726412872,
+        "val_micro_auprc": 0.0006488855780562055,
+        "val_macro_auprc": 0.1151084055752416,
+        "val_precision@5": 0.0,
+        "val_recall@5": 0.0,
+        "time_s": 1.3956782817840576
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.0005548587141674943,
+        "val_bce": 0.0019578538175666375,
+        "val_micro_auroc": 0.5769622510037219,
+        "val_macro_auroc": 0.47429294844316694,
+        "val_micro_auprc": 0.00048131988189591243,
+        "val_macro_auprc": 0.10783263509638875,
+        "val_precision@5": 0.0,
+        "val_recall@5": 0.0,
+        "time_s": 2.806759834289551
+      }
+    ],
+    "total_time_s": 2.9640238285064697
+  },
+  "test_metrics": {
+    "bce": 0.0010573157149534993,
+    "micro_auroc": 0.5795346716815178,
+    "macro_auroc": 0.4967751163140857,
+    "micro_auprc": 0.0006787428533999929,
+    "macro_auprc": 0.107942939648965,
+    "precision@5": 0.0,
+    "recall@5": 0.0
+  },
+  "model_card": {
+    "name": "dtr_mimic"
+  }
+}

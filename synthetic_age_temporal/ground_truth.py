@@ -84,7 +84,7 @@ def calibrate_parameters(
     return report
 
 
-def build_target_specs(rng: np.random.Generator) -> list[dict[str, Any]]:
+def build_target_specs(rng: np.random.Generator, scenario: str = "S2") -> list[dict[str, Any]]:
     """Create multi-label target definitions with known mechanism classes."""
     codes = all_signal_codes()
     n_codes = len(codes)
@@ -92,15 +92,29 @@ def build_target_specs(rng: np.random.Generator) -> list[dict[str, Any]]:
     idx = 0
     for mech, count in TARGET_MECHANISM_COUNTS.items():
         for _ in range(count):
-            # Sparse weights over signal types; not age-dependent.
-            w = rng.normal(0.0, 1.2, size=n_codes)
-            # Zero out half so content is not dense noise.
-            mask = rng.random(n_codes) < 0.55
-            w = np.where(mask, w, 0.0)
-            if not np.any(np.abs(w) > 0):
-                w[rng.integers(0, n_codes)] = rng.choice([-1.0, 1.0])
-            if mech in ("interaction", "temporal_only"):
-                w = w * 1.5  # stronger history contribution
+            if scenario == "S6" and mech == "interaction":
+                w = np.zeros(n_codes)
+                target_group = idx % 4
+                if target_group == 0:
+                    subset = [0, 1, 2]
+                elif target_group == 1:
+                    subset = [3, 4, 5]
+                elif target_group == 2:
+                    subset = [6, 7, 8]
+                else:
+                    subset = [9, 10, 11]
+                for i in subset:
+                    w[i] = float(rng.uniform(0.5, 1.5) * rng.choice([-1.0, 1.0]))
+            else:
+                # Sparse weights over signal types; not age-dependent.
+                w = rng.normal(0.0, 1.2, size=n_codes)
+                # Zero out half so content is not dense noise.
+                mask = rng.random(n_codes) < 0.55
+                w = np.where(mask, w, 0.0)
+                if not np.any(np.abs(w) > 0):
+                    w[rng.integers(0, n_codes)] = rng.choice([-1.0, 1.0])
+                if mech in ("interaction", "temporal_only"):
+                    w = w * 1.5  # stronger history contribution
             gamma = float(rng.uniform(0.6, 1.4) * rng.choice([-1.0, 1.0]))
             specs.append(
                 {
@@ -152,21 +166,34 @@ def compute_target_logits(
     beta: float,
     noise: np.ndarray,
     temporal_lambda0: float = TEMPORAL_ONLY_LAMBDA0,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, float]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, Any]:
     """Return logits, probs, mechanism-weighted relevance sum, and true λ(a*)."""
     spec_sc = SCENARIO_SPECS[scenario]
     z = float(z_age(age))
-    lam_interact = float(lambda_true(age, theta0, beta))
     codes = list(all_signal_codes())
     code_to_i = {c: i for i, c in enumerate(codes)}
+
+    lam_interact = float(lambda_true(age, theta0, beta))
 
     # Event relevances under interaction λ and under fixed temporal λ.
     if signals.tau.size == 0:
         R_int = np.zeros(0, dtype=np.float64)
         R_temp = np.zeros(0, dtype=np.float64)
         code_idx = np.zeros(0, dtype=np.int64)
+        lam_interact_events = np.zeros(0, dtype=np.float64)
     else:
-        R_int = np.exp(-lam_interact * signals.tau)
+        lam_interact_events = np.full(signals.tau.size, lam_interact)
+        if scenario == "S5":
+            for j, c in enumerate(signals.codes):
+                if str(c) in ("SYN_SIGNAL_A", "SYN_SIGNAL_B", "SYN_SIGNAL_C", "SYN_SIGNAL_D"):
+                    th = 1.0
+                elif str(c) in ("SYN_SIGNAL_E", "SYN_SIGNAL_F", "SYN_SIGNAL_G", "SYN_SIGNAL_H"):
+                    th = 0.0
+                else:
+                    th = -1.0
+                lam_interact_events[j] = float(lambda_true(age, th, beta))
+        
+        R_int = np.exp(-lam_interact_events * signals.tau)
         R_temp = np.exp(-temporal_lambda0 * signals.tau)
         code_idx = np.array([code_to_i[c] for c in signals.codes], dtype=np.int64)
 

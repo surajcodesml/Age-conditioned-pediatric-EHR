@@ -1,0 +1,13 @@
+{
+  "cf_rmse_age": 0.233621775283019,
+  "cf_rmse_lag": 0.23869520435067293,
+  "surface_rmse": 0.23318020462494538,
+  "mechanism_classification": "NO_MECHANISM_RECOVERY",
+  "thresholds": {
+    "functional": 0.1,
+    "partial": 0.25,
+    "s0_max_cf_age": 0.05
+  },
+  "model": "count_lightgbm",
+  "scenario": "S1"
+}
