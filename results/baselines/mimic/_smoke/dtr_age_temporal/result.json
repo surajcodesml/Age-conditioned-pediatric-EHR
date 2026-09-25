@@ -1,0 +1,77 @@
+{
+  "model": "dtr_age_temporal",
+  "seed": 0,
+  "smoke": true,
+  "n_codes": 30635,
+  "arm": "age_temporal",
+  "param_counts": {
+    "trainable_params": 13949997,
+    "total_params": 13949997,
+    "embedding_params": 0,
+    "non_embedding_trainable": 13949997
+  },
+  "train": {
+    "best_val_bce": 0.0156080063843653,
+    "best_epoch": 2,
+    "last_epoch": 2,
+    "epochs_trained": 2,
+    "max_epochs": 2,
+    "min_epochs": 2,
+    "patience": 3,
+    "stopped_early": false,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.028283590894369853,
+        "val_bce": 0.01701725339693258,
+        "val_micro_auroc": 0.772821955148017,
+        "val_macro_auroc": 0.4905563694815717,
+        "val_micro_auprc": 0.04021783790478933,
+        "val_macro_auprc": 0.3649599993195228,
+        "val_precision@5": 0.3428571428571429,
+        "val_recall@5": 0.023037754843167477,
+        "time_s": 0.7661359310150146
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.026237598487309048,
+        "val_bce": 0.0156080063843653,
+        "val_micro_auroc": 0.8366889160432779,
+        "val_macro_auroc": 0.5152822700160976,
+        "val_micro_auprc": 0.07042205279887095,
+        "val_macro_auprc": 0.3758704231363353,
+        "val_precision@5": 0.3428571428571429,
+        "val_recall@5": 0.023037754843167477,
+        "time_s": 1.2579035758972168
+      }
+    ],
+    "total_time_s": 1.9144580364227295,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/dtr_age_temporal/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/dtr_age_temporal/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/dtr_age_temporal/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.007017579597560762,
+    "micro_auroc": 0.8792682961604816,
+    "macro_auroc": 0.4336686787391013,
+    "micro_auprc": 0.048512775623056156,
+    "macro_auprc": 0.3509043147775542,
+    "precision@5": 0.275,
+    "recall@5": 0.031356457672247144
+  },
+  "model_card": {
+    "name": "dtr_age_temporal",
+    "arm": "age_temporal",
+    "n_codes": 30635,
+    "d_model": 256,
+    "n_heads": 4,
+    "n_layers": 4
+  },
+  "AUROC": 0.8792682961604816,
+  "AUPRC": 0.048512775623056156,
+  "BCE": 0.007017579597560762,
+  "best_val_bce": 0.0156080063843653,
+  "epochs_trained": 2
+}

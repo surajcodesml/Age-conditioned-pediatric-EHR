@@ -675,33 +675,122 @@ Tables/artifacts: `results/final_validation/`.
 
 ## Model improvement experiments
 ### Experiment 1: Content-dependent temporal persistence
-Result: Improved S5 AUPRC
+Result: Improved S5 AUPRC — **promoted to locked canonical architecture** (see below).
 
 ### Experiment 2: Multi-query / target-aware content retrieval
-Result: Failed to improve S6 AUPRC
+Result: Failed to improve S6 AUPRC — rejected.
 
 ### Experiment 3: Multi-horizon temporal supervision
-Result: Improved mean forecasting AUPRC
+Result: Improved mean forecasting AUPRC in isolation, but **naive joint training with content persistence inverted β on S2** (β̂≈+1.36 when β_true=-2.5). Multi-horizon remains experimental only; not part of the locked canonical model.
 
 RECOMMENDED FOR MIMIC:
-Final combination
+Content-Persistence DTR + single-task training (`train_dtr.py`)
 
-REJECTED:
-Multi-query retrieval
+REJECTED / EXPERIMENTAL:
+- Multi-query retrieval (rejected)
+- Multi-horizon joint supervision with content persistence (experimental; mechanism sign failure)
 
 
-## Model improvement experiments
-### Experiment 1: Content-dependent temporal persistence
-Result: Improved S5 AUPRC
+## Canonical Content-Persistence DTR implementation
 
-### Experiment 2: Multi-query / target-aware content retrieval
-Result: Failed to improve S6 AUPRC
+Locked architecture (canonical production model):
 
-### Experiment 3: Multi-horizon temporal supervision
-Result: Improved mean forecasting AUPRC
+$$
+v_m = f_{\mathrm{enc}}(C_m)
+$$
 
-RECOMMENDED FOR MIMIC:
-Final combination
+$$
+u_m = q^\top k_m
+$$
 
-REJECTED:
-Multi-query retrieval
+$$
+\theta_m = \theta_0 + r^\top v_m
+$$
+
+$$
+\lambda_m(a_*) = \operatorname{softplus}(\theta_m + \beta z(a_*))
+$$
+
+$$
+g_m = \exp[-\lambda_m(a_*)\tau_m],\quad
+w_m = \exp(u_m)\,g_m,\quad
+h = \sum_m w_m v_m
+$$
+
+$$
+\ell = f_{\mathrm{history}}(h) + f_{\mathrm{age}}(z(a_*)) + b
+$$
+
+Raw additive aggregation only. No softmax over encounters. Single global β. Linear persistence projection. Separated age main-effect head.
+
+### Files changed
+
+- `synthetic_age_temporal/model_dtr.py` — canonical Content-Persistence DTR
+- `synthetic_age_temporal/train_dtr.py` — canonical trainer + persistence diagnostics
+- `synthetic_age_temporal/tests/test_dtr.py` — 20 required contract tests (+ extras)
+- `synthetic_age_temporal/train_multi_horizon.py` — marked experimental; API aligned
+- `synthetic_age_temporal/validate_canonical_dtr.py` — lightweight S0–S3 / S5 regression
+- `dataset_dtr.py` — unchanged (model inputs already sufficient; S5 groups are eval-only)
+
+### Initialization contract
+
+- `beta = 0` for both arms at init
+- `persistence_projection` weights and bias initialized to **0** so θ_m ≈ θ₀ at step 0
+- Gradients still reach `persistence_projection` from the first step
+- Matched arms share identical weights; `max_abs_logit_diff < 1e-6` before training
+
+### Matched arm definition
+
+| Arm | λ_m | β |
+|---|---|---|
+| `temporal_only` | softplus(θ₀ + rᵀv_m) | frozen at 0 |
+| `age_temporal` | softplus(θ₀ + rᵀv_m + β z(a*)) | trainable |
+
+Otherwise identical modules (encoder, content relevance, persistence projection, heads).
+
+### Numerical stability
+
+`w = exp(u)·g` uses `u.clamp(max=20)` before `exp` (`CONTENT_SCORE_EXP_CLAMP=20`). This caps overflow without softmax renormalization; for typical scores the quantity is unchanged.
+
+### Checkpoint compatibility
+
+`load_legacy_dtr_checkpoint(...)` migrates older keys (`gate.theta0/beta`, `W_r`, `W_k`, `q`, bare `code_emb`/`enc_mlp`, `f_history`/`f_age`). Missing `persistence_projection.*` triggers an explicit warning and leaves zero init (θ_m ≈ θ₀). Not silently ignored.
+
+### Config fields saved per run
+
+```text
+content_dependent_persistence: true
+persistence_projection: linear
+temporal_aggregation: raw_additive
+num_content_queries: 1
+age_conditioning: linear_softplus
+beta_scope: global
+```
+
+### Tests passed
+
+All 29 tests in `tests/test_dtr.py`, including the 20 required contract checks (β=0 arm identity, gradients to β/θ₀/persistence, pad masking, raw additive, no softmax, S2/S3 sign capacity, no GT leakage, matched init, etc.).
+
+### Regression results (`results/canonical_dtr/regression_summary.json`)
+
+| Scenario | β̂ | Expectation | Pass |
+|---|---|---|---|
+| S0 | +0.009 | β≈0, β=0 ablation ≈0 | Yes |
+| S1 | +0.075 | ordinary age ok; interaction inert | Yes |
+| S2 | −2.358 | β<0; age-shuffle / β=0 hurt | Yes |
+| S3 | +2.065 | β>0 | Yes |
+
+S2 smoke (8 epochs): β̂=−1.92, AUROC=0.922.
+
+S5 heterogeneous persistence:
+
+- Content-Persistence AUPRC **0.817** > global-persistence baseline **0.812**
+- Learned group offsets: acute **+1.11** > intermediate **+0.20** > chronic **−0.53** (correct ordering)
+
+### Multi-horizon note
+
+Multi-horizon supervision is currently experimental and is not part of the locked canonical architecture because naive joint training with content persistence inverted beta on the synthetic S2 benchmark.
+
+### Verdict
+
+**CANONICAL CONTENT-PERSISTENCE DTR IMPLEMENTATION READY**

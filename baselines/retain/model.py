@@ -18,17 +18,30 @@ using Reverse Time Attention Mechanism", NeurIPS 2016.
 from __future__ import annotations
 
 import json
-import math
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 from baselines.common.interface import BaselineModel, ModelOutput
 from baselines.common.registry import register_baseline
+
+
+def _reverse_padded(x: torch.Tensor, lengths: torch.Tensor) -> torch.Tensor:
+    """Reverse the valid (left) prefix of a right-padded sequence batch.
+
+    Args:
+        x: [B, T, D]
+        lengths: [B] valid lengths
+    """
+    B, T, D = x.shape
+    idx = torch.arange(T, device=x.device).unsqueeze(0).expand(B, -1)
+    gather_idx = (lengths.unsqueeze(1) - 1 - idx).clamp(min=0)
+    out = x.gather(1, gather_idx.unsqueeze(-1).expand(B, T, D))
+    valid = (idx < lengths.unsqueeze(1)).unsqueeze(-1).to(dtype=x.dtype)
+    return out * valid
 
 
 @register_baseline("retain")
@@ -49,8 +62,11 @@ class RETAINModel(BaselineModel, nn.Module):
         self.d_emb = d_emb
         self.d_rnn = d_rnn
 
-        # Code embedding: multi-hot → dense
-        self.code_embedding = nn.Linear(n_codes, d_emb)
+        # Vocab: PAD=0, UNK=1, real codes = v+2 (model_new.data collate).
+        # Event-level "micro-visits" are single-code, so Embedding is equivalent
+        # to Linear(multi-hot) without building a B×L×|V| dense tensor.
+        self.vocab_size = n_codes + 2
+        self.code_embedding = nn.Embedding(self.vocab_size, d_emb, padding_idx=0)
 
         # Reverse-time GRU for α (scalar visit attention)
         self.gru_alpha = nn.GRU(
@@ -96,104 +112,74 @@ class RETAINModel(BaselineModel, nn.Module):
             "ffn_size": "N/A",
             "max_seq_len": "unlimited (sequential)",
             "d_emb": self.d_emb,
+            "vocab_size": self.vocab_size,
         }
 
     def _build_visit_embeddings(self, batch: dict[str, torch.Tensor]) -> tuple[torch.Tensor, torch.Tensor, int]:
-        """Convert event-level batch to visit-level multi-hot embeddings.
+        """Convert event-level batch to visit-level embeddings (vectorized).
 
-        For the synthetic benchmark we group by is_query and encounter-level structure.
-        For simplicity, each event is treated as its own "micro-visit" — this is
-        equivalent to event-level RETAIN but respects the canonical interface.
+        Each event is treated as its own micro-visit (single code). Equivalent to
+        one-hot → Linear, but O(B·L·d) instead of O(B·L·|V|).
 
         Returns (visit_emb [B, T, d_emb], mask [B, T], T).
         """
         code_ids = batch["code_ids"]  # [B, L]
         B, L = code_ids.shape
-        pad_mask = batch.get("padding_mask", torch.zeros(B, L, dtype=torch.bool))
-        is_query = batch.get("is_query", torch.zeros(B, L, dtype=torch.bool))
-
-        # Build multi-hot per event (treating each event as a micro-visit)
         device = code_ids.device
-        multi_hot = torch.zeros(B, L, self.n_codes, device=device, dtype=torch.float32)
-        for i in range(B):
-            for j in range(L):
-                if not pad_mask[i, j] and not is_query[i, j]:
-                    cid = int(code_ids[i, j])
-                    if 0 < cid < self.n_codes:
-                        multi_hot[i, j, cid] = 1.0
-
-        # valid_mask: True where there is a real event (not pad, not query)
+        pad_mask = batch.get(
+            "padding_mask", torch.zeros(B, L, dtype=torch.bool, device=device)
+        )
+        is_query = batch.get(
+            "is_query", torch.zeros(B, L, dtype=torch.bool, device=device)
+        )
         valid_mask = (~pad_mask) & (~is_query)  # [B, L]
 
-        # Embed
-        visit_emb = self.code_embedding(multi_hot)  # [B, L, d_emb]
+        # Clamp to vocab; zero out pads/queries/invalid ids after lookup.
+        safe_ids = code_ids.clamp(0, self.vocab_size - 1)
+        visit_emb = self.code_embedding(safe_ids)
+        invalid = (~valid_mask) | (code_ids <= 0) | (code_ids >= self.vocab_size)
+        visit_emb = visit_emb.masked_fill(invalid.unsqueeze(-1), 0.0)
         return visit_emb, valid_mask, L
 
     def _reverse_time_pass(
         self, visit_emb: torch.Tensor, mask: torch.Tensor,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        """Run reverse-time GRUs for α and β.
-
-        Args:
-            visit_emb: [B, T, d_emb] visit embeddings (chronological order)
-            mask: [B, T] True = valid visit
-
-        Returns:
-            alpha: [B, T] scalar visit attention (softmaxed)
-            beta:  [B, T, d_emb] vector variable attention (tanh)
-            context: [B, d_emb] weighted sum
-        """
-        B, T, D = visit_emb.shape
-
-        # Reverse the sequence (RETAIN processes history from most recent to oldest)
-        # We flip along the time dimension, then unflip after GRU
+        """Run reverse-time GRUs for α and β (fully vectorized reverse)."""
+        B, T, _D = visit_emb.shape
         lengths = mask.sum(dim=1).long().clamp(min=1)
-        # Reverse the visit embeddings for valid entries
-        reversed_emb = torch.zeros_like(visit_emb)
-        for i in range(B):
-            n = int(lengths[i])
-            if n > 0:
-                reversed_emb[i, :n] = visit_emb[i, :n].flip(0)
 
-        # Pack padded sequences for efficient GRU
+        reversed_emb = _reverse_padded(visit_emb, lengths)
+
         packed = nn.utils.rnn.pack_padded_sequence(
             reversed_emb, lengths.cpu().clamp(min=1),
             batch_first=True, enforce_sorted=False,
         )
 
-        # Alpha pathway
         h_alpha, _ = self.gru_alpha(packed)
-        h_alpha, _ = nn.utils.rnn.pad_packed_sequence(h_alpha, batch_first=True, total_length=T)
+        h_alpha, _ = nn.utils.rnn.pad_packed_sequence(
+            h_alpha, batch_first=True, total_length=T
+        )
 
-        # Beta pathway
         h_beta, _ = self.gru_beta(packed)
-        h_beta, _ = nn.utils.rnn.pad_packed_sequence(h_beta, batch_first=True, total_length=T)
+        h_beta, _ = nn.utils.rnn.pad_packed_sequence(
+            h_beta, batch_first=True, total_length=T
+        )
 
-        # Un-reverse to align with original time order
-        h_alpha_fwd = torch.zeros_like(h_alpha)
-        h_beta_fwd = torch.zeros_like(h_beta)
-        for i in range(B):
-            n = int(lengths[i])
-            if n > 0:
-                h_alpha_fwd[i, :n] = h_alpha[i, :n].flip(0)
-                h_beta_fwd[i, :n] = h_beta[i, :n].flip(0)
+        h_alpha_fwd = _reverse_padded(h_alpha, lengths)
+        h_beta_fwd = _reverse_padded(h_beta, lengths)
 
-        # Scalar attention α
         alpha_logits = self.alpha_fc(h_alpha_fwd).squeeze(-1)  # [B, T]
         alpha_logits = alpha_logits.masked_fill(~mask, float("-inf"))
         alpha = torch.softmax(alpha_logits, dim=-1)
         alpha = torch.nan_to_num(alpha, nan=0.0)
 
-        # Variable attention β
         beta = torch.tanh(self.beta_fc(h_beta_fwd))  # [B, T, d_emb]
-
-        # Context: weighted sum of β ⊙ v
         context = (alpha.unsqueeze(-1) * beta * visit_emb).sum(dim=1)  # [B, d_emb]
 
         return alpha, beta, context
 
     def forward(self, batch: dict[str, torch.Tensor]) -> ModelOutput:
-        visit_emb, mask, T = self._build_visit_embeddings(batch)
+        visit_emb, mask, _T = self._build_visit_embeddings(batch)
         alpha, beta, context = self._reverse_time_pass(visit_emb, mask)
         context = self.dropout(context)
         logits = self.head(context)
@@ -222,6 +208,7 @@ class RETAINModel(BaselineModel, nn.Module):
             json.dump({
                 "n_codes": self.n_codes, "n_targets": self.n_targets,
                 "d_emb": self.d_emb, "d_rnn": self.d_rnn,
+                "vocab_size": self.vocab_size,
             }, f)
 
     def load_checkpoint(self, path: Path) -> None:

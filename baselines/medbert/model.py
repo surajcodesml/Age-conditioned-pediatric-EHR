@@ -63,8 +63,10 @@ class MedBERTModel(BaselineModel, nn.Module):
         self.max_visits = max_visits
         self.max_serial = max_serial
 
+        # Collate: PAD=0, UNK=1, real=v+2 → need n_codes+2 slots
+        self.vocab_size = n_codes + 2
         # Embeddings: code + visit index + within-visit serialization
-        self.code_embedding = nn.Embedding(n_codes, d_model, padding_idx=0)
+        self.code_embedding = nn.Embedding(self.vocab_size, d_model, padding_idx=0)
         self.visit_embedding = nn.Embedding(max_visits, d_model)
         self.serial_embedding = nn.Embedding(max_serial, d_model)
 
@@ -143,7 +145,7 @@ class MedBERTModel(BaselineModel, nn.Module):
         code_ids, visit_ids, serial_ids, key_pad_mask = self._prepare_input(batch)
         B, L = code_ids.shape
 
-        code_emb = self.code_embedding(code_ids)
+        code_emb = self.code_embedding(code_ids.clamp(0, self.vocab_size - 1))
         visit_emb = self.visit_embedding(visit_ids)
         serial_emb = self.serial_embedding(serial_ids)
 

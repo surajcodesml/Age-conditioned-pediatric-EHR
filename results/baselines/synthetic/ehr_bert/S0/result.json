@@ -215,5 +215,54 @@
     "hidden_size": 256,
     "ffn_size": 1024,
     "max_seq_len": 112
-  }
+  },
+  "cf_report": {
+    "cf_rmse_age": 0.12972364507893944,
+    "cf_rmse_lag": 0.11081118987605869,
+    "surface_rmse": 0.13522214569877658,
+    "CF_RMSE_age": 0.12972364507893944,
+    "CF_RMSE_lag": 0.11081118987605869,
+    "Surface_RMSE": 0.13522214569877658,
+    "mechanism_classification": "PARTIAL_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "ehr_bert",
+    "scenario": "S0"
+  },
+  "benchmark_record": {
+    "scenario": "S0",
+    "model": "ehr_bert",
+    "AUROC": 0.6775180440999151,
+    "AUPRC": 0.4132730405173286,
+    "BCE": 0.5231726564634825,
+    "CF_RMSE_age": 0.12972364507893944,
+    "CF_RMSE_lag": 0.11081118987605869,
+    "Surface_RMSE": 0.13522214569877658,
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "mechanism_classification": "PARTIAL_RECOVERY"
+  },
+  "AUROC": 0.6775180440999151,
+  "AUPRC": 0.4132730405173286,
+  "BCE": 0.5231726564634825,
+  "CF_RMSE_age": 0.12972364507893944,
+  "CF_RMSE_lag": 0.11081118987605869,
+  "Surface_RMSE": 0.13522214569877658,
+  "S5_Surface_RMSE_acute": null,
+  "S5_Surface_RMSE_intermediate": null,
+  "S5_Surface_RMSE_chronic": null,
+  "S5_Surface_RMSE_mean": null,
+  "persistence_order_correct": null,
+  "mechanism_classification": "PARTIAL_RECOVERY"
 }

@@ -1,0 +1,55 @@
+{
+  "rule": "Paper names are unambiguous. Content-Persistence DTR is not the same run as Previous DTR (age\u00d7temporal).",
+  "shared_full_label": {
+    "dtr_age_temporal": {
+      "paper_name": "Previous DTR (age\u00d7temporal)",
+      "model_family": "previous_dtr"
+    },
+    "dtr_temporal_only": {
+      "paper_name": "Previous DTR (temporal-only)",
+      "model_family": "previous_dtr"
+    },
+    "dtr_age_only": {
+      "paper_name": "Previous DTR (age-only)",
+      "model_family": "previous_dtr"
+    },
+    "dtr_no_age": {
+      "paper_name": "Previous DTR (no age)",
+      "model_family": "previous_dtr"
+    },
+    "count_lightgbm": {
+      "paper_name": "Count + LightGBM",
+      "model_family": "count_baseline"
+    },
+    "retain": {
+      "paper_name": "RETAIN",
+      "model_family": "neural_baseline"
+    },
+    "ehr_bert": {
+      "paper_name": "EHR-BERT",
+      "model_family": "neural_baseline"
+    },
+    "medbert": {
+      "paper_name": "Med-BERT",
+      "model_family": "neural_baseline"
+    },
+    "behrt": {
+      "paper_name": "BEHRT",
+      "model_family": "neural_baseline"
+    },
+    "cehrbert": {
+      "paper_name": "CEHR-BERT",
+      "model_family": "neural_baseline"
+    }
+  },
+  "content_persistence_interaction_only": {
+    "reg_{S}_dtr_age_temporal": "Content-Persistence DTR",
+    "reg_{S}_dtr_temporal_only": "DTR temporal-only",
+    "S5_canonical": "Content-Persistence DTR",
+    "S5_baseline_global": "Global-Persistence DTR"
+  },
+  "excluded": {
+    "dtr/": "empty stub, incomplete",
+    "_smoke/": "smoke runs, not the final benchmark"
+  }
+}

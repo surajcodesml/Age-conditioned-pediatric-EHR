@@ -1,0 +1,190 @@
+{
+  "dataset": {
+    "synthea_version": "master-branch-latest",
+    "synthea_commit": "aa0772fb5e92e48a776c51508c00eddc0d9d27ff",
+    "geography": "Massachusetts",
+    "reference_date": "20260101",
+    "n_patients_source": 10000,
+    "n_background_events_synthea_source": 3275125,
+    "pediatric_age_years_source": {
+      "min": 0.0027378507871321013,
+      "max": 17.99315537303217
+    },
+    "controlled_cohort_n": 7007,
+    "controlled_age_min_years": 2.0,
+    "full_realism_cohort_n": 10000,
+    "full_realism_used_for_these_runs": false,
+    "split": {
+      "train": 4906,
+      "val": 1070,
+      "test": 1031,
+      "fractions": {
+        "train": 0.7,
+        "val": 0.15,
+        "test": 0.15
+      },
+      "seed": 20260922
+    },
+    "patient_disjoint": true,
+    "same_patient_ids_across_S0_S1_S2_S3_S5": true,
+    "signal_codes": [
+      "SYN_SIGNAL_A",
+      "SYN_SIGNAL_B",
+      "SYN_SIGNAL_C",
+      "SYN_SIGNAL_D",
+      "SYN_SIGNAL_E",
+      "SYN_SIGNAL_F",
+      "SYN_SIGNAL_G",
+      "SYN_SIGNAL_H",
+      "SYN_SIGNAL_I",
+      "SYN_SIGNAL_J",
+      "SYN_SIGNAL_K",
+      "SYN_SIGNAL_L"
+    ],
+    "signals_per_patient": "integer draw from 4 through 8 inclusive",
+    "signal_lags_days": [
+      7,
+      30,
+      90,
+      180,
+      365,
+      730
+    ],
+    "lag_jitter": [
+      0.9,
+      1.1
+    ],
+    "background_events_kept": "newest 64 Synthea events with timestamp strictly before the cutoff",
+    "max_sequence_length": 96,
+    "prediction_cutoff": "patient index_date; history requires event_timestamp < cutoff",
+    "n_targets": 32,
+    "target_counts": {
+      "interaction": 8,
+      "temporal_only": 6,
+      "age_only": 6,
+      "content_only": 6,
+      "null": 6
+    }
+  },
+  "equations": {
+    "z": "(a-9)/9",
+    "tau": "log(1+delta_t_days/7)",
+    "lambda": "softplus(theta + beta * z(a))",
+    "relevance": "exp(-lambda * tau)"
+  },
+  "scenarios": {
+    "S0": {
+      "beta_true": 0.0,
+      "theta0": 0.0,
+      "has_interaction": false,
+      "age_main_effect": 0.0,
+      "meta_beta": 0.0
+    },
+    "S1": {
+      "beta_true": 0.0,
+      "theta0": 0.0,
+      "has_interaction": false,
+      "age_main_effect": 1.2,
+      "meta_beta": 0.0
+    },
+    "S2": {
+      "beta_true": -2.5,
+      "theta0": 0.0,
+      "has_interaction": true,
+      "age_main_effect": 0.0,
+      "meta_beta": -2.5
+    },
+    "S3": {
+      "beta_true": 2.5,
+      "theta0": 0.0,
+      "has_interaction": true,
+      "age_main_effect": 0.0,
+      "meta_beta": 2.5
+    },
+    "S5": {
+      "beta_true": -2.5,
+      "theta0": 0.0,
+      "has_interaction": true,
+      "group_theta": {
+        "acute": 1.0,
+        "intermediate": 0.0,
+        "chronic": -1.0
+      },
+      "groups": {
+        "acute": [
+          "SYN_SIGNAL_A",
+          "SYN_SIGNAL_B",
+          "SYN_SIGNAL_C",
+          "SYN_SIGNAL_D"
+        ],
+        "intermediate": [
+          "SYN_SIGNAL_E",
+          "SYN_SIGNAL_F",
+          "SYN_SIGNAL_G",
+          "SYN_SIGNAL_H"
+        ],
+        "chronic": [
+          "SYN_SIGNAL_I",
+          "SYN_SIGNAL_J",
+          "SYN_SIGNAL_K",
+          "SYN_SIGNAL_L"
+        ]
+      },
+      "temporal_only_lambda": 0.8,
+      "meta_beta": -2.5
+    }
+  },
+  "cf_grids": {
+    "CF_AGES": [
+      2,
+      5,
+      9,
+      13,
+      17
+    ],
+    "CF_LAGS_DAYS": [
+      7,
+      30,
+      90,
+      180,
+      365,
+      730
+    ],
+    "SURFACE_AGES": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+    ],
+    "SURFACE_LAGS_DAYS": [
+      0,
+      7,
+      30,
+      90,
+      180,
+      365,
+      730
+    ],
+    "functional_surface_rmse": 0.1,
+    "partial_surface_rmse": 0.25,
+    "s0_max_cf_age_rmse": 0.05,
+    "unique_thresholds_in_reports": [
+      "{\"functional\": 0.1, \"partial\": 0.25, \"s0_max_cf_age\": 0.05}"
+    ]
+  }
+}

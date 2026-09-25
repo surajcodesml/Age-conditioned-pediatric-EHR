@@ -1,0 +1,6 @@
+comparison,metric,estimate,ci_low,ci_high,status
+DTR vs temporal-only,S2 AUPRC,NA,NA,NA,bootstrap unavailable from saved artifacts
+DTR vs temporal-only,S2 AUROC,NA,NA,NA,bootstrap unavailable from saved artifacts
+DTR vs temporal-only,S2 Surface RMSE,NA,NA,NA,bootstrap unavailable from saved artifacts
+DTR vs temporal-only,S3 AUPRC,NA,NA,NA,bootstrap unavailable from saved artifacts
+DTR vs temporal-only,S5 AUPRC,NA,NA,NA,bootstrap unavailable from saved artifacts

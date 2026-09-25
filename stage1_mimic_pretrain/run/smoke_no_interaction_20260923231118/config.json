@@ -1,0 +1,166 @@
+{
+  "run_id": "smoke_no_interaction_20260923231118",
+  "git_commit": "d94b8f26077611e405bc82d62f8bac305a940354",
+  "git_dirty": true,
+  "seed": 0,
+  "arm": "no_interaction",
+  "timestamp": "2026-09-23T23:11:18",
+  "model": {
+    "arm": "no_interaction",
+    "attention_equation": "s_ij^(h) = q_i^(h)^T k_j^(h) / sqrt(d_h) - [lambda0 + beta * z(a_i)] * tau_ij",
+    "lambda0_beta": "single scalars shared across all attention heads (not per-head)",
+    "d_model": 64,
+    "n_layers": 1,
+    "n_heads": 4,
+    "d_head": 16,
+    "use_residual": true,
+    "use_layernorm": true,
+    "use_ffn": true,
+    "ffn_mult": 4,
+    "use_out_proj": true,
+    "demo_dim": 9,
+    "demo_channels": [
+      "age_years",
+      "sex",
+      "race_WHITE",
+      "race_BLACK",
+      "race_ASIAN",
+      "race_HISPANIC",
+      "race_AMERICAN_INDIAN",
+      "race_OTHER",
+      "race_UNKNOWN"
+    ],
+    "demo_hidden": 16,
+    "race_encoding": "one_hot",
+    "age_transform": {
+      "name": "standardize_years",
+      "formula": "z(a) = (a - mean) / sd",
+      "a_unit": "years (age_at_event_days / 365.25)",
+      "mean": 63.33600997924805,
+      "sd": 16.574804306030273,
+      "source": "model_new.data.corpus_stats event-level moments on MIMIC train",
+      "trainable": false,
+      "fourier": false,
+      "chebyshev": false,
+      "age_mlp": false
+    },
+    "tau_transform": {
+      "name": "log1p_weeks",
+      "formula": "tau_ij = log(1 + |t_i - t_j| / c)",
+      "c_days": 7.0,
+      "t_unit": "days from first event (timestamps_days)",
+      "implementation": "model_new.data.lag_to_tau (float64 abs, then log1p)",
+      "chebyshev_rescale": false,
+      "tau_max_used": false
+    },
+    "embedding_dim": 1024,
+    "masking": "padding_only",
+    "pooling": "attention_relevance_only (no lambda/beta)",
+    "pool_temporal_bias": false,
+    "experimental_difference": "self-attention lambda(a)*tau only; pooling identical across arms",
+    "head_in": 80,
+    "head_out": 30635,
+    "head_final_bias": -7.0,
+    "task": "pretrain",
+    "obsolete_disabled": [
+      "LogAgeFourier / LinearAgeFourier",
+      "ChebyshevKernel / polynomial temporal basis",
+      "AgeConditioner MLP / coefficient generator",
+      "per-head lambda/beta"
+    ]
+  },
+  "params": {
+    "backbone": 301984,
+    "age": 1,
+    "head": 2487915,
+    "frozen_embedding": 31372288,
+    "total_trainable": 2789900,
+    "lambda0_trainable": 1,
+    "beta_trainable": 0
+  },
+  "optim": {
+    "lr_backbone": 0.0001,
+    "lr_age": 0.001,
+    "lr_head": 0.001,
+    "n_tensors": {
+      "backbone": 20,
+      "age": 1,
+      "head": 4
+    },
+    "n_params": {
+      "backbone": 301984,
+      "age": 1,
+      "head": 2487915
+    },
+    "batch_size": 4,
+    "epochs": 2,
+    "optimizer": "Adam",
+    "grad_clip": 1.0
+  },
+  "data": {
+    "paths": {
+      "tensorized_dir": "/home/suraj/Git/Age-conditioned-pediatric-EHR/stage1_mimic_pretrain/run/smoke_no_interaction_20260923231118/data_subset",
+      "embedding_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/bge_embeddings.pt",
+      "vocab_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/data/processed/code_vocab.json"
+    },
+    "split_sizes": {
+      "train": 8,
+      "val": 8,
+      "test": 8
+    },
+    "max_seq_len": 32,
+    "age_transform": {
+      "name": "standardize_years",
+      "formula": "z(a) = (a - mean) / sd",
+      "a_unit": "years (age_at_event_days / 365.25)",
+      "mean": 63.33601047086648,
+      "sd": 16.574804662346914,
+      "source": "model_new.data.corpus_stats event-level moments on MIMIC train",
+      "trainable": false,
+      "fourier": false,
+      "chebyshev": false,
+      "age_mlp": false
+    },
+    "tau_transform": {
+      "name": "log1p_weeks",
+      "formula": "tau_ij = log(1 + |t_i - t_j| / c)",
+      "c_days": 7.0,
+      "t_unit": "days from first event (timestamps_days)",
+      "implementation": "model_new.data.lag_to_tau (float64 abs, then log1p)",
+      "chebyshev_rescale": false,
+      "tau_max_used": false
+    },
+    "target": {
+      "name": "future_visit_codes",
+      "input": "events with timestamp < start_time(V_{m+1}) (strict); ties go to target",
+      "target": "multi-hot code set of hadm-visit V_{m+1}, UNK dropped",
+      "horizon": "next admission/visit; not a fixed calendar window",
+      "masking": "padding_only (not causal); target visit is outside the input window",
+      "implementation": "model_new.data.TensorizedPretrainDataset",
+      "loss": "BCEWithLogitsLoss, unweighted, no pos_weight"
+    },
+    "corpus_stats": {
+      "source": "frozen_mimic_defaults",
+      "age_mean": 63.33601047086648,
+      "age_sd": 16.574804662346914,
+      "age_median": 58.702868326488705
+    },
+    "patient_splits": {},
+    "class_imbalance": {
+      "n_examples": 8,
+      "n_classes": 30635,
+      "mean_prevalence": 0.0013587400317192078,
+      "median_prevalence": 0.0,
+      "max_prevalence": 0.625,
+      "frac_classes_never_positive": 0.9933409498939122,
+      "mean_positives_per_example": 41.625,
+      "weighting": "none (existing pipeline: unweighted BCEWithLogitsLoss, no pos_weight)"
+    }
+  },
+  "env": {
+    "torch": "2.8.0+rocm6.4",
+    "python": "3.10.19",
+    "device": "cpu",
+    "gpu": "AMD Radeon AI PRO R9700"
+  }
+}

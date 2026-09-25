@@ -1,0 +1,104 @@
+{
+  "model": "retain",
+  "scenario": "S5",
+  "seed": 0,
+  "n_codes": 566,
+  "n_targets": 32,
+  "smoke": true,
+  "benchmark_family": "heterogeneous_persistence",
+  "AUROC": null,
+  "AUPRC": null,
+  "BCE": null,
+  "CF_RMSE_age": null,
+  "CF_RMSE_lag": null,
+  "Surface_RMSE": null,
+  "S5_Surface_RMSE_acute": null,
+  "S5_Surface_RMSE_intermediate": null,
+  "S5_Surface_RMSE_chronic": null,
+  "S5_Surface_RMSE_mean": null,
+  "persistence_order_correct": null,
+  "mechanism_classification": null,
+  "param_counts": {
+    "trainable_params": 291489,
+    "total_params": 291489,
+    "embedding_params": 0,
+    "non_embedding_trainable": 291489
+  },
+  "train": {
+    "best_val_bce": 0.5529297423601285,
+    "best_epoch": 2,
+    "last_epoch": 2,
+    "epochs_trained": 2,
+    "max_epochs": 2,
+    "min_epochs": 2,
+    "patience": 5,
+    "stopped_early": false,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.5809287896848337,
+        "val_bce": 0.55980061229717,
+        "val_micro_auroc": 0.573470508670956,
+        "val_macro_auroc": 0.568104592080196,
+        "val_micro_auprc": 0.3089294428848014,
+        "val_macro_auprc": 0.30764279289118707,
+        "val_precision@5": 0.32168224299065423,
+        "val_recall@5": 0.19990700048836385,
+        "time_s": 104.1011106967926
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.5546973142583079,
+        "val_bce": 0.5529297423601285,
+        "val_micro_auroc": 0.605933444646559,
+        "val_macro_auroc": 0.59552815851863,
+        "val_micro_auprc": 0.3382537941411041,
+        "val_macro_auprc": 0.32733041420621095,
+        "val_precision@5": 0.35158878504672897,
+        "val_recall@5": 0.2193333965069809,
+        "time_s": 219.48093962669373
+      }
+    ],
+    "total_time_s": 219.48982048034668,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/_smoke/retain/S5/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/_smoke/retain/S5/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/_smoke/retain/S5/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.5533636804248636,
+    "micro_auroc": 0.5992190966671602,
+    "macro_auroc": 0.5871787740562946,
+    "micro_auprc": 0.33058893582860793,
+    "macro_auprc": 0.3206277040532956,
+    "precision@5": 0.3551891367604268,
+    "recall@5": 0.2233553297782772
+  },
+  "model_card": {
+    "trainable_params": 291489,
+    "embedding_params": 72576,
+    "layers": "2 GRUs",
+    "heads": "N/A",
+    "hidden_size": 128,
+    "ffn_size": "N/A",
+    "max_seq_len": "unlimited (sequential)",
+    "d_emb": 128
+  },
+  "benchmark_record": {
+    "scenario": "S5",
+    "model": "retain",
+    "AUROC": 0.5992190966671602,
+    "AUPRC": 0.33058893582860793,
+    "BCE": 0.5533636804248636,
+    "CF_RMSE_age": null,
+    "CF_RMSE_lag": null,
+    "Surface_RMSE": null,
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "mechanism_classification": null
+  }
+}

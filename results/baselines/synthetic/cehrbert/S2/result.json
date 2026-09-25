@@ -277,5 +277,54 @@
     "max_seq_len": 112,
     "age_representation": "time2vec",
     "time_representation": "time2vec"
-  }
+  },
+  "cf_report": {
+    "cf_rmse_age": 0.09827911344233253,
+    "cf_rmse_lag": 0.1107840133457542,
+    "surface_rmse": 0.13078465452453683,
+    "CF_RMSE_age": 0.09827911344233253,
+    "CF_RMSE_lag": 0.1107840133457542,
+    "Surface_RMSE": 0.13078465452453683,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "cehrbert",
+    "scenario": "S2"
+  },
+  "benchmark_record": {
+    "scenario": "S2",
+    "model": "cehrbert",
+    "AUROC": 0.7635682281963081,
+    "AUPRC": 0.5818115186216142,
+    "BCE": 0.45627353794076914,
+    "CF_RMSE_age": 0.09827911344233253,
+    "CF_RMSE_lag": 0.1107840133457542,
+    "Surface_RMSE": 0.13078465452453683,
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY"
+  },
+  "AUROC": 0.7635682281963081,
+  "AUPRC": 0.5818115186216142,
+  "BCE": 0.45627353794076914,
+  "CF_RMSE_age": 0.09827911344233253,
+  "CF_RMSE_lag": 0.1107840133457542,
+  "Surface_RMSE": 0.13078465452453683,
+  "S5_Surface_RMSE_acute": null,
+  "S5_Surface_RMSE_intermediate": null,
+  "S5_Surface_RMSE_chronic": null,
+  "S5_Surface_RMSE_mean": null,
+  "persistence_order_correct": null,
+  "mechanism_classification": "NO_MECHANISM_RECOVERY"
 }

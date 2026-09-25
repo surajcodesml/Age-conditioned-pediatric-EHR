@@ -1,0 +1,183 @@
+tree
+version=v4
+num_class=1
+num_tree_per_iteration=1
+label_index=0
+max_feature_idx=567
+objective=binary sigmoid:1
+feature_names=Column_0 Column_1 Column_2 Column_3 Column_4 Column_5 Column_6 Column_7 Column_8 Column_9 Column_10 Column_11 Column_12 Column_13 Column_14 Column_15 Column_16 Column_17 Column_18 Column_19 Column_20 Column_21 Column_22 Column_23 Column_24 Column_25 Column_26 Column_27 Column_28 Column_29 Column_30 Column_31 Column_32 Column_33 Column_34 Column_35 Column_36 Column_37 Column_38 Column_39 Column_40 Column_41 Column_42 Column_43 Column_44 Column_45 Column_46 Column_47 Column_48 Column_49 Column_50 Column_51 Column_52 Column_53 Column_54 Column_55 Column_56 Column_57 Column_58 Column_59 Column_60 Column_61 Column_62 Column_63 Column_64 Column_65 Column_66 Column_67 Column_68 Column_69 Column_70 Column_71 Column_72 Column_73 Column_74 Column_75 Column_76 Column_77 Column_78 Column_79 Column_80 Column_81 Column_82 Column_83 Column_84 Column_85 Column_86 Column_87 Column_88 Column_89 Column_90 Column_91 Column_92 Column_93 Column_94 Column_95 Column_96 Column_97 Column_98 Column_99 Column_100 Column_101 Column_102 Column_103 Column_104 Column_105 Column_106 Column_107 Column_108 Column_109 Column_110 Column_111 Column_112 Column_113 Column_114 Column_115 Column_116 Column_117 Column_118 Column_119 Column_120 Column_121 Column_122 Column_123 Column_124 Column_125 Column_126 Column_127 Column_128 Column_129 Column_130 Column_131 Column_132 Column_133 Column_134 Column_135 Column_136 Column_137 Column_138 Column_139 Column_140 Column_141 Column_142 Column_143 Column_144 Column_145 Column_146 Column_147 Column_148 Column_149 Column_150 Column_151 Column_152 Column_153 Column_154 Column_155 Column_156 Column_157 Column_158 Column_159 Column_160 Column_161 Column_162 Column_163 Column_164 Column_165 Column_166 Column_167 Column_168 Column_169 Column_170 Column_171 Column_172 Column_173 Column_174 Column_175 Column_176 Column_177 Column_178 Column_179 Column_180 Column_181 Column_182 Column_183 Column_184 Column_185 Column_186 Column_187 Column_188 Column_189 Column_190 Column_191 Column_192 Column_193 Column_194 Column_195 Column_196 Column_197 Column_198 Column_199 Column_200 Column_201 Column_202 Column_203 Column_204 Column_205 Column_206 Column_207 Column_208 Column_209 Column_210 Column_211 Column_212 Column_213 Column_214 Column_215 Column_216 Column_217 Column_218 Column_219 Column_220 Column_221 Column_222 Column_223 Column_224 Column_225 Column_226 Column_227 Column_228 Column_229 Column_230 Column_231 Column_232 Column_233 Column_234 Column_235 Column_236 Column_237 Column_238 Column_239 Column_240 Column_241 Column_242 Column_243 Column_244 Column_245 Column_246 Column_247 Column_248 Column_249 Column_250 Column_251 Column_252 Column_253 Column_254 Column_255 Column_256 Column_257 Column_258 Column_259 Column_260 Column_261 Column_262 Column_263 Column_264 Column_265 Column_266 Column_267 Column_268 Column_269 Column_270 Column_271 Column_272 Column_273 Column_274 Column_275 Column_276 Column_277 Column_278 Column_279 Column_280 Column_281 Column_282 Column_283 Column_284 Column_285 Column_286 Column_287 Column_288 Column_289 Column_290 Column_291 Column_292 Column_293 Column_294 Column_295 Column_296 Column_297 Column_298 Column_299 Column_300 Column_301 Column_302 Column_303 Column_304 Column_305 Column_306 Column_307 Column_308 Column_309 Column_310 Column_311 Column_312 Column_313 Column_314 Column_315 Column_316 Column_317 Column_318 Column_319 Column_320 Column_321 Column_322 Column_323 Column_324 Column_325 Column_326 Column_327 Column_328 Column_329 Column_330 Column_331 Column_332 Column_333 Column_334 Column_335 Column_336 Column_337 Column_338 Column_339 Column_340 Column_341 Column_342 Column_343 Column_344 Column_345 Column_346 Column_347 Column_348 Column_349 Column_350 Column_351 Column_352 Column_353 Column_354 Column_355 Column_356 Column_357 Column_358 Column_359 Column_360 Column_361 Column_362 Column_363 Column_364 Column_365 Column_366 Column_367 Column_368 Column_369 Column_370 Column_371 Column_372 Column_373 Column_374 Column_375 Column_376 Column_377 Column_378 Column_379 Column_380 Column_381 Column_382 Column_383 Column_384 Column_385 Column_386 Column_387 Column_388 Column_389 Column_390 Column_391 Column_392 Column_393 Column_394 Column_395 Column_396 Column_397 Column_398 Column_399 Column_400 Column_401 Column_402 Column_403 Column_404 Column_405 Column_406 Column_407 Column_408 Column_409 Column_410 Column_411 Column_412 Column_413 Column_414 Column_415 Column_416 Column_417 Column_418 Column_419 Column_420 Column_421 Column_422 Column_423 Column_424 Column_425 Column_426 Column_427 Column_428 Column_429 Column_430 Column_431 Column_432 Column_433 Column_434 Column_435 Column_436 Column_437 Column_438 Column_439 Column_440 Column_441 Column_442 Column_443 Column_444 Column_445 Column_446 Column_447 Column_448 Column_449 Column_450 Column_451 Column_452 Column_453 Column_454 Column_455 Column_456 Column_457 Column_458 Column_459 Column_460 Column_461 Column_462 Column_463 Column_464 Column_465 Column_466 Column_467 Column_468 Column_469 Column_470 Column_471 Column_472 Column_473 Column_474 Column_475 Column_476 Column_477 Column_478 Column_479 Column_480 Column_481 Column_482 Column_483 Column_484 Column_485 Column_486 Column_487 Column_488 Column_489 Column_490 Column_491 Column_492 Column_493 Column_494 Column_495 Column_496 Column_497 Column_498 Column_499 Column_500 Column_501 Column_502 Column_503 Column_504 Column_505 Column_506 Column_507 Column_508 Column_509 Column_510 Column_511 Column_512 Column_513 Column_514 Column_515 Column_516 Column_517 Column_518 Column_519 Column_520 Column_521 Column_522 Column_523 Column_524 Column_525 Column_526 Column_527 Column_528 Column_529 Column_530 Column_531 Column_532 Column_533 Column_534 Column_535 Column_536 Column_537 Column_538 Column_539 Column_540 Column_541 Column_542 Column_543 Column_544 Column_545 Column_546 Column_547 Column_548 Column_549 Column_550 Column_551 Column_552 Column_553 Column_554 Column_555 Column_556 Column_557 Column_558 Column_559 Column_560 Column_561 Column_562 Column_563 Column_564 Column_565 Column_566 Column_567
+feature_infos=[2.0013689994812012:17.993154525756836] [-0.7776256799697876:0.99923950433731079] none none none [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] none none none none [0:1] [0:1] none [0:1] none [0:1] none none [0:1] none none none none [0:1] [0:1] [0:1] [0:1] [0:1] none [0:1] [0:1] [0:1] [0:1] none [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] none none none none none none none none none none [0:1] [0:1] none none none none none [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] none none [0:1] [0:1] [0:1] none [0:1] [0:1] [0:1] [0:1] [0:1] none [0:1] none none [0:1] none [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] none none none none none none none none none none none none none none none none none [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] none [0:1] [0:1] [0:1] [0:1] none [0:1] [0:1] none none none [0:1] [0:1] none none none none none [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] [0:1] none none none [0:1] none [0:1] [0:1] [0:1] none [0:1] [0:1] [0:1] [0:1] none none [0:1] [0:1] none none none none [0:1] [0:1] none none none [0:1] none none [0:1] [0:1] none none [0:1] [0:1] none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none none
+tree_sizes=3390
+
+Tree=0
+num_leaves=31
+num_cat=0
+split_feature=142 114 30 63 68 101 105 14 26 81 67 1 0 135 104 5 73 0 83 39 1 0 49 87 1 0 6 0 68 11
+split_gain=7.54223 7.14175 5.67764 4.79271 9.12401 5.78045 5.93398 8.1145 8.92009 5.52168 9.75363 4.88454 7.61365 8.78175 8.49745 7.73128 6.89548 6.41326 6.08108 5.62156 4.72935 4.70664 4.67941 8.24069 8.52258 4.71773 4.17507 4.11228 6.09676 4.04081
+threshold=1.0000000180025095e-35 1.0000000180025095e-35 1.0000000180025095e-35 1.0000000180025095e-35 1.0000000180025095e-35 1.0000000180025095e-35 1.0000000180025095e-35 1.0000000180025095e-35 1.0000000180025095e-35 1.0000000180025095e-35 1.0000000180025095e-35 -0.29652445018291468 4.8090348243713388 1.0000000180025095e-35 1.0000000180025095e-35 1.0000000180025095e-35 1.0000000180025095e-35 7.0814509391784677 1.0000000180025095e-35 1.0000000180025095e-35 -0.48056885600090021 10.925393581390383 1.0000000180025095e-35 1.0000000180025095e-35 0.93231424689292919 17.698836326599125 1.0000000180025095e-35 15.260780334472658 1.0000000180025095e-35 1.0000000180025095e-35
+decision_type=2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+left_child=1 3 -3 5 9 11 7 8 -7 10 -5 12 14 15 20 26 -15 -13 22 21 -1 -20 -19 24 -24 -26 -14 -23 -29 -6
+right_child=-2 2 -4 4 29 6 -8 -9 -10 -11 -12 17 13 16 -16 -17 -18 18 19 -21 -22 27 23 -25 25 -27 -28 28 -30 -31
+leaf_value=-1.1221932308993763 -1.0251219551034529 -1.1148207289401921 -0.96105140236292486 -0.97099338468473106 -1.0926798923602374 -1.075758359688709 -1.1468560053104562 -1.1251705874598159 -0.89675991668191235 -0.94183023654076647 -1.1596701158585618 -1.1667749692317688 -1.0210447381108738 -1.0829540592876663 -0.98027256818508324 -0.92981700790191746 -1.1490278884542029 -1.1363448915889687 -1.1112799878676893 -1.138564522014623 -1.1955496253932574 -1.0291991720960321 -1.126124232960269 -1.0169675211182947 -0.94183023654076647 -1.0923960354810074 -1.1515156818734036 -1.1872697385775584 -1.0251219551034529 -1.1791698493013312
+leaf_weight=162.76700127124786 8.9187397956848127 4.4593698978424072 5.2025982141494733 5.3884052932262438 14.67875924706459 5.7600194513797813 7.8038973212242118 7.2464760839939109 5.3884052932262421 5.2025982141494742 5.574212372303009 37.533029973506927 6.1316336095333117 56.485352039337158 4.0877557396888724 5.9458265304565421 21.925235331058502 282.24095311760902 28.242676019668579 25.269762754440308 9.2903539538383466 20.43877869844437 137.12562435865402 8.1755114793777448 3.9019486606121045 4.4593698978424072 4.0877557396888733 4.8309840559959394 4.4593698978424072 8.5471256375312805
+leaf_count=876 48 24 28 29 79 31 42 39 29 28 30 202 33 304 22 32 118 1519 152 136 50 110 738 44 21 24 22 26 24 46
+internal_value=-1.11663 -1.11753 -1.03202 -1.11846 -1.08436 -1.12003 -1.07379 -1.04279 -0.989242 -1.02667 -1.06693 -1.1215 -1.11048 -1.08759 -1.12277 -1.02048 -1.10143 -1.12686 -1.12397 -1.0992 -1.12615 -1.08205 -1.1287 -1.11466 -1.12015 -1.02213 -1.07323 -1.05427 -1.10944 -1.12451
+internal_weight=911.57 902.651 9.66197 892.989 39.3911 853.598 26.1988 18.3949 11.1484 16.1652 10.9626 827.399 270.721 94.5758 176.145 16.1652 78.4106 556.678 519.145 83.2416 172.057 57.9718 435.903 153.662 145.487 8.36132 10.2194 29.7291 9.29035 23.2259
+internal_count=4906 4858 52 4806 212 4594 141 99 60 87 59 4453 1457 509 948 87 422 2996 2794 448 926 312 2346 827 783 45 55 160 50 125
+is_linear=0
+shrinkage=1
+
+
+end of trees
+
+feature_importances:
+Column_0=5
+Column_1=3
+Column_68=2
+Column_5=1
+Column_6=1
+Column_11=1
+Column_14=1
+Column_26=1
+Column_30=1
+Column_39=1
+Column_49=1
+Column_63=1
+Column_67=1
+Column_73=1
+Column_81=1
+Column_83=1
+Column_87=1
+Column_101=1
+Column_104=1
+Column_105=1
+Column_114=1
+Column_135=1
+Column_142=1
+
+parameters:
+[boosting: gbdt]
+[objective: binary]
+[metric: binary_logloss]
+[tree_learner: serial]
+[device_type: cpu]
+[data_sample_strategy: bagging]
+[data: ]
+[valid: ]
+[num_iterations: 300]
+[learning_rate: 0.1]
+[num_leaves: 31]
+[num_threads: 0]
+[seed: 0]
+[deterministic: 0]
+[force_col_wise: 0]
+[force_row_wise: 0]
+[histogram_pool_size: -1]
+[max_depth: -1]
+[min_data_in_leaf: 20]
+[min_sum_hessian_in_leaf: 0.001]
+[bagging_fraction: 1]
+[pos_bagging_fraction: 1]
+[neg_bagging_fraction: 1]
+[bagging_freq: 0]
+[bagging_seed: 7719]
+[bagging_by_query: 0]
+[feature_fraction: 1]
+[feature_fraction_bynode: 1]
+[feature_fraction_seed: 2437]
+[extra_trees: 0]
+[extra_seed: 11797]
+[early_stopping_round: 0]
+[early_stopping_min_delta: 0]
+[first_metric_only: 0]
+[max_delta_step: 0]
+[lambda_l1: 0]
+[lambda_l2: 0]
+[linear_lambda: 0]
+[min_gain_to_split: 0]
+[drop_rate: 0.1]
+[max_drop: 50]
+[skip_drop: 0.5]
+[xgboost_dart_mode: 0]
+[uniform_drop: 0]
+[drop_seed: 21238]
+[top_rate: 0.2]
+[other_rate: 0.1]
+[min_data_per_group: 100]
+[max_cat_threshold: 32]
+[cat_l2: 10]
+[cat_smooth: 10]
+[max_cat_to_onehot: 4]
+[top_k: 20]
+[monotone_constraints: ]
+[monotone_constraints_method: basic]
+[monotone_penalty: 0]
+[feature_contri: ]
+[forcedsplits_filename: ]
+[refit_decay_rate: 0.9]
+[cegb_tradeoff: 1]
+[cegb_penalty_split: 0]
+[cegb_penalty_feature_lazy: ]
+[cegb_penalty_feature_coupled: ]
+[path_smooth: 0]
+[interaction_constraints: ]
+[verbosity: -1]
+[saved_feature_importance_type: 0]
+[use_quantized_grad: 0]
+[num_grad_quant_bins: 4]
+[quant_train_renew_leaf: 0]
+[stochastic_rounding: 1]
+[linear_tree: 0]
+[max_bin: 255]
+[max_bin_by_feature: ]
+[min_data_in_bin: 3]
+[bin_construct_sample_cnt: 200000]
+[data_random_seed: 38]
+[is_enable_sparse: 1]
+[enable_bundle: 1]
+[use_missing: 1]
+[zero_as_missing: 0]
+[feature_pre_filter: 1]
+[pre_partition: 0]
+[two_round: 0]
+[header: 0]
+[label_column: ]
+[weight_column: ]
+[group_column: ]
+[ignore_column: ]
+[categorical_feature: ]
+[forcedbins_filename: ]
+[precise_float_parser: 0]
+[parser_config_file: ]
+[objective_seed: 8855]
+[num_class: 1]
+[is_unbalance: 0]
+[scale_pos_weight: 1]
+[sigmoid: 1]
+[boost_from_average: 1]
+[reg_sqrt: 0]
+[alpha: 0.9]
+[fair_c: 1]
+[poisson_max_delta_step: 0.7]
+[tweedie_variance_power: 1.5]
+[lambdarank_truncation_level: 30]
+[lambdarank_norm: 1]
+[label_gain: ]
+[lambdarank_position_bias_regularization: 0]
+[eval_at: ]
+[multi_error_top_k: 1]
+[auc_mu_weights: ]
+[num_machines: 1]
+[local_listen_port: 12400]
+[time_out: 120]
+[machine_list_filename: ]
+[machines: ]
+[gpu_platform_id: -1]
+[gpu_device_id: -1]
+[gpu_device_id_list: ]
+[gpu_use_dp: 0]
+[num_gpu: 1]
+
+end of parameters
+
+pandas_categorical:null

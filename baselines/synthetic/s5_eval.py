@@ -190,17 +190,26 @@ def make_empty_predict_fn(
     itos: dict[int, str],
     n_targets: int,
 ) -> PredictSurfaceFn:
-    """Predictions with query-only history (no signals)."""
+    """Predictions with no clinical-signal history (evaluation-only).
+
+    Several Transformer baselines (Med-BERT, BEHRT, …) mask ``is_query`` as
+    padding. A *query-only* sequence therefore has zero valid tokens and
+    crashes nested-tensor encoders. We keep one non-query UNK placeholder
+    (not a SYN_SIGNAL_*) plus the query token so the forward pass is valid
+    while remaining empty of clinical signal content.
+    """
     stoi = {tok: i for i, tok in itos.items()}
     query_id = int(stoi.get("PRED_QUERY", 2))
+    unk_id = int(stoi.get("<UNK>", 1))
+    # type: background=10, query=2 (see synthetic_age_temporal.dataset.TYPE_STOI)
     base = {
-        "code_ids": torch.tensor([[query_id]], dtype=torch.long),
-        "type_ids": torch.tensor([[2]], dtype=torch.long),
-        "lag_days": torch.zeros(1, 1),
-        "tau": torch.zeros(1, 1),
-        "is_query": torch.ones(1, 1, dtype=torch.bool),
-        "is_signal": torch.zeros(1, 1, dtype=torch.bool),
-        "padding_mask": torch.zeros(1, 1, dtype=torch.bool),
+        "code_ids": torch.tensor([[unk_id, query_id]], dtype=torch.long),
+        "type_ids": torch.tensor([[10, 2]], dtype=torch.long),
+        "lag_days": torch.tensor([[0.0, 0.0]], dtype=torch.float32),
+        "tau": torch.tensor([[0.0, 0.0]], dtype=torch.float32),
+        "is_query": torch.tensor([[False, True]]),
+        "is_signal": torch.tensor([[False, False]]),
+        "padding_mask": torch.tensor([[False, False]]),
         "age": torch.tensor([9.0]),
         "z_age": torch.tensor([0.0]),
         "labels": torch.zeros(1, n_targets),

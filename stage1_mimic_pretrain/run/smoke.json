@@ -100,16 +100,16 @@
     "arms": {
       "no_interaction": {
         "returncode": 0,
-        "run_name": "smoke_no_interaction_20260920231520",
-        "wall_s": 1.6418805122375488
+        "run_name": "smoke_no_interaction_20260923232351",
+        "wall_s": 1.8038575649261475
       },
       "age_temporal": {
         "returncode": 0,
-        "run_name": "smoke_age_temporal_20260920231520",
-        "wall_s": 1.6120915412902832
+        "run_name": "smoke_age_temporal_20260923232351",
+        "wall_s": 1.6342158317565918
       }
     }
   },
-  "wall_s": 3.687088966369629,
+  "wall_s": 10.287739276885986,
   "all_unit_passed": true
 }

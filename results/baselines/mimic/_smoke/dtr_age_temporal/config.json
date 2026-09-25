@@ -1,0 +1,8 @@
+{
+  "name": "dtr_age_temporal",
+  "arm": "age_temporal",
+  "n_codes": 30635,
+  "d_model": 256,
+  "n_heads": 4,
+  "n_layers": 4
+}

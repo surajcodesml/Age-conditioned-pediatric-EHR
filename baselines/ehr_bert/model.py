@@ -69,9 +69,11 @@ class EHRBertModel(BaselineModel, nn.Module):
         self.d_ff = d_ff
         self.max_seq_len = max_seq_len
 
-        # +2 for [PAD]=0 and [CLS]=n_codes+1
-        self.cls_id = n_codes
-        self.code_embedding = nn.Embedding(n_codes + 1, d_model, padding_idx=0)
+        # Collate uses PAD=0, UNK=1, real=v+2 → ids in [0, n_codes+1].
+        # CLS occupies the next free id.
+        self.vocab_size = n_codes + 3  # PAD/UNK/codes + [CLS]
+        self.cls_id = n_codes + 2
+        self.code_embedding = nn.Embedding(self.vocab_size, d_model, padding_idx=0)
         self.position_embedding = SinusoidalPositionalEmbedding(d_model, max_seq_len)
         self.segment_embedding = nn.Embedding(2, d_model)  # alternating A/B
 
@@ -143,7 +145,7 @@ class EHRBertModel(BaselineModel, nn.Module):
         B, L_plus = input_ids.shape
 
         # Embeddings: code + position + segment (alternating)
-        code_emb = self.code_embedding(input_ids)
+        code_emb = self.code_embedding(input_ids.clamp(0, self.vocab_size - 1))
         pos_emb = self.position_embedding(L_plus)
         seg_ids = torch.zeros(B, L_plus, dtype=torch.long, device=input_ids.device)
         seg_emb = self.segment_embedding(seg_ids)  # uniform segment for vanilla

@@ -1,0 +1,26 @@
+{
+  "cf_rmse_age": 0.22075113206300268,
+  "cf_rmse_lag": 0.12445650485709499,
+  "surface_rmse": 0.16976505294815394,
+  "CF_RMSE_age": 0.22075113206300268,
+  "CF_RMSE_lag": 0.12445650485709499,
+  "Surface_RMSE": 0.16976505294815394,
+  "mechanism_classification": "NO_HETEROGENEOUS_PERSISTENCE_RECOVERY",
+  "S5_Surface_RMSE_acute": 0.36004194142362983,
+  "S5_Surface_RMSE_intermediate": 0.26043974334627135,
+  "S5_Surface_RMSE_chronic": 0.33984590020773764,
+  "S5_Surface_RMSE_mean": 0.32010919499254625,
+  "persistence_order_correct": false,
+  "thresholds": {
+    "functional": 0.1,
+    "partial": 0.25,
+    "s0_max_cf_age": 0.05
+  },
+  "decay_proxy": {
+    "acute": -7.401486830834377e-17,
+    "intermediate": -7.401486830834377e-17,
+    "chronic": -1.4802973661668753e-16
+  },
+  "model": "dtr_age_only",
+  "scenario": "S5"
+}

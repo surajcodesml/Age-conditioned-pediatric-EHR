@@ -1,0 +1,96 @@
+{
+  "model": "dtr_no_age",
+  "arm": "no_age",
+  "scenario": "S5",
+  "seed": 0,
+  "train": {
+    "best_val_bce": 0.4817720741944156,
+    "best_epoch": 2,
+    "last_epoch": 2,
+    "epochs_trained": 2,
+    "max_epochs": 2,
+    "min_epochs": 2,
+    "patience": 5,
+    "stopped_early": false,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.5139291235198306,
+        "val_bce": 0.4886519067620239,
+        "val_micro_auroc": 0.7360914615661867,
+        "val_macro_auroc": 0.7146140079620865,
+        "val_micro_auprc": 0.5146976349329304,
+        "val_macro_auprc": 0.48634957675363466,
+        "val_precision@5": 0.5336448598130841,
+        "val_recall@5": 0.33845820548335664,
+        "time_s": 3.5669355392456055
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.4839465669889718,
+        "val_bce": 0.4817720741944156,
+        "val_micro_auroc": 0.7443883363136604,
+        "val_macro_auroc": 0.7193882331951301,
+        "val_micro_auprc": 0.5314501449663127,
+        "val_macro_auprc": 0.49672156328595435,
+        "val_precision@5": 0.5422429906542057,
+        "val_recall@5": 0.34158156782744464,
+        "time_s": 6.4326012134552
+      }
+    ],
+    "total_time_s": 6.445751905441284,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/_smoke/dtr_no_age/S5/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/_smoke/dtr_no_age/S5/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/_smoke/dtr_no_age/S5/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.4826975944764044,
+    "micro_auroc": 0.7432538609409091,
+    "macro_auroc": 0.715863506652356,
+    "micro_auprc": 0.5319197249109799,
+    "macro_auprc": 0.4927686531106699,
+    "precision@5": 0.5437439379243453,
+    "recall@5": 0.3431208300267466
+  },
+  "model_card": {
+    "trainable_params": 814624,
+    "embedding_params": 144896,
+    "layers": 1,
+    "heads": 4,
+    "hidden_size": 256,
+    "ffn_size": 256,
+    "max_seq_len": "N/A",
+    "arm": "no_age"
+  },
+  "benchmark_family": "heterogeneous_persistence",
+  "S5_Surface_RMSE_acute": null,
+  "S5_Surface_RMSE_intermediate": null,
+  "S5_Surface_RMSE_chronic": null,
+  "S5_Surface_RMSE_mean": null,
+  "persistence_order_correct": null,
+  "mechanism_classification": null,
+  "benchmark_record": {
+    "scenario": "S5",
+    "model": "dtr_no_age",
+    "AUROC": 0.7432538609409091,
+    "AUPRC": 0.5319197249109799,
+    "BCE": 0.4826975944764044,
+    "CF_RMSE_age": null,
+    "CF_RMSE_lag": null,
+    "Surface_RMSE": null,
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "mechanism_classification": null
+  },
+  "AUROC": 0.7432538609409091,
+  "AUPRC": 0.5319197249109799,
+  "BCE": 0.4826975944764044,
+  "CF_RMSE_age": null,
+  "CF_RMSE_lag": null,
+  "Surface_RMSE": null
+}

@@ -189,6 +189,7 @@ def train_neural(
     run_dir: Path,
     seed: int = MODEL_SEED,
     max_epochs: int = MAX_EPOCHS,
+    min_epochs: int | None = None,
     lr: float = LR,
     device: str = "cuda",
 ) -> dict[str, Any]:
@@ -203,6 +204,7 @@ def train_neural(
         weight_decay=WEIGHT_DECAY,
         max_epochs=max_epochs,
         patience=PATIENCE,
+        min_epochs=min_epochs,
         grad_clip=GRAD_CLIP,
         device=device,
         run_dir=run_dir,
@@ -253,6 +255,9 @@ def run_one_model(
 
     batch_size = 8 if smoke else BATCH_SIZE
     max_ep = 2 if smoke else max_epochs
+    # Full runs: at least half the budget (and ≥ patience) before early stop can fire.
+    # Smoke: allow stopping immediately after the short budget.
+    min_ep = max_ep if smoke else None
 
     train_raw, val_raw, test_raw, vocab, info = make_baseline_loaders(
         scenario,
@@ -323,7 +328,8 @@ def run_one_model(
             model = build_model("dtr", n_codes, n_types, n_targets, arm=arm)
             train_result = train_neural(
                 model, train_loader, val_loader,
-                run_dir=arm_dir, seed=seed, max_epochs=max_ep, device=device,
+                run_dir=arm_dir, seed=seed, max_epochs=max_ep, min_epochs=min_ep,
+                device=device,
             )
             test_metrics = evaluate_test(model, test_loader, device)
             arm_result = {
@@ -355,7 +361,8 @@ def run_one_model(
             result["param_counts"] = count_parameters(model)
         train_result = train_neural(
             model, train_loader, val_loader,
-            run_dir=run_dir, seed=seed, max_epochs=max_ep, device=device,
+            run_dir=run_dir, seed=seed, max_epochs=max_ep, min_epochs=min_ep,
+            device=device,
         )
         test_metrics = evaluate_test(model, test_loader, device)
         result["train"] = train_result

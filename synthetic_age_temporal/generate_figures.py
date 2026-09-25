@@ -45,10 +45,10 @@ def generate_figures():
             mask_t = torch.ones_like(ids_t, dtype=torch.bool)
             with torch.no_grad():
                 v = model.encode_encounters(ids_t, mask_t)
-                theta = model.W_r(v).squeeze(-1) # user's code uses W_r not r
+                theta = model.persistence_projection(v).squeeze(-1)
                 theta_mean = theta.mean().item()
             
-            beta = model.gate.beta.item()
+            beta = float(model.beta.detach())
             lam = np.log1p(np.exp(theta_mean + beta * z_ages))
             if name == "Acute": true_th = 1.0
             elif name == "Intermediate": true_th = 0.0

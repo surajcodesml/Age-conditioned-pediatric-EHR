@@ -152,8 +152,8 @@ def test_04_grad_persistence_projection():
 def test_05_zero_init_persistence_still_gets_grad():
     """5. Zero-initialized persistence projection still receives gradient."""
     m = build_dtr(age_temporal=True, n_codes=30, n_targets=2, d_model=8)
-    assert float(m.persistence_projection.weight.abs().sum()) == 0.0
-    assert float(m.persistence_projection.bias.abs().sum()) == 0.0
+    assert float(m.persistence_projection.weight.detach().abs().sum()) == 0.0
+    assert float(m.persistence_projection.bias.detach().abs().sum()) == 0.0
     b = _batch(n_codes=30)
     loss = torch.nn.functional.binary_cross_entropy_with_logits(
         m(b["enc_code_ids"], b["enc_code_mask"], b["enc_tau"], b["enc_padding_mask"], b["age"]),

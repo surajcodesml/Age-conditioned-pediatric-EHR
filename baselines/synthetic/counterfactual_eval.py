@@ -230,28 +230,39 @@ def main():
                     model, template, device, n_codes,
                 )
 
-                if scenario == "S5":
-                    # Universal CF on full history
-                    base = full_counterfactual_report(
-                        p_age, p_lag, p_surf, o_age, o_lag, o_surf, cf_age_rmse_s0=None,
-                    )
-                    # S5 group metrics + heterogeneous classification
-                    s5 = full_s5_counterfactual_report(
-                        p_batch, template, itos, specs, theta0, beta,
-                        cf_rmse_age=base["cf_rmse_age"],
-                        cf_rmse_lag=base["cf_rmse_lag"],
-                        surface_rmse_full=base["surface_rmse"],
-                    )
-                    report = {
-                        **base,
-                        **s5,
-                        # Override classification with S5-specific label
-                        "mechanism_classification": s5["mechanism_classification"],
+                try:
+                    if scenario == "S5":
+                        # Universal CF on full history
+                        base = full_counterfactual_report(
+                            p_age, p_lag, p_surf, o_age, o_lag, o_surf, cf_age_rmse_s0=None,
+                        )
+                        # S5 group metrics + heterogeneous classification
+                        s5 = full_s5_counterfactual_report(
+                            p_batch, template, itos, specs, theta0, beta,
+                            cf_rmse_age=base["cf_rmse_age"],
+                            cf_rmse_lag=base["cf_rmse_lag"],
+                            surface_rmse_full=base["surface_rmse"],
+                        )
+                        report = {
+                            **base,
+                            **s5,
+                            # Override classification with S5-specific label
+                            "mechanism_classification": s5["mechanism_classification"],
+                        }
+                    else:
+                        report = full_counterfactual_report(
+                            p_age, p_lag, p_surf, o_age, o_lag, o_surf, cf_age_rmse_s0=s0_rmse,
+                        )
+                except Exception as e:
+                    print(f"ERROR evaluating {arm_name} on {scenario}: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    reports[arm_name] = {
+                        "model": arm_name,
+                        "scenario": scenario,
+                        "error": str(e),
                     }
-                else:
-                    report = full_counterfactual_report(
-                        p_age, p_lag, p_surf, o_age, o_lag, o_surf, cf_age_rmse_s0=s0_rmse,
-                    )
+                    continue
 
                 report["model"] = arm_name
                 report["scenario"] = scenario

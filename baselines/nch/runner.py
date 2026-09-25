@@ -43,7 +43,7 @@ from baselines.cehrbert_adapter.adapter import CEHRBertAdapter
 from baselines.dtr_adapter.adapter import DTRAdapter
 
 # MIMIC defaults
-BATCH_SIZE = 64
+BATCH_SIZE = 32
 MAX_EPOCHS = 10
 MAX_SEQ_LEN = 256
 MODEL_SEED = 0
@@ -54,7 +54,10 @@ DROPOUT = 0.1
 LR = 3e-4
 WEIGHT_DECAY = 1e-2
 PATIENCE = 3
+MIN_EPOCHS = 5  # early stopping cannot fire before this many epochs
 GRAD_CLIP = 1.0
+VAL_MAX_BATCHES = 50
+TEST_MAX_BATCHES = 100
 
 BASELINE_CONFIGS: dict[str, dict[str, Any]] = {
     "count_lightgbm": {},
@@ -115,7 +118,19 @@ class DTRAdapter(torch.nn.Module):
             out = self.model(batch)
             return {"logits": out["code_logits"]}
     def save_checkpoint(self, path):
-        pass
+        path = Path(path)
+        path.mkdir(parents=True, exist_ok=True)
+        torch.save(self.state_dict(), path / "checkpoint.pt")
+        with (path / "config.json").open("w") as f:
+            json.dump({"name": "dtr_mimic", "n_codes": getattr(self, "n_codes", None)}, f, indent=2, default=str)
+
+    def load_checkpoint(self, path):
+        path = Path(path)
+        ckpt = path / "checkpoint.pt"
+        if not ckpt.exists():
+            ckpt = path / "best_checkpoint.pt"
+        state = torch.load(ckpt, map_location="cpu", weights_only=True)
+        self.load_state_dict(state)
 
 def build_model(name: str, n_codes: int) -> Any:
     if name == "count_lightgbm":
@@ -164,6 +179,7 @@ def run_one_model(model_name, output_dir, train_ds, val_ds, test_ds, batch_size,
     print(f"\n{'='*60}\nModel: {model_name} | NCH Stage-2\n{'='*60}")
     n_codes = train_ds.dataset.num_codes if hasattr(train_ds, "dataset") else train_ds.num_codes
     max_ep = 2 if smoke else MAX_EPOCHS
+    min_ep = max_ep if smoke else MIN_EPOCHS
     run_dir = output_dir / model_name
     run_dir.mkdir(parents=True, exist_ok=True)
 
@@ -206,10 +222,14 @@ def run_one_model(model_name, output_dir, train_ds, val_ds, test_ds, batch_size,
             model=model, train_fn=model.training_step, predict_fn=model.predict,
             train_loader=train_loader, val_loader=val_loader,
             lr=LR, weight_decay=WEIGHT_DECAY, max_epochs=max_ep, patience=PATIENCE,
+            min_epochs=min_ep,
+            val_max_batches=None if smoke else VAL_MAX_BATCHES,
             grad_clip=GRAD_CLIP, device=device, run_dir=run_dir, seed=MODEL_SEED
         )
-        test_metrics = evaluate_loader(model, model.predict, test_loader, get_device(device))
-        result["train"] = train_result
+        test_metrics = evaluate_loader(
+            model, model.predict, test_loader, get_device(device),
+            max_batches=None if smoke else TEST_MAX_BATCHES,
+        )        result["train"] = train_result
         result["test_metrics"] = test_metrics
         result["model_card"] = model.model_card
         model.save_checkpoint(run_dir)

@@ -61,9 +61,10 @@ class CEHRBertAdapter(BaselineModel, nn.Module):
         self.time_dim = time_dim
         self.age_dim = age_dim
 
-        # Code embedding
-        self.code_embedding = nn.Embedding(n_codes + 1, d_model, padding_idx=0)
-        self.cls_id = n_codes
+        # Collate: PAD=0, UNK=1, real=v+2; CLS = n_codes+2
+        self.vocab_size = n_codes + 3
+        self.code_embedding = nn.Embedding(self.vocab_size, d_model, padding_idx=0)
+        self.cls_id = n_codes + 2
 
         # Segment embedding (alternating A/B)
         self.segment_embedding = nn.Embedding(2, d_model)
@@ -166,7 +167,7 @@ class CEHRBertAdapter(BaselineModel, nn.Module):
         input_ids, timestamps, ages, seg_ids, key_pad_mask = self._prepare_input(batch)
         B, L_plus = input_ids.shape
 
-        code_emb = self.code_embedding(input_ids)
+        code_emb = self.code_embedding(input_ids.clamp(0, self.vocab_size - 1))
         seg_emb = self.segment_embedding(seg_ids)
         time_emb = self._time2vec(timestamps, self.time_w0, self.time_b0, self.time_w, self.time_b)
         age_emb = self._time2vec(ages, self.age_w0, self.age_b0, self.age_w, self.age_b)
