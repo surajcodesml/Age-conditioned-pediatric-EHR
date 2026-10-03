@@ -1,0 +1,23 @@
+{
+  "dtr_S5": {
+    "model": "dtr",
+    "scenario": "S5",
+    "seed": 0,
+    "n_codes": 566,
+    "n_targets": 32,
+    "smoke": true,
+    "benchmark_family": "heterogeneous_persistence",
+    "AUROC": null,
+    "AUPRC": null,
+    "BCE": null,
+    "CF_RMSE_age": null,
+    "CF_RMSE_lag": null,
+    "Surface_RMSE": null,
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "mechanism_classification": null
+  }
+}

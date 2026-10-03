@@ -1,0 +1,10 @@
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+baseline: C01_staged_current
+git_commit: be9a2b73960bc701272eb08e7bd9f31527fe4efe
+timestamp: '2026-10-02T22:02:18+00:00'
+jobs: 2

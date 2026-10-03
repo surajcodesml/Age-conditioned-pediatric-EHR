@@ -1,0 +1,57 @@
+dataset: synthea_controlled
+cohort: controlled
+data_seed: 20260922
+scenarios:
+- S0
+- S1
+- S2
+- S3
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+split_fractions:
+  train: 0.7
+  val: 0.15
+  test: 0.15
+d_model: 64
+dropout: 0.0
+lambda_init: 0.1
+batch_size: 32
+lr: 0.0003
+weight_decay: 0.01
+max_epochs: 1
+patience: 1
+min_epochs: 1
+grad_clip: 1.0
+n_channels: 4
+n_components: 3
+knots:
+- 0.0
+- 6.0
+- 12.0
+- 18.0
+stage_b_epochs: 1
+temporal_lr_mult: 10.0
+temporal_weight_decay: 0.0
+mass_eps: 1.0e-06
+age_shuffle_seed: 0
+staged: false
+aggregation: raw_additive
+architecture: mixture
+experiment_id: E05_mixture
+hypothesis: 'A small content-dependent mixture of developmental timescales recovers
+  heterogeneous clinical persistence better than one global decay.
+
+  '
+change_vs_reference: 'K=3 persistence components. Mixture weights depend only on encounter
+  content. Each component has its own theta_k and beta_k. Aggregation and readout
+  match E01.
+
+  '
+training_difference: none
+config_path: /home/suraj/Git/Age-conditioned-pediatric-EHR/configs/architecture_ladder/e05_mixture.yaml
+base_config_path: /home/suraj/Git/Age-conditioned-pediatric-EHR/configs/architecture_ladder/base.yaml
+config_hash: e800e157108437f8fef44ad21b68526f81a4e8e6f9b3cada0a0a3eac6f10ba7c

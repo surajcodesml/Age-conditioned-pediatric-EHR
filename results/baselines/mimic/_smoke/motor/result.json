@@ -1,0 +1,90 @@
+{
+  "model": "motor",
+  "seed": 0,
+  "smoke": true,
+  "n_codes": 30635,
+  "batch_size": 8,
+  "test_batch_size": 8,
+  "val_max_batches": null,
+  "test_max_batches": null,
+  "name_suffix": "",
+  "grad_accum_steps": 1,
+  "effective_batch_size": 8,
+  "amp": "bf16",
+  "param_counts": {
+    "trainable_params": 20512683,
+    "total_params": 20512683,
+    "embedding_params": 7843328,
+    "non_embedding_trainable": 12669355
+  },
+  "train": {
+    "best_val_bce": 0.6047008338385134,
+    "best_epoch": 2,
+    "last_epoch": 2,
+    "epochs_trained": 2,
+    "max_epochs": 2,
+    "min_epochs": 2,
+    "patience": 3,
+    "val_max_batches": null,
+    "stopped_early": false,
+    "amp": "bf16",
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.6926986035846528,
+        "val_bce": 0.6623331812935718,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 0.5580382347106934
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.647450157574245,
+        "val_bce": 0.6047008338385134,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 0.8138010501861572
+      }
+    ],
+    "total_time_s": 1.0913400650024414,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/motor/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/motor/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/motor/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.6035354137420654,
+    "micro_auroc": 0.5938717452801288,
+    "macro_auroc": NaN,
+    "micro_auprc": 0.001500052352488529,
+    "macro_auprc": NaN,
+    "precision@5": 0.0,
+    "recall@5": 0.0,
+    "macro_skipped": true,
+    "macro_skip_reason": "n_classes=30635>2000"
+  },
+  "model_card": {
+    "model": "motor",
+    "paper": "Steinberg et al., ICLR 2024",
+    "official_repo": "som-shahlab/motor_code_release",
+    "trainable_params": 20512683,
+    "embedding_params": 7843328,
+    "layers": 6,
+    "heads": 8,
+    "hidden_size": 256,
+    "ffn_size": 1024,
+    "max_seq_len": 257,
+    "temporal_mechanism": "continuous_rope_on_event_ages",
+    "normalization": "RMSNorm"
+  },
+  "AUROC": 0.5938717452801288,
+  "AUPRC": 0.001500052352488529,
+  "BCE": 0.6035354137420654,
+  "best_val_bce": 0.6047008338385134,
+  "epochs_trained": 2
+}

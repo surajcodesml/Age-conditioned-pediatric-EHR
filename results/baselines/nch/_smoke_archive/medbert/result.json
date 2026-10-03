@@ -1,0 +1,64 @@
+{
+  "model": "medbert",
+  "seed": 0,
+  "smoke": true,
+  "n_codes": 30635,
+  "param_counts": {
+    "trainable_params": 14500907,
+    "total_params": 14500907,
+    "embedding_params": 5918784,
+    "non_embedding_trainable": 8582123
+  },
+  "train": {
+    "best_val_bce": 0.4073703121888913,
+    "epochs_trained": 2,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.6581950187683105,
+        "val_bce": 0.5639158035638236,
+        "val_micro_auroc": 0.5184960369857985,
+        "val_macro_auroc": 0.47436682376663636,
+        "val_micro_auprc": 0.00026963658612341604,
+        "val_macro_auprc": 0.11857380492974005,
+        "val_precision@5": 0.0,
+        "val_recall@5": 0.0,
+        "time_s": 1.4346020221710205
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.4941471144556999,
+        "val_bce": 0.4073703121888913,
+        "val_micro_auroc": 0.5197570918831692,
+        "val_macro_auroc": 0.46216390351875514,
+        "val_micro_auprc": 0.00024389214681976254,
+        "val_macro_auprc": 0.12561907081039095,
+        "val_precision@5": 0.0,
+        "val_recall@5": 0.0,
+        "time_s": 3.8454854488372803
+      }
+    ],
+    "total_time_s": 3.885390520095825
+  },
+  "test_metrics": {
+    "bce": 0.4073215771756288,
+    "micro_auroc": 0.5231812569888152,
+    "macro_auroc": 0.4766019992859334,
+    "micro_auprc": 0.00011351401651754682,
+    "macro_auprc": 0.0742116622588006,
+    "precision@5": 0.0,
+    "recall@5": 0.0
+  },
+  "model_card": {
+    "trainable_params": 14500907,
+    "embedding_params": 5918784,
+    "layers": 6,
+    "heads": 6,
+    "hidden_size": 192,
+    "ffn_size": 768,
+    "max_seq_len": 257,
+    "age_representation": "none",
+    "time_representation": "none",
+    "pooling": "mean_pool"
+  }
+}

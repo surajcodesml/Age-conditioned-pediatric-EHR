@@ -1,0 +1,52 @@
+{
+  "experiment_id": "E01_direct",
+  "architecture": "direct",
+  "variant": "age_temporal",
+  "arm": "age_temporal",
+  "dataset": "synthea_controlled",
+  "scenario": "S2",
+  "seed": 1,
+  "split": "patient_split:data_seed=20260922:train=0.70,val=0.15,test=0.15",
+  "git_commit": "be9a2b73960bc701272eb08e7bd9f31527fe4efe",
+  "config_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/configs/architecture_ladder/e01_direct.yaml",
+  "config_hash": "605254a1ff43056db1334250b4bcd8d0e2fbd18db351812eaa124911e3231d11",
+  "checkpoint_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/synthetic_architecture_ladder/E01_direct/s2/age_temporal/seed_1/checkpoint_best.pt",
+  "timestamp": "2026-10-02T16:38:22+00:00",
+  "training_settings": {
+    "lr": 0.0003,
+    "weight_decay": 0.01,
+    "max_epochs": 25,
+    "patience": 5,
+    "min_epochs": 12,
+    "grad_clip": 1.0,
+    "batch_size": 32,
+    "d_model": 64,
+    "dropout": 0.0,
+    "lambda_init": 0.1,
+    "staged": false,
+    "stage_b_epochs": 5,
+    "temporal_lr_mult": 10.0,
+    "temporal_weight_decay": 0.0,
+    "aggregation": "raw_additive",
+    "n_channels": 4,
+    "n_components": 3,
+    "knots": [
+      0.0,
+      6.0,
+      12.0,
+      18.0
+    ],
+    "data_seed": 20260922,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "n_trainable": 46658,
+  "hypothesis": "Current retrieval and readout complexity is the main bottleneck for explicit age x lag mechanism recovery.",
+  "predictions_sha256": "5d5d814a5ea82cc37f4ab7fb98bfae4dff7f74f71c7142a6160e5da27de07bbf",
+  "predictions_timestamp": "2026-10-02T16:38:23+00:00"
+}

@@ -1,0 +1,168 @@
+{
+  "model": "behrt",
+  "seed": 1,
+  "smoke": false,
+  "n_codes": 30635,
+  "batch_size": 384,
+  "test_batch_size": 64,
+  "val_max_batches": 50,
+  "test_max_batches": 100,
+  "name_suffix": "",
+  "grad_accum_steps": 1,
+  "effective_batch_size": 384,
+  "amp": "bf16",
+  "param_counts": {
+    "trainable_params": 23760107,
+    "total_params": 23760107,
+    "embedding_params": 8828352,
+    "non_embedding_trainable": 14931755
+  },
+  "train": {
+    "best_val_bce": 0.012321335709683233,
+    "best_epoch": 9,
+    "last_epoch": 10,
+    "epochs_trained": 10,
+    "max_epochs": 10,
+    "min_epochs": 5,
+    "patience": 3,
+    "val_max_batches": 50,
+    "stopped_early": false,
+    "amp": "bf16",
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.02841458427041277,
+        "val_bce": 0.012702022336031432,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 396.33394622802734
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.012633092185565369,
+        "val_bce": 0.012415545022394898,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 787.6853952407837
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.012497983311273346,
+        "val_bce": 0.012356214547078165,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 1179.3117213249207
+      },
+      {
+        "epoch": 4,
+        "train_loss": 0.012464808456551364,
+        "val_bce": 0.01233993313939156,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 1570.925078868866
+      },
+      {
+        "epoch": 5,
+        "train_loss": 0.012452079201520303,
+        "val_bce": 0.012326887707372763,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 1962.5376932621002
+      },
+      {
+        "epoch": 6,
+        "train_loss": 0.012447407928934768,
+        "val_bce": 0.012327235821275196,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 2354.275986433029
+      },
+      {
+        "epoch": 7,
+        "train_loss": 0.012446268424210108,
+        "val_bce": 0.012328490819111786,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 2745.966092824936
+      },
+      {
+        "epoch": 8,
+        "train_loss": 0.01244495700430981,
+        "val_bce": 0.012326327901327287,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 3137.6555116176605
+      },
+      {
+        "epoch": 9,
+        "train_loss": 0.012445058176140337,
+        "val_bce": 0.012321335709683233,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 3529.4953076839447
+      },
+      {
+        "epoch": 10,
+        "train_loss": 0.01244662939277914,
+        "val_bce": 0.012326486265326628,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 3921.399971008301
+      }
+    ],
+    "total_time_s": 3921.7517318725586,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/seed_1/behrt/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/seed_1/behrt/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/seed_1/behrt/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.012150312773883343,
+    "micro_auroc": 0.977335792615971,
+    "macro_auroc": NaN,
+    "micro_auprc": 0.3047248478933393,
+    "macro_auprc": NaN,
+    "precision@5": 0.7672500014305115,
+    "recall@5": 0.05221147462725639,
+    "micro_subsampled_to": 5000000,
+    "macro_skipped": true,
+    "macro_skip_reason": "n_classes=30635>2000"
+  },
+  "model_card": {
+    "trainable_params": 23760107,
+    "embedding_params": 8827776,
+    "layers": 6,
+    "heads": 12,
+    "hidden_size": 288,
+    "ffn_size": 1152,
+    "max_seq_len": 257,
+    "age_representation": "learnable_bucket_embedding",
+    "n_age_buckets": 14
+  },
+  "AUROC": 0.977335792615971,
+  "AUPRC": 0.3047248478933393,
+  "BCE": 0.012150312773883343,
+  "best_val_bce": 0.012321335709683233,
+  "epochs_trained": 10
+}

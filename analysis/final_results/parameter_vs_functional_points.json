@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Transformer DTR (S2)",
+    "lambda_corr": 0.9819340123770934,
+    "beta_err": 0.7429659843444825,
+    "delta_bce_beta0": 0.0029153028021179916,
+    "delta_bce_shuffle": 0.007186230833269136,
+    "color": "#6B46C1"
+  },
+  {
+    "name": "Factorized DTR (canonical S2)",
+    "lambda_corr": 0.9996928559531021,
+    "beta_err": 0.2351306438446045,
+    "delta_bce_beta0": 0.09169834769447643,
+    "delta_bce_shuffle": 0.19258943451234767,
+    "color": "#2B6CB0"
+  },
+  {
+    "name": "Factorized DTR (baseline `_new` S2)",
+    "lambda_corr": 0.9827623554347351,
+    "beta_err": 0.7539562940597534,
+    "delta_bce_beta0": 0.00693988838749976,
+    "delta_bce_shuffle": 0.020081041761893625,
+    "color": "#0B6E4F"
+  },
+  {
+    "name": "DTR `_new` S0 (neg. control)",
+    "lambda_corr": NaN,
+    "beta_err": 0.0018794552888721228,
+    "delta_bce_beta0": 6.889267063492355e-07,
+    "delta_bce_shuffle": 0.007785567082242484,
+    "color": "#718096",
+    "x_is_abs_beta": true
+  }
+]

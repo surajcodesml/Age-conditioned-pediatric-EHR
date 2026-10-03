@@ -1,0 +1,52 @@
+{
+  "experiment_id": "E06_integrated_hazard",
+  "architecture": "integrated_hazard",
+  "variant": "temporal_only",
+  "arm": "temporal_only",
+  "dataset": "synthea_controlled",
+  "scenario": "S3",
+  "seed": 0,
+  "split": "patient_split:data_seed=20260922:train=0.70,val=0.15,test=0.15",
+  "git_commit": "be9a2b73960bc701272eb08e7bd9f31527fe4efe",
+  "config_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/configs/architecture_ladder/e06_integrated_hazard.yaml",
+  "config_hash": "c0f30142015b3c9800a64b6c9ec2aa27c79b531b27bb7facb5c117182ee2e1cf",
+  "checkpoint_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/synthetic_architecture_ladder/E06_integrated_hazard/s3/temporal_only/seed_0/checkpoint_best.pt",
+  "timestamp": "2026-10-02T17:55:05+00:00",
+  "training_settings": {
+    "lr": 0.0003,
+    "weight_decay": 0.01,
+    "max_epochs": 25,
+    "patience": 5,
+    "min_epochs": 12,
+    "grad_clip": 1.0,
+    "batch_size": 32,
+    "d_model": 64,
+    "dropout": 0.0,
+    "lambda_init": 0.1,
+    "staged": false,
+    "stage_b_epochs": 5,
+    "temporal_lr_mult": 10.0,
+    "temporal_weight_decay": 0.0,
+    "aggregation": "raw_additive",
+    "n_channels": 4,
+    "n_components": 3,
+    "knots": [
+      0.0,
+      6.0,
+      12.0,
+      18.0
+    ],
+    "data_seed": 20260922,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "n_trainable": 46657,
+  "hypothesis": "A small positive piecewise-linear integrated hazard can express developmental persistence between event age and prediction age.",
+  "predictions_sha256": "810b20574a4cf3d8444da391013b71cff404a898fa5c83f3beff907889dceab3",
+  "predictions_timestamp": "2026-10-02T17:55:06+00:00"
+}

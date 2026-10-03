@@ -1,0 +1,102 @@
+[
+  {
+    "epoch": 1,
+    "train_loss": 0.057561781133858,
+    "val_bce": 0.014829213631295139,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 160.70236682891846
+  },
+  {
+    "epoch": 2,
+    "train_loss": 0.013787248962946048,
+    "val_bce": 0.01302943538206912,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 315.5600299835205
+  },
+  {
+    "epoch": 3,
+    "train_loss": 0.012912400460780817,
+    "val_bce": 0.012617788965752254,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 470.61348581314087
+  },
+  {
+    "epoch": 4,
+    "train_loss": 0.012660661953656368,
+    "val_bce": 0.01246602482559904,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 625.5452098846436
+  },
+  {
+    "epoch": 5,
+    "train_loss": 0.012554784715013584,
+    "val_bce": 0.012392118632978262,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 780.4761328697205
+  },
+  {
+    "epoch": 6,
+    "train_loss": 0.012502596032031415,
+    "val_bce": 0.012352871025213706,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 935.5252051353455
+  },
+  {
+    "epoch": 7,
+    "train_loss": 0.012474032107230274,
+    "val_bce": 0.012332872214238719,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 1090.4913582801819
+  },
+  {
+    "epoch": 8,
+    "train_loss": 0.012457711867811689,
+    "val_bce": 0.012318517705793772,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 1245.4745225906372
+  },
+  {
+    "epoch": 9,
+    "train_loss": 0.012448137817092952,
+    "val_bce": 0.012310327060774798,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 1400.472999572754
+  },
+  {
+    "epoch": 10,
+    "train_loss": 0.012442847685277522,
+    "val_bce": 0.012307126953762546,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 1555.4576041698456
+  }
+]

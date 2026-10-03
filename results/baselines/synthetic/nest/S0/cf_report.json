@@ -1,0 +1,21 @@
+{
+  "cf_rmse_age": 0.0928864450032537,
+  "cf_rmse_lag": 0.12297842712969152,
+  "surface_rmse": 0.14826718880160572,
+  "CF_RMSE_age": 0.0928864450032537,
+  "CF_RMSE_lag": 0.12297842712969152,
+  "Surface_RMSE": 0.14826718880160572,
+  "mechanism_classification": "PARTIAL_RECOVERY",
+  "S5_Surface_RMSE_acute": null,
+  "S5_Surface_RMSE_intermediate": null,
+  "S5_Surface_RMSE_chronic": null,
+  "S5_Surface_RMSE_mean": null,
+  "persistence_order_correct": null,
+  "thresholds": {
+    "functional": 0.1,
+    "partial": 0.25,
+    "s0_max_cf_age": 0.05
+  },
+  "model": "nest",
+  "scenario": "S0"
+}

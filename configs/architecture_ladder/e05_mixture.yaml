@@ -1,0 +1,12 @@
+experiment_id: E05_mixture
+architecture: mixture
+aggregation: raw_additive
+staged: false
+n_components: 3
+hypothesis: >
+  A small content-dependent mixture of developmental timescales recovers
+  heterogeneous clinical persistence better than one global decay.
+change_vs_reference: >
+  K=3 persistence components. Mixture weights depend only on encounter content.
+  Each component has its own theta_k and beta_k. Aggregation and readout match E01.
+training_difference: none

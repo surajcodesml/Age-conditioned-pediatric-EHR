@@ -1,80 +1,275 @@
 {
-  "retain": {
-    "model": "retain",
+  "motor": {
+    "model": "motor",
     "seed": 0,
     "smoke": true,
     "n_codes": 30635,
+    "batch_size": 8,
+    "test_batch_size": 8,
+    "val_max_batches": null,
+    "test_max_batches": null,
+    "name_suffix": "",
+    "grad_accum_steps": 1,
+    "effective_batch_size": 8,
+    "amp": "fp32",
     "param_counts": {
-      "trainable_params": 8088108,
-      "total_params": 8088108,
-      "embedding_params": 0,
-      "non_embedding_trainable": 8088108
+      "trainable_params": 20512683,
+      "total_params": 20512683,
+      "embedding_params": 7843328,
+      "non_embedding_trainable": 12669355
     },
     "train": {
-      "best_val_bce": 0.6922433598069623,
+      "best_val_bce": 0.6048379610739351,
       "best_epoch": 2,
       "last_epoch": 2,
       "epochs_trained": 2,
       "max_epochs": 2,
       "min_epochs": 2,
       "patience": 3,
+      "val_max_batches": null,
       "stopped_early": false,
+      "amp": "fp32",
       "history": [
         {
           "epoch": 1,
-          "train_loss": 0.6930191374960399,
-          "val_bce": 0.6926962851897254,
-          "val_micro_auroc": 0.6299055782140891,
-          "val_macro_auroc": 0.5048113343430055,
-          "val_micro_auprc": 0.21071512990467076,
-          "val_macro_auprc": 0.3709028154396,
-          "val_precision@5": 0.8571428571428571,
-          "val_recall@5": 0.05759438710791869,
-          "time_s": 1.579468011856079
+          "train_loss": 0.6927022735277811,
+          "val_bce": 0.6625619331297069,
+          "val_micro_auroc": NaN,
+          "val_macro_auroc": NaN,
+          "val_micro_auprc": NaN,
+          "val_macro_auprc": NaN,
+          "time_s": 0.5601727962493896
         },
         {
           "epoch": 2,
-          "train_loss": 0.6925691366195679,
-          "val_bce": 0.6922433598069623,
-          "val_micro_auroc": 0.6523575176526516,
-          "val_macro_auroc": 0.5105089897374264,
-          "val_micro_auprc": 0.21318960059646075,
-          "val_macro_auprc": 0.37827761643973795,
-          "val_precision@5": 0.8571428571428571,
-          "val_recall@5": 0.05759438710791869,
-          "time_s": 2.796994686126709
+          "train_loss": 0.6476237717128935,
+          "val_bce": 0.6048379610739351,
+          "val_micro_auroc": NaN,
+          "val_macro_auroc": NaN,
+          "val_micro_auprc": NaN,
+          "val_macro_auprc": NaN,
+          "time_s": 0.803217887878418
         }
       ],
-      "total_time_s": 2.865403652191162,
+      "total_time_s": 1.084522008895874,
       "checkpoints": {
-        "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/retain/best_checkpoint.pt",
-        "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/retain/last_checkpoint.pt",
-        "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/retain/checkpoint.pt"
+        "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/motor/best_checkpoint.pt",
+        "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/motor/last_checkpoint.pt",
+        "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/motor/checkpoint.pt"
       }
     },
     "test_metrics": {
-      "bce": 0.6922418224101902,
-      "micro_auroc": 0.7385481682548894,
-      "macro_auroc": 0.5024312541918177,
-      "micro_auprc": 0.22578821100934968,
-      "macro_auprc": 0.39958920187793423,
-      "precision@5": 0.625,
-      "recall@5": 0.06994519823467192
+      "bce": 0.6037444472312927,
+      "micro_auroc": 0.5947246727313154,
+      "macro_auroc": NaN,
+      "micro_auprc": 0.0014918878706927825,
+      "macro_auprc": NaN,
+      "precision@5": 0.0,
+      "recall@5": 0.0,
+      "macro_skipped": true,
+      "macro_skip_reason": "n_classes=30635>2000"
     },
     "model_card": {
-      "trainable_params": 8088108,
-      "embedding_params": 3921408,
-      "layers": "2 GRUs",
-      "heads": "N/A",
-      "hidden_size": 128,
-      "ffn_size": "N/A",
-      "max_seq_len": "unlimited (sequential)",
-      "d_emb": 128
+      "model": "motor",
+      "paper": "Steinberg et al., ICLR 2024",
+      "official_repo": "som-shahlab/motor_code_release",
+      "trainable_params": 20512683,
+      "embedding_params": 7843328,
+      "layers": 6,
+      "heads": 8,
+      "hidden_size": 256,
+      "ffn_size": 1024,
+      "max_seq_len": 257,
+      "temporal_mechanism": "continuous_rope_on_event_ages",
+      "normalization": "RMSNorm"
     },
-    "AUROC": 0.7385481682548894,
-    "AUPRC": 0.22578821100934968,
-    "BCE": 0.6922418224101902,
-    "best_val_bce": 0.6922433598069623,
+    "AUROC": 0.5947246727313154,
+    "AUPRC": 0.0014918878706927825,
+    "BCE": 0.6037444472312927,
+    "best_val_bce": 0.6048379610739351,
+    "epochs_trained": 2
+  },
+  "tale_ehr": {
+    "model": "tale_ehr",
+    "seed": 0,
+    "smoke": true,
+    "n_codes": 30635,
+    "batch_size": 8,
+    "test_batch_size": 8,
+    "val_max_batches": null,
+    "test_max_batches": null,
+    "name_suffix": "",
+    "grad_accum_steps": 1,
+    "effective_batch_size": 8,
+    "amp": "fp32",
+    "param_counts": {
+      "trainable_params": 19728073,
+      "total_params": 19728073,
+      "embedding_params": 7843328,
+      "non_embedding_trainable": 11884745
+    },
+    "train": {
+      "best_val_bce": 0.6339586636433584,
+      "best_epoch": 2,
+      "last_epoch": 2,
+      "epochs_trained": 2,
+      "max_epochs": 2,
+      "min_epochs": 2,
+      "patience": 3,
+      "val_max_batches": null,
+      "stopped_early": false,
+      "amp": "fp32",
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.6911033051354545,
+          "val_bce": 0.6785950360232227,
+          "val_micro_auroc": NaN,
+          "val_macro_auroc": NaN,
+          "val_micro_auprc": NaN,
+          "val_macro_auprc": NaN,
+          "time_s": 0.10566854476928711
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.6695224273772467,
+          "val_bce": 0.6339586636433584,
+          "val_micro_auroc": NaN,
+          "val_macro_auroc": NaN,
+          "val_micro_auprc": NaN,
+          "val_macro_auprc": NaN,
+          "time_s": 0.3167152404785156
+        }
+      ],
+      "total_time_s": 0.5783228874206543,
+      "checkpoints": {
+        "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/tale_ehr/best_checkpoint.pt",
+        "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/tale_ehr/last_checkpoint.pt",
+        "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/tale_ehr/checkpoint.pt"
+      }
+    },
+    "test_metrics": {
+      "bce": 0.6343334317207336,
+      "micro_auroc": 0.6104345869175762,
+      "macro_auroc": NaN,
+      "micro_auprc": 0.0025165760004300665,
+      "macro_auprc": NaN,
+      "precision@5": 0.0,
+      "recall@5": 0.0,
+      "macro_skipped": true,
+      "macro_skip_reason": "n_classes=30635>2000"
+    },
+    "model_card": {
+      "model": "tale_ehr",
+      "paper": "Yu et al., arXiv:2507.14847 (2025)",
+      "trainable_params": 19728073,
+      "embedding_params": 7843328,
+      "layers": 4,
+      "heads": 4,
+      "hidden_size": 256,
+      "ffn_size": 1024,
+      "max_seq_len": 257,
+      "temporal_mechanism": "continuous_poly5_attention"
+    },
+    "AUROC": 0.6104345869175762,
+    "AUPRC": 0.0025165760004300665,
+    "BCE": 0.6343334317207336,
+    "best_val_bce": 0.6339586636433584,
+    "epochs_trained": 2
+  },
+  "nest": {
+    "model": "nest",
+    "seed": 0,
+    "smoke": true,
+    "n_codes": 30635,
+    "batch_size": 8,
+    "test_batch_size": 8,
+    "val_max_batches": null,
+    "test_max_batches": null,
+    "name_suffix": "",
+    "grad_accum_steps": 1,
+    "effective_batch_size": 8,
+    "amp": "fp32",
+    "param_counts": {
+      "trainable_params": 30025306,
+      "total_params": 30025306,
+      "embedding_params": 7843584,
+      "non_embedding_trainable": 22181722
+    },
+    "train": {
+      "best_val_bce": 0.6299073079635804,
+      "best_epoch": 2,
+      "last_epoch": 2,
+      "epochs_trained": 2,
+      "max_epochs": 2,
+      "min_epochs": 2,
+      "patience": 3,
+      "val_max_batches": null,
+      "stopped_early": false,
+      "amp": "fp32",
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.6911732100305104,
+          "val_bce": 0.6734252226678169,
+          "val_micro_auroc": NaN,
+          "val_macro_auroc": NaN,
+          "val_micro_auprc": NaN,
+          "val_macro_auprc": NaN,
+          "time_s": 0.3372797966003418
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.6640303645815168,
+          "val_bce": 0.6299073079635804,
+          "val_micro_auroc": NaN,
+          "val_macro_auroc": NaN,
+          "val_micro_auprc": NaN,
+          "val_macro_auprc": NaN,
+          "time_s": 0.8068082332611084
+        }
+      ],
+      "total_time_s": 1.1759519577026367,
+      "checkpoints": {
+        "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/nest/best_checkpoint.pt",
+        "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/nest/last_checkpoint.pt",
+        "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/nest/checkpoint.pt"
+      }
+    },
+    "test_metrics": {
+      "bce": 0.629819393157959,
+      "micro_auroc": 0.5722933720841961,
+      "macro_auroc": NaN,
+      "micro_auprc": 0.0017282927203634837,
+      "macro_auprc": NaN,
+      "precision@5": 0.0,
+      "recall@5": 0.0,
+      "macro_skipped": true,
+      "macro_skip_reason": "n_classes=30635>2000"
+    },
+    "model_card": {
+      "model": "nest",
+      "paper": "Sun et al., arXiv:2602.00520 (2026)",
+      "trainable_params": 30025306,
+      "embedding_params": 7843584,
+      "layers": 4,
+      "heads": 4,
+      "hidden_size": 256,
+      "ffn_size": 683,
+      "max_encounters": 32,
+      "max_codes_per_encounter": 32,
+      "temporal_mechanism": "interleaved_swe_cse_rope",
+      "feasibility_status": {
+        "official_code_available": false,
+        "official_weights_available": false,
+        "architecture_reproducible_from_paper": true,
+        "note": "NEST architecture (SWE + CSE + RoPE + SwiGLU + MSM) is fully and faithfully reproduced from Section 3 of Sun et al. (arXiv:2602.00520). Official pretrained weights on proprietary Duke CDM data remain unreleased pending paper acceptance."
+      }
+    },
+    "AUROC": 0.5722933720841961,
+    "AUPRC": 0.0017282927203634837,
+    "BCE": 0.629819393157959,
+    "best_val_bce": 0.6299073079635804,
     "epochs_trained": 2
   }
 }

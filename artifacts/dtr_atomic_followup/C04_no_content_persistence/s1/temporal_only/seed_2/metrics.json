@@ -1,0 +1,36 @@
+{
+  "bce": 0.48159442819750437,
+  "auroc": 0.7405926245991163,
+  "auprc": 0.5355741533450913,
+  "delta_bce_beta0": 0.0,
+  "delta_bce_full_age_shuffle": 0.011691549891987674,
+  "delta_bce_gate_age_shuffle": 0.0,
+  "patient_bootstrap": {
+    "bce": {
+      "mean": 0.48166804313543393,
+      "std": 0.0027908638399644953,
+      "ci95_lo": 0.4770885434689878,
+      "ci95_hi": 0.48764374311068803
+    },
+    "delta_bce_beta0": {
+      "mean": 0.0,
+      "std": 0.0,
+      "ci95_lo": 0.0,
+      "ci95_hi": 0.0
+    },
+    "delta_bce_full_age_shuffle": {
+      "mean": 0.011701217304932397,
+      "std": 0.000899319489868581,
+      "ci95_lo": 0.010049022806721469,
+      "ci95_hi": 0.013524739533829839
+    },
+    "delta_bce_gate_age_shuffle": {
+      "mean": 0.0,
+      "std": 0.0,
+      "ci95_lo": 0.0,
+      "ci95_hi": 0.0
+    }
+  },
+  "n_rows": 1031,
+  "n_targets": 32
+}

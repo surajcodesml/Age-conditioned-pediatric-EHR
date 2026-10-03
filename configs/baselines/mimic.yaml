@@ -1,0 +1,85 @@
+# MIMIC Stage-1 Next-Visit Prediction Configuration
+stage: mimic_pretrain
+
+seed: 0
+device: cuda
+amp: bf16
+max_epochs: 10
+patience: 3
+min_epochs: 5
+batch_size: 32
+throughput_optimized: true
+num_workers: 4
+val_max_batches: 50
+test_max_batches: 100
+tensorized_dir: data/processed/tensorized_flat
+vocab_path: data/processed/code_vocab.json
+output_dir: results/baselines/mimic
+
+# Per-model throughput batch sizes (bf16, Radeon AI PRO R9700 30GiB)
+throughput_batch_sizes:
+  motor: 256
+  tale_ehr: 256
+  nest: 32
+  retain: 512
+  ehr_bert: 512
+  behrt: 384
+  medbert: 512
+  cehrbert: 512
+  dtr: 32
+
+models:
+  motor:
+    d_model: 256
+    n_layers: 6
+    n_heads: 8
+    dropout: 0.1
+    max_seq_len: 256
+  tale_ehr:
+    d_model: 256
+    n_layers: 4
+    n_heads: 4
+    dropout: 0.1
+    max_seq_len: 256
+  nest:
+    d_model: 256
+    n_layers: 4
+    n_heads: 4
+    dropout: 0.1
+    max_encounters: 32
+    max_codes_per_encounter: 32
+    max_seq_len: 256
+  retain:
+    d_emb: 128
+    d_rnn: 128
+    dropout: 0.1
+  ehr_bert:
+    d_model: 256
+    n_layers: 4
+    n_heads: 4
+    d_ff: 1024
+    dropout: 0.1
+    max_seq_len: 256
+  behrt:
+    d_model: 288
+    n_layers: 6
+    n_heads: 12
+    dropout: 0.1
+    max_seq_len: 256
+  medbert:
+    d_model: 192
+    n_layers: 6
+    n_heads: 6
+    dropout: 0.1
+    max_seq_len: 256
+  cehrbert:
+    d_model: 128
+    n_layers: 5
+    n_heads: 8
+    dropout: 0.1
+    max_seq_len: 256
+  dtr:
+    d_model: 64
+    arms:
+      - temporal_only
+      - age_temporal

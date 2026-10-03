@@ -1,0 +1,14 @@
+{
+  "model": "motor",
+  "paper": "Steinberg et al., ICLR 2024",
+  "official_repo": "som-shahlab/motor_code_release",
+  "trainable_params": 4950048,
+  "embedding_params": 145664,
+  "layers": 6,
+  "heads": 8,
+  "hidden_size": 256,
+  "ffn_size": 1024,
+  "max_seq_len": 112,
+  "temporal_mechanism": "continuous_rope_on_event_ages",
+  "normalization": "RMSNorm"
+}

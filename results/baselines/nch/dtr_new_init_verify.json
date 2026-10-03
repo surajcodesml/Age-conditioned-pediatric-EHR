@@ -1,0 +1,12 @@
+{
+  "shared_ckpt": "results/baselines/mimic/dtr_temporal_only_new",
+  "fingerprint_temporal_only": "56c480c00662e0ae0b48f23ebe95a1b203bcb1d64da34a04e684e54ff39142a6",
+  "fingerprint_age_temporal": "56c480c00662e0ae0b48f23ebe95a1b203bcb1d64da34a04e684e54ff39142a6",
+  "fingerprints_match": true,
+  "beta_to": 0.0,
+  "beta_at": 0.0,
+  "theta0_to": 0.14370284974575043,
+  "theta0_at": 0.14370284974575043,
+  "beta_requires_grad_to": false,
+  "beta_requires_grad_at": true
+}

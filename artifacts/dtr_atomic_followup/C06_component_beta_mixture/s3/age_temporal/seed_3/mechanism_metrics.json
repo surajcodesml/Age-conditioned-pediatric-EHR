@@ -1,0 +1,103 @@
+{
+  "architecture": "component_beta_mixture",
+  "surface_rmse": 0.21557041748287803,
+  "cf_rmse_age": 0.16313702028472743,
+  "cf_rmse_lag": 0.1255399723256702,
+  "beta_true": 2.5,
+  "theta0_true": 0.0,
+  "beta": [
+    0.5908312797546387,
+    0.5908312797546387,
+    0.5908312797546387
+  ],
+  "beta_mean": 0.5908312797546387,
+  "abs_beta_mean": 0.5908312797546387,
+  "theta": [
+    -0.48031163215637207,
+    -0.48031163215637207,
+    -0.48031163215637207
+  ],
+  "gate_signal_rmse": 0.1705739859425903,
+  "gate_signal_mae": 0.1415459738084082,
+  "gate_signal_correlation": 0.7965208341843745,
+  "gate_signal_n": 6166,
+  "gate_signal_rmse_by_code": {
+    "SYN_SIGNAL_A": {
+      "rmse": 0.17878143014431944,
+      "n": 488
+    },
+    "SYN_SIGNAL_B": {
+      "rmse": 0.17022094482423042,
+      "n": 498
+    },
+    "SYN_SIGNAL_C": {
+      "rmse": 0.16401694396499417,
+      "n": 529
+    },
+    "SYN_SIGNAL_D": {
+      "rmse": 0.17096740052136206,
+      "n": 511
+    },
+    "SYN_SIGNAL_E": {
+      "rmse": 0.17357334354616621,
+      "n": 482
+    },
+    "SYN_SIGNAL_F": {
+      "rmse": 0.17117014582451484,
+      "n": 528
+    },
+    "SYN_SIGNAL_G": {
+      "rmse": 0.17163684107633576,
+      "n": 499
+    },
+    "SYN_SIGNAL_H": {
+      "rmse": 0.1668678977028585,
+      "n": 543
+    },
+    "SYN_SIGNAL_I": {
+      "rmse": 0.1696626365733638,
+      "n": 483
+    },
+    "SYN_SIGNAL_J": {
+      "rmse": 0.17900142460295376,
+      "n": 525
+    },
+    "SYN_SIGNAL_K": {
+      "rmse": 0.16252158443028725,
+      "n": 554
+    },
+    "SYN_SIGNAL_L": {
+      "rmse": 0.16908578225406304,
+      "n": 526
+    }
+  },
+  "gate_surface_rmse": null,
+  "gate_surface_mae": null,
+  "gate_surface_correlation": null,
+  "gate_surface_note": "content-dependent gate; signal-encounter g_eff is the gate metric",
+  "lambda_k_vs_oracle": [
+    {
+      "rmse": 0.7919295229102378,
+      "corr": 0.984813961295411
+    },
+    {
+      "rmse": 0.7919295229102378,
+      "corr": 0.984813961295411
+    },
+    {
+      "rmse": 0.7919295229102378,
+      "corr": 0.984813961295411
+    }
+  ],
+  "mixture_mean_pi": [
+    0.3333333432674408,
+    0.3333333432674408,
+    0.3333333432674408
+  ],
+  "mixture_entropy": 1.0986122916069845,
+  "mixture_assignment_fraction": [
+    1.0,
+    0.0,
+    0.0
+  ]
+}

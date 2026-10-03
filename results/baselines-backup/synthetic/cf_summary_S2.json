@@ -1,0 +1,212 @@
+{
+  "count_lightgbm": {
+    "cf_rmse_age": 0.19259326108816904,
+    "cf_rmse_lag": 0.21965649318676714,
+    "surface_rmse": 0.2071067906693188,
+    "CF_RMSE_age": 0.19259326108816904,
+    "CF_RMSE_lag": 0.21965649318676714,
+    "Surface_RMSE": 0.2071067906693188,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "count_lightgbm",
+    "scenario": "S2"
+  },
+  "retain": {
+    "cf_rmse_age": 0.22259415110144776,
+    "cf_rmse_lag": 0.19305304830790904,
+    "surface_rmse": 0.23632075771887726,
+    "CF_RMSE_age": 0.22259415110144776,
+    "CF_RMSE_lag": 0.19305304830790904,
+    "Surface_RMSE": 0.23632075771887726,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "retain",
+    "scenario": "S2"
+  },
+  "ehr_bert": {
+    "cf_rmse_age": 0.21087936715672156,
+    "cf_rmse_lag": 0.1947272641321826,
+    "surface_rmse": 0.23387091107026506,
+    "CF_RMSE_age": 0.21087936715672156,
+    "CF_RMSE_lag": 0.1947272641321826,
+    "Surface_RMSE": 0.23387091107026506,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "ehr_bert",
+    "scenario": "S2"
+  },
+  "behrt": {
+    "cf_rmse_age": 0.18943315614033002,
+    "cf_rmse_lag": 0.18597841495275946,
+    "surface_rmse": 0.21725437915873763,
+    "CF_RMSE_age": 0.18943315614033002,
+    "CF_RMSE_lag": 0.18597841495275946,
+    "Surface_RMSE": 0.21725437915873763,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "behrt",
+    "scenario": "S2"
+  },
+  "medbert": {
+    "cf_rmse_age": 0.1940623656226302,
+    "cf_rmse_lag": 0.19620154390176972,
+    "surface_rmse": 0.23435308132621824,
+    "CF_RMSE_age": 0.1940623656226302,
+    "CF_RMSE_lag": 0.19620154390176972,
+    "Surface_RMSE": 0.23435308132621824,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "medbert",
+    "scenario": "S2"
+  },
+  "cehrbert": {
+    "cf_rmse_age": 0.09827911344233253,
+    "cf_rmse_lag": 0.1107840133457542,
+    "surface_rmse": 0.13078465452453683,
+    "CF_RMSE_age": 0.09827911344233253,
+    "CF_RMSE_lag": 0.1107840133457542,
+    "Surface_RMSE": 0.13078465452453683,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "cehrbert",
+    "scenario": "S2"
+  },
+  "dtr_no_age": {
+    "cf_rmse_age": 0.19471924379760877,
+    "cf_rmse_lag": 0.1616096524318074,
+    "surface_rmse": 0.2209947286226049,
+    "CF_RMSE_age": 0.19471924379760877,
+    "CF_RMSE_lag": 0.1616096524318074,
+    "Surface_RMSE": 0.2209947286226049,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "dtr_no_age",
+    "scenario": "S2"
+  },
+  "dtr_age_only": {
+    "cf_rmse_age": 0.18698744152257019,
+    "cf_rmse_lag": 0.17440324531755866,
+    "surface_rmse": 0.21269530173925405,
+    "CF_RMSE_age": 0.18698744152257019,
+    "CF_RMSE_lag": 0.17440324531755866,
+    "Surface_RMSE": 0.21269530173925405,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "dtr_age_only",
+    "scenario": "S2"
+  },
+  "dtr_temporal_only": {
+    "cf_rmse_age": 0.17799513365235584,
+    "cf_rmse_lag": 0.16710409590751985,
+    "surface_rmse": 0.2251274387070816,
+    "CF_RMSE_age": 0.17799513365235584,
+    "CF_RMSE_lag": 0.16710409590751985,
+    "Surface_RMSE": 0.2251274387070816,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "dtr_temporal_only",
+    "scenario": "S2"
+  },
+  "dtr_age_temporal": {
+    "cf_rmse_age": 0.19667186309820064,
+    "cf_rmse_lag": 0.16513315872128306,
+    "surface_rmse": 0.22658061397557958,
+    "CF_RMSE_age": 0.19667186309820064,
+    "CF_RMSE_lag": 0.16513315872128306,
+    "Surface_RMSE": 0.22658061397557958,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "dtr_age_temporal",
+    "scenario": "S2"
+  }
+}

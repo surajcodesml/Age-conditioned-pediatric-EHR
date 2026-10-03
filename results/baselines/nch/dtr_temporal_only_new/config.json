@@ -1,0 +1,19 @@
+{
+  "name": "dtr_temporal_only",
+  "arm": "temporal_only",
+  "architecture": "Content-Persistence DTR",
+  "n_codes": 30635,
+  "d_model": 64,
+  "aggregation": "raw_additive",
+  "code_embeddings": "frozen_bge_plus_linear_proj",
+  "n_emb_codes": 30637,
+  "model": "Content-Persistence DTR",
+  "content_dependent_persistence": true,
+  "persistence_projection": "linear",
+  "temporal_aggregation": "raw_additive",
+  "num_content_queries": 1,
+  "age_conditioning": "linear_softplus",
+  "beta_scope": "global",
+  "age_temporal": false,
+  "content_score_exp_clamp": 20.0
+}

@@ -1,0 +1,17 @@
+{
+  "trainable_params": 8923179,
+  "frozen_params": 0,
+  "total_params": 8923179,
+  "embedding_params": 3921664,
+  "code_embeddings_trainable": true,
+  "segment_embeddings_trainable": true,
+  "layers": 5,
+  "heads": 8,
+  "hidden_size": 128,
+  "ffn_size": 512,
+  "time_dim": 32,
+  "age_dim": 32,
+  "max_seq_len": 257,
+  "age_representation": "time2vec",
+  "time_representation": "time2vec"
+}

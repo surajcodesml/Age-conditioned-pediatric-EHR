@@ -1,0 +1,503 @@
+{
+  "model": "cehrbert_small",
+  "scenario": "S2",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "per_seed": [
+    {
+      "seed": 0,
+      "trainable_params": 55016,
+      "AUPRC": 0.5458903649972794,
+      "AUROC": 0.7424384226775915,
+      "BCE": 0.47459831833839417,
+      "CF_RMSE_age": 0.11579797909790193,
+      "CF_RMSE_lag": 0.13110248294560561,
+      "Surface_RMSE": 0.1621539830226552,
+      "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/cehrbert_small/seed0/S2/best_checkpoint.pt",
+      "secondary_interaction8": {
+        "n_targets": 8,
+        "target_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "note": "Same checkpoint; metrics restricted to mechanism=interaction labels.",
+        "AUROC": 0.8954629777850772,
+        "AUPRC": 0.7974626472239367,
+        "BCE": 0.338008314371109,
+        "test_metrics": {
+          "bce": 0.338008314371109,
+          "micro_auroc": 0.8954629777850772,
+          "macro_auroc": 0.8838920395042518,
+          "micro_auprc": 0.7974626472239367,
+          "macro_auprc": 0.7853372982055515,
+          "precision@5": 0.3780795633792877,
+          "recall@5": 0.7571128363116751
+        },
+        "cf_report": {
+          "cf_rmse_age": 0.16825878363139923,
+          "cf_rmse_lag": 0.17616851360654046,
+          "surface_rmse": 0.22858828378480936,
+          "CF_RMSE_age": 0.16825878363139923,
+          "CF_RMSE_lag": 0.17616851360654046,
+          "Surface_RMSE": 0.22858828378480936,
+          "mechanism_classification": "PARTIAL_RECOVERY",
+          "S5_Surface_RMSE_acute": null,
+          "S5_Surface_RMSE_intermediate": null,
+          "S5_Surface_RMSE_chronic": null,
+          "S5_Surface_RMSE_mean": null,
+          "persistence_order_correct": null,
+          "thresholds": {
+            "functional": 0.1,
+            "partial": 0.25,
+            "s0_max_cf_age": 0.05
+          },
+          "model": "cehrbert_small",
+          "scenario": "S2",
+          "seed": 0,
+          "n_targets": 8,
+          "note": "SECONDARY: interaction targets only; not primary result."
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "trainable_params": 55016,
+      "AUPRC": 0.5182720678435137,
+      "AUROC": 0.7241502177955734,
+      "BCE": 0.48750215768814087,
+      "CF_RMSE_age": 0.18996561345149285,
+      "CF_RMSE_lag": 0.1508276974819612,
+      "Surface_RMSE": 0.17654580807463394,
+      "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/cehrbert_small/seed1/S2/best_checkpoint.pt",
+      "secondary_interaction8": {
+        "n_targets": 8,
+        "target_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "note": "Same checkpoint; metrics restricted to mechanism=interaction labels.",
+        "AUROC": 0.8618927755167316,
+        "AUPRC": 0.7373794143151925,
+        "BCE": 0.38149312138557434,
+        "test_metrics": {
+          "bce": 0.38149312138557434,
+          "micro_auroc": 0.8618927755167316,
+          "macro_auroc": 0.8384024743008669,
+          "micro_auprc": 0.7373794143151925,
+          "macro_auprc": 0.6998762810080557,
+          "precision@5": 0.36547043919563293,
+          "recall@5": 0.7360953318332724
+        },
+        "cf_report": {
+          "cf_rmse_age": 0.27501127477641074,
+          "cf_rmse_lag": 0.20221301658004515,
+          "surface_rmse": 0.24419511117314152,
+          "CF_RMSE_age": 0.27501127477641074,
+          "CF_RMSE_lag": 0.20221301658004515,
+          "Surface_RMSE": 0.24419511117314152,
+          "mechanism_classification": "PARTIAL_RECOVERY",
+          "S5_Surface_RMSE_acute": null,
+          "S5_Surface_RMSE_intermediate": null,
+          "S5_Surface_RMSE_chronic": null,
+          "S5_Surface_RMSE_mean": null,
+          "persistence_order_correct": null,
+          "thresholds": {
+            "functional": 0.1,
+            "partial": 0.25,
+            "s0_max_cf_age": 0.05
+          },
+          "model": "cehrbert_small",
+          "scenario": "S2",
+          "seed": 1,
+          "n_targets": 8,
+          "note": "SECONDARY: interaction targets only; not primary result."
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "trainable_params": 55016,
+      "AUPRC": 0.5466296347865105,
+      "AUROC": 0.7436218533570452,
+      "BCE": 0.4747840166091919,
+      "CF_RMSE_age": 0.11298171000389626,
+      "CF_RMSE_lag": 0.15265172643417713,
+      "Surface_RMSE": 0.16468619056192338,
+      "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/cehrbert_small/seed2/S2/best_checkpoint.pt",
+      "secondary_interaction8": {
+        "n_targets": 8,
+        "target_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "note": "Same checkpoint; metrics restricted to mechanism=interaction labels.",
+        "AUROC": 0.8955471365946759,
+        "AUPRC": 0.7976451042734393,
+        "BCE": 0.33957937359809875,
+        "test_metrics": {
+          "bce": 0.33957937359809875,
+          "micro_auroc": 0.8955471365946759,
+          "macro_auroc": 0.8848743125449219,
+          "micro_auprc": 0.7976451042734393,
+          "macro_auprc": 0.7861797707487088,
+          "precision@5": 0.37827351689338684,
+          "recall@5": 0.7593344427161027
+        },
+        "cf_report": {
+          "cf_rmse_age": 0.16946072191174658,
+          "cf_rmse_lag": 0.21749030693548646,
+          "surface_rmse": 0.23256734814709074,
+          "CF_RMSE_age": 0.16946072191174658,
+          "CF_RMSE_lag": 0.21749030693548646,
+          "Surface_RMSE": 0.23256734814709074,
+          "mechanism_classification": "PARTIAL_RECOVERY",
+          "S5_Surface_RMSE_acute": null,
+          "S5_Surface_RMSE_intermediate": null,
+          "S5_Surface_RMSE_chronic": null,
+          "S5_Surface_RMSE_mean": null,
+          "persistence_order_correct": null,
+          "thresholds": {
+            "functional": 0.1,
+            "partial": 0.25,
+            "s0_max_cf_age": 0.05
+          },
+          "model": "cehrbert_small",
+          "scenario": "S2",
+          "seed": 2,
+          "n_targets": 8,
+          "note": "SECONDARY: interaction targets only; not primary result."
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "trainable_params": 55016,
+      "AUPRC": 0.553275558665159,
+      "AUROC": 0.746631727090979,
+      "BCE": 0.4725677967071533,
+      "CF_RMSE_age": 0.11142184703527346,
+      "CF_RMSE_lag": 0.14167263547812686,
+      "Surface_RMSE": 0.1463479482736907,
+      "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/cehrbert_small/seed3/S2/best_checkpoint.pt",
+      "secondary_interaction8": {
+        "n_targets": 8,
+        "target_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "note": "Same checkpoint; metrics restricted to mechanism=interaction labels.",
+        "AUROC": 0.8924394204792032,
+        "AUPRC": 0.7914033972561526,
+        "BCE": 0.34369224309921265,
+        "test_metrics": {
+          "bce": 0.34369224309921265,
+          "micro_auroc": 0.8924394204792032,
+          "macro_auroc": 0.8807321532024388,
+          "micro_auprc": 0.7914033972561526,
+          "macro_auprc": 0.7807629152230899,
+          "precision@5": 0.37672165036201477,
+          "recall@5": 0.7539605570001352
+        },
+        "cf_report": {
+          "cf_rmse_age": 0.14302433059862762,
+          "cf_rmse_lag": 0.19177774016001897,
+          "surface_rmse": 0.20204832984812157,
+          "CF_RMSE_age": 0.14302433059862762,
+          "CF_RMSE_lag": 0.19177774016001897,
+          "Surface_RMSE": 0.20204832984812157,
+          "mechanism_classification": "PARTIAL_RECOVERY",
+          "S5_Surface_RMSE_acute": null,
+          "S5_Surface_RMSE_intermediate": null,
+          "S5_Surface_RMSE_chronic": null,
+          "S5_Surface_RMSE_mean": null,
+          "persistence_order_correct": null,
+          "thresholds": {
+            "functional": 0.1,
+            "partial": 0.25,
+            "s0_max_cf_age": 0.05
+          },
+          "model": "cehrbert_small",
+          "scenario": "S2",
+          "seed": 3,
+          "n_targets": 8,
+          "note": "SECONDARY: interaction targets only; not primary result."
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "trainable_params": 55016,
+      "AUPRC": 0.5410118265842996,
+      "AUROC": 0.7382201871918919,
+      "BCE": 0.4781392514705658,
+      "CF_RMSE_age": 0.11650260792222109,
+      "CF_RMSE_lag": 0.14786599419830884,
+      "Surface_RMSE": 0.1728066418016519,
+      "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/cehrbert_small/seed4/S2/best_checkpoint.pt",
+      "secondary_interaction8": {
+        "n_targets": 8,
+        "target_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "note": "Same checkpoint; metrics restricted to mechanism=interaction labels.",
+        "AUROC": 0.890716166830326,
+        "AUPRC": 0.7890410468623753,
+        "BCE": 0.34744322299957275,
+        "test_metrics": {
+          "bce": 0.34744322299957275,
+          "micro_auroc": 0.890716166830326,
+          "macro_auroc": 0.8796706355713992,
+          "micro_auprc": 0.7890410468623753,
+          "macro_auprc": 0.7779969050021617,
+          "precision@5": 0.3774975836277008,
+          "recall@5": 0.7554962828133894
+        },
+        "cf_report": {
+          "cf_rmse_age": 0.17926878318796444,
+          "cf_rmse_lag": 0.20601112667538019,
+          "surface_rmse": 0.2523692853014313,
+          "CF_RMSE_age": 0.17926878318796444,
+          "CF_RMSE_lag": 0.20601112667538019,
+          "Surface_RMSE": 0.2523692853014313,
+          "mechanism_classification": "NO_MECHANISM_RECOVERY",
+          "S5_Surface_RMSE_acute": null,
+          "S5_Surface_RMSE_intermediate": null,
+          "S5_Surface_RMSE_chronic": null,
+          "S5_Surface_RMSE_mean": null,
+          "persistence_order_correct": null,
+          "thresholds": {
+            "functional": 0.1,
+            "partial": 0.25,
+            "s0_max_cf_age": 0.05
+          },
+          "model": "cehrbert_small",
+          "scenario": "S2",
+          "seed": 4,
+          "n_targets": 8,
+          "note": "SECONDARY: interaction targets only; not primary result."
+        }
+      }
+    }
+  ],
+  "canonical_seed0": {
+    "seed": 0,
+    "trainable_params": 55016,
+    "AUPRC": 0.5458903649972794,
+    "AUROC": 0.7424384226775915,
+    "BCE": 0.47459831833839417,
+    "CF_RMSE_age": 0.11579797909790193,
+    "CF_RMSE_lag": 0.13110248294560561,
+    "Surface_RMSE": 0.1621539830226552,
+    "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/cehrbert_small/seed0/S2/best_checkpoint.pt",
+    "secondary_interaction8": {
+      "n_targets": 8,
+      "target_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "note": "Same checkpoint; metrics restricted to mechanism=interaction labels.",
+      "AUROC": 0.8954629777850772,
+      "AUPRC": 0.7974626472239367,
+      "BCE": 0.338008314371109,
+      "test_metrics": {
+        "bce": 0.338008314371109,
+        "micro_auroc": 0.8954629777850772,
+        "macro_auroc": 0.8838920395042518,
+        "micro_auprc": 0.7974626472239367,
+        "macro_auprc": 0.7853372982055515,
+        "precision@5": 0.3780795633792877,
+        "recall@5": 0.7571128363116751
+      },
+      "cf_report": {
+        "cf_rmse_age": 0.16825878363139923,
+        "cf_rmse_lag": 0.17616851360654046,
+        "surface_rmse": 0.22858828378480936,
+        "CF_RMSE_age": 0.16825878363139923,
+        "CF_RMSE_lag": 0.17616851360654046,
+        "Surface_RMSE": 0.22858828378480936,
+        "mechanism_classification": "PARTIAL_RECOVERY",
+        "S5_Surface_RMSE_acute": null,
+        "S5_Surface_RMSE_intermediate": null,
+        "S5_Surface_RMSE_chronic": null,
+        "S5_Surface_RMSE_mean": null,
+        "persistence_order_correct": null,
+        "thresholds": {
+          "functional": 0.1,
+          "partial": 0.25,
+          "s0_max_cf_age": 0.05
+        },
+        "model": "cehrbert_small",
+        "scenario": "S2",
+        "seed": 0,
+        "n_targets": 8,
+        "note": "SECONDARY: interaction targets only; not primary result."
+      }
+    }
+  },
+  "aggregate": {
+    "AUPRC": {
+      "mean": 0.5410158905753525,
+      "std": 0.013442986792412258,
+      "values": [
+        0.5458903649972794,
+        0.5182720678435137,
+        0.5466296347865105,
+        0.553275558665159,
+        0.5410118265842996
+      ],
+      "n": 5
+    },
+    "AUROC": {
+      "mean": 0.7390124816226161,
+      "std": 0.008839554541025627,
+      "values": [
+        0.7424384226775915,
+        0.7241502177955734,
+        0.7436218533570452,
+        0.746631727090979,
+        0.7382201871918919
+      ],
+      "n": 5
+    },
+    "BCE": {
+      "mean": 0.4775183081626892,
+      "std": 0.005928175867907502,
+      "values": [
+        0.47459831833839417,
+        0.48750215768814087,
+        0.4747840166091919,
+        0.4725677967071533,
+        0.4781392514705658
+      ],
+      "n": 5
+    },
+    "CF_RMSE_age": {
+      "mean": 0.12933395150215712,
+      "std": 0.03395697147193654,
+      "values": [
+        0.11579797909790193,
+        0.18996561345149285,
+        0.11298171000389626,
+        0.11142184703527346,
+        0.11650260792222109
+      ],
+      "n": 5
+    },
+    "CF_RMSE_lag": {
+      "mean": 0.14482410730763592,
+      "std": 0.008729011138896967,
+      "values": [
+        0.13110248294560561,
+        0.1508276974819612,
+        0.15265172643417713,
+        0.14167263547812686,
+        0.14786599419830884
+      ],
+      "n": 5
+    },
+    "Surface_RMSE": {
+      "mean": 0.164508114346911,
+      "std": 0.011716835168217206,
+      "values": [
+        0.1621539830226552,
+        0.17654580807463394,
+        0.16468619056192338,
+        0.1463479482736907,
+        0.1728066418016519
+      ],
+      "n": 5
+    }
+  },
+  "references": {
+    "cehrbert_full": {
+      "trainable_params": 1126304,
+      "AUPRC": 0.5818115186216142,
+      "AUROC": 0.7635682281963081,
+      "BCE": 0.45627353794076914,
+      "CF_RMSE_age": 0.09827911344233253,
+      "CF_RMSE_lag": 0.1107840133457542,
+      "Surface_RMSE": 0.13078465452453683,
+      "seed": 0
+    },
+    "dtr_age_temporal": {
+      "trainable_params": 55107,
+      "AUPRC": 0.5765216901925238,
+      "AUROC": 0.7605760485882068,
+      "BCE": 0.45861258257578463,
+      "CF_RMSE_age": 0.1422413997058967,
+      "CF_RMSE_lag": 0.16559003100876837,
+      "Surface_RMSE": 0.20129356921286942,
+      "seed": 0
+    },
+    "dtr_temporal_only": {
+      "trainable_params": 55106,
+      "AUPRC": 0.5689695664492664,
+      "AUROC": 0.7577090463428859,
+      "BCE": 0.46254313003898545,
+      "CF_RMSE_age": 0.17737379595297495,
+      "CF_RMSE_lag": 0.18411855417566345,
+      "Surface_RMSE": 0.23606079048992756,
+      "seed": 0
+    }
+  },
+  "deltas_canonical": {
+    "small_vs_full": {
+      "AUPRC": -0.03592115362433479,
+      "AUROC": -0.02112980551871657,
+      "CF_RMSE_age": 0.0175188656555694,
+      "CF_RMSE_lag": 0.02031846959985141,
+      "Surface_RMSE": 0.03136932849811838,
+      "Surface_RMSE_rel": 0.23985481027694355
+    },
+    "small_vs_dtr": {
+      "AUPRC": -0.030631325195244363,
+      "AUROC": -0.018137625910615296,
+      "CF_RMSE_age": -0.02644342060799476,
+      "CF_RMSE_lag": -0.03448754806316276,
+      "Surface_RMSE": -0.03913958619021421,
+      "Surface_RMSE_rel": -0.19444032088687246
+    }
+  }
+}

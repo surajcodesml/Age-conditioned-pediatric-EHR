@@ -151,7 +151,7 @@ class RETAINModel(BaselineModel, nn.Module):
         reversed_emb = _reverse_padded(visit_emb, lengths)
 
         packed = nn.utils.rnn.pack_padded_sequence(
-            reversed_emb, lengths.cpu().clamp(min=1),
+            reversed_emb, lengths.detach().cpu().clamp(min=1),
             batch_first=True, enforce_sorted=False,
         )
 
@@ -213,5 +213,24 @@ class RETAINModel(BaselineModel, nn.Module):
 
     def load_checkpoint(self, path: Path) -> None:
         path = Path(path)
-        state = torch.load(path / "checkpoint.pt", map_location="cpu", weights_only=True)
-        self.load_state_dict(state)
+        ckpt = path / "checkpoint.pt"
+        if not ckpt.exists():
+            ckpt = path / "best_checkpoint.pt"
+        state = torch.load(ckpt, map_location="cpu", weights_only=True)
+        # Migrate pre-vectorization Linear(n_codes→d_emb) checkpoints
+        # (weight [d_emb, n_codes] + bias) into Embedding(vocab_size, d_emb).
+        w = state.get("code_embedding.weight")
+        if w is not None and w.ndim == 2 and w.shape[0] == self.d_emb:
+            bias = state.get("code_embedding.bias")
+            n_old = int(w.shape[1])
+            new_w = torch.zeros(self.vocab_size, self.d_emb, dtype=w.dtype)
+            n = min(n_old, self.vocab_size)
+            new_w[:n] = w.t()[:n]
+            if bias is not None:
+                new_w[1:n] = new_w[1:n] + bias.to(dtype=w.dtype)
+            state = {
+                k: v for k, v in state.items()
+                if k not in ("code_embedding.weight", "code_embedding.bias")
+            }
+            state["code_embedding.weight"] = new_w
+        self.load_state_dict(state, strict=False)

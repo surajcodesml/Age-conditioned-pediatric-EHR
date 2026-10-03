@@ -48,13 +48,20 @@ class NCHForecastDataset(TensorizedPretrainDataset):
 def nch_collate(batch: list[dict[str, Any]], *, race_encoding: str = "one_hot",
                 assert_horizon: bool | None = None) -> dict:
     out = pretrain_collate(batch, race_encoding=race_encoding, assert_horizon=assert_horizon)
-    out["patient_id"] = torch.tensor([int(item["patient_id"]) for item in batch], dtype=torch.long)
-    out["n_input_events"] = torch.tensor([int(item["n_input_events"]) for item in batch],
-                                         dtype=torch.long)
-    out["n_prior_visits"] = torch.tensor([int(item["n_prior_visits"]) for item in batch],
-                                         dtype=torch.long)
-    out["last_age_years"] = torch.tensor([float(item["last_age_years"]) for item in batch],
-                                         dtype=torch.float32)
+    if batch and ("patient_id" in batch[0] or "subject_id" in batch[0]):
+        out["patient_id"] = torch.tensor(
+            [int(item.get("patient_id", item.get("subject_id", 0))) for item in batch],
+            dtype=torch.long,
+        )
+    if batch and "n_input_events" in batch[0]:
+        out["n_input_events"] = torch.tensor([int(item["n_input_events"]) for item in batch],
+                                             dtype=torch.long)
+    if batch and "n_prior_visits" in batch[0]:
+        out["n_prior_visits"] = torch.tensor([int(item["n_prior_visits"]) for item in batch],
+                                             dtype=torch.long)
+    if batch and "last_age_years" in batch[0]:
+        out["last_age_years"] = torch.tensor([float(item["last_age_years"]) for item in batch],
+                                             dtype=torch.float32)
     return out
 
 

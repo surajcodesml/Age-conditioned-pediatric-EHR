@@ -1,0 +1,25 @@
+{
+  "experiment_id": "C02_mass_current",
+  "architecture": "mass",
+  "variant": "mass",
+  "arm": "age_temporal",
+  "dataset": "synthea_controlled",
+  "scenario": "S2",
+  "seed": 4,
+  "split": "test",
+  "git_commit": "be9a2b73960bc701272eb08e7bd9f31527fe4efe",
+  "config_hash": "c621ea72729de287ee9f218629e93947db7aa61d9f199b36fcb3e6a5447c541f",
+  "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/dtr_atomic_followup/C02_mass_current/s2/age_temporal/seed_4/checkpoint_best.pt",
+  "timestamp": "2026-10-02T19:26:45+00:00",
+  "n_trainable": 55171,
+  "training": {
+    "lr": 0.0003,
+    "weight_decay": 0.01,
+    "batch_size": 32,
+    "max_epochs": 25,
+    "patience": 5,
+    "min_epochs": 12,
+    "staged": false
+  },
+  "predictions_sha256": "033043f2d72b7aeb0b2e150a6a40692ca9435d12b78b5ba6773a762a5c908591"
+}

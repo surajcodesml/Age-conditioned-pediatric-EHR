@@ -1,0 +1,26 @@
+{
+  "cf_rmse_age": 0.14480363726128023,
+  "cf_rmse_lag": 0.08962711505430933,
+  "surface_rmse": 0.12497388935823996,
+  "CF_RMSE_age": 0.14480363726128023,
+  "CF_RMSE_lag": 0.08962711505430933,
+  "Surface_RMSE": 0.12497388935823996,
+  "mechanism_classification": "PARTIAL_HETEROGENEOUS_PERSISTENCE_RECOVERY",
+  "S5_Surface_RMSE_acute": 0.19326018785805052,
+  "S5_Surface_RMSE_intermediate": 0.15862339840130715,
+  "S5_Surface_RMSE_chronic": 0.11792384069913502,
+  "S5_Surface_RMSE_mean": 0.1566024756528309,
+  "persistence_order_correct": false,
+  "thresholds": {
+    "functional": 0.1,
+    "partial": 0.25,
+    "s0_max_cf_age": 0.05
+  },
+  "decay_proxy": {
+    "acute": 7.401486830834377e-17,
+    "intermediate": 7.401486830834377e-17,
+    "chronic": 3.700743415417188e-17
+  },
+  "model": "behrt",
+  "scenario": "S5"
+}

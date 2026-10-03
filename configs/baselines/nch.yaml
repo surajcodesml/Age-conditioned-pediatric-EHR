@@ -1,0 +1,83 @@
+# NCH Stage-2 Finetuning Configuration
+stage: nch_finetune
+
+seed: 0
+device: cuda
+amp: bf16
+max_epochs: 10
+patience: 3
+min_epochs: 5
+batch_size: 128
+throughput_optimized: true
+throughput_batch_sizes:
+  motor: 256
+  tale_ehr: 256
+  nest: 32
+  retain: 512
+  ehr_bert: 512
+  behrt: 384
+  medbert: 512
+  cehrbert: 512
+  dtr: 32
+num_workers: 0
+val_max_batches: 50
+test_max_batches: 100
+use_mimic_checkpoints: true
+mimic_results_dir: results/baselines/mimic
+output_dir: results/baselines/nch
+
+models:
+  motor:
+    d_model: 256
+    n_layers: 6
+    n_heads: 8
+    dropout: 0.1
+    max_seq_len: 256
+  tale_ehr:
+    d_model: 256
+    n_layers: 4
+    n_heads: 4
+    dropout: 0.1
+    max_seq_len: 256
+  nest:
+    d_model: 256
+    n_layers: 4
+    n_heads: 4
+    dropout: 0.1
+    max_encounters: 32
+    max_codes_per_encounter: 32
+    max_seq_len: 256
+  retain:
+    d_emb: 128
+    d_rnn: 128
+    dropout: 0.1
+  ehr_bert:
+    d_model: 256
+    n_layers: 4
+    n_heads: 4
+    d_ff: 1024
+    dropout: 0.1
+    max_seq_len: 256
+  behrt:
+    d_model: 288
+    n_layers: 6
+    n_heads: 12
+    dropout: 0.1
+    max_seq_len: 256
+  medbert:
+    d_model: 192
+    n_layers: 6
+    n_heads: 6
+    dropout: 0.1
+    max_seq_len: 256
+  cehrbert:
+    d_model: 128
+    n_layers: 5
+    n_heads: 8
+    dropout: 0.1
+    max_seq_len: 256
+  dtr:
+    d_model: 64
+    arms:
+      - temporal_only
+      - age_temporal

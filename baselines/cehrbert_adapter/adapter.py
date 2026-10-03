@@ -50,8 +50,13 @@ class CEHRBertAdapter(BaselineModel, nn.Module):
         max_seq_len: int = 300,
         time_dim: int = 32,
         age_dim: int = 32,
+        d_ff: int | None = None,
     ) -> None:
         nn.Module.__init__(self)
+        if d_model % n_heads != 0:
+            raise ValueError(
+                f"d_model={d_model} must be divisible by n_heads={n_heads}"
+            )
         self.n_codes = n_codes
         self.n_targets = n_targets
         self.d_model = d_model
@@ -60,6 +65,7 @@ class CEHRBertAdapter(BaselineModel, nn.Module):
         self.max_seq_len = max_seq_len
         self.time_dim = time_dim
         self.age_dim = age_dim
+        self.d_ff = int(d_ff) if d_ff is not None else int(d_model * 4)
 
         # Collate: PAD=0, UNK=1, real=v+2; CLS = n_codes+2
         self.vocab_size = n_codes + 3
@@ -87,7 +93,7 @@ class CEHRBertAdapter(BaselineModel, nn.Module):
 
         # Transformer encoder
         encoder_layer = nn.TransformerEncoderLayer(
-            d_model=d_model, nhead=n_heads, dim_feedforward=d_model * 4,
+            d_model=d_model, nhead=n_heads, dim_feedforward=self.d_ff,
             dropout=dropout, activation="gelu", batch_first=True,
         )
         self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=n_layers)
@@ -119,14 +125,24 @@ class CEHRBertAdapter(BaselineModel, nn.Module):
     @property
     def model_card(self) -> dict[str, Any]:
         tp = sum(p.numel() for p in self.parameters() if p.requires_grad)
+        frozen = sum(p.numel() for p in self.parameters() if not p.requires_grad)
+        total = sum(p.numel() for p in self.parameters())
         ep = sum(p.numel() for p in self.code_embedding.parameters())
         return {
             "trainable_params": tp,
+            "frozen_params": frozen,
+            "total_params": total,
             "embedding_params": ep,
+            "code_embeddings_trainable": bool(self.code_embedding.weight.requires_grad),
+            "segment_embeddings_trainable": bool(
+                self.segment_embedding.weight.requires_grad
+            ),
             "layers": self.n_layers,
             "heads": self.n_heads,
             "hidden_size": self.d_model,
-            "ffn_size": self.d_model * 4,
+            "ffn_size": self.d_ff,
+            "time_dim": self.time_dim,
+            "age_dim": self.age_dim,
             "max_seq_len": self.max_seq_len,
             "age_representation": "time2vec",
             "time_representation": "time2vec",

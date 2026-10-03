@@ -1,0 +1,14 @@
+experiment_id: E06_integrated_hazard
+architecture: integrated_hazard
+aggregation: raw_additive
+staged: false
+knots: [0.0, 6.0, 12.0, 18.0]
+hypothesis: >
+  A small positive piecewise-linear integrated hazard can express developmental
+  persistence between event age and prediction age.
+change_vs_reference: >
+  Separate extension from E01. Gate is exp of minus the integral of rho between
+  event age and current age. Temporal-only uses a constant hazard.
+  The S2 oracle was generated with current-age lambda(a), not this integral,
+  so oracle-surface recovery is not expected to favor E06 by construction.
+training_difference: none

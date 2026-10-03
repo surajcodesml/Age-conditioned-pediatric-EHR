@@ -1,0 +1,21 @@
+{
+  "cf_rmse_age": 0.0747557365413309,
+  "cf_rmse_lag": 0.07858157291971012,
+  "surface_rmse": 0.1087335786264148,
+  "CF_RMSE_age": 0.0747557365413309,
+  "CF_RMSE_lag": 0.07858157291971012,
+  "Surface_RMSE": 0.1087335786264148,
+  "mechanism_classification": "PARTIAL_RECOVERY",
+  "S5_Surface_RMSE_acute": null,
+  "S5_Surface_RMSE_intermediate": null,
+  "S5_Surface_RMSE_chronic": null,
+  "S5_Surface_RMSE_mean": null,
+  "persistence_order_correct": null,
+  "thresholds": {
+    "functional": 0.1,
+    "partial": 0.25,
+    "s0_max_cf_age": 0.05
+  },
+  "model": "tale_ehr",
+  "scenario": "S0"
+}

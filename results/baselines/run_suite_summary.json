@@ -1,0 +1,40 @@
+{
+  "timestamp": "2026-10-03 03:42:05",
+  "stage": "synthetic",
+  "models_requested": [
+    "motor",
+    "tale_ehr",
+    "nest"
+  ],
+  "models_executed": [
+    "motor",
+    "tale_ehr",
+    "nest"
+  ],
+  "seed": 0,
+  "smoke": false,
+  "device": "cuda",
+  "stages_run": {
+    "synthetic": {
+      "num_runs": 15,
+      "keys": [
+        "motor_S0",
+        "tale_ehr_S0",
+        "nest_S0",
+        "motor_S1",
+        "tale_ehr_S1",
+        "nest_S1",
+        "motor_S2",
+        "tale_ehr_S2",
+        "nest_S2",
+        "motor_S3",
+        "tale_ehr_S3",
+        "nest_S3",
+        "motor_S5",
+        "tale_ehr_S5",
+        "nest_S5"
+      ]
+    }
+  },
+  "total_elapsed_sec": 21.808409690856934
+}

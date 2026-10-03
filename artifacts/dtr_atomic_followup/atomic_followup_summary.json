@@ -1,0 +1,7 @@
+{
+  "n_metric_rows": 4710,
+  "n_paired_rows": 3920,
+  "metrics_csv": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/dtr_atomic_followup/atomic_followup_metrics.csv",
+  "summary_csv": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/dtr_atomic_followup/atomic_followup_summary.csv",
+  "paired_csv": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/dtr_atomic_followup/paired_delta_vs_C00.csv"
+}

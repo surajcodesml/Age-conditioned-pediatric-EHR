@@ -1,0 +1,12 @@
+experiment_id: E01_direct
+architecture: direct
+aggregation: raw_additive
+staged: false
+hypothesis: >
+  Current retrieval and readout complexity is the main bottleneck for explicit
+  age x lag mechanism recovery.
+change_vs_reference: >
+  Relative to dtr_age_temporal_new: remove the content query, exp(u),
+  content-dependent persistence, and the nonlinear history MLP. Keep one
+  global softplus decay and a separate linear age main-effect head.
+training_difference: none

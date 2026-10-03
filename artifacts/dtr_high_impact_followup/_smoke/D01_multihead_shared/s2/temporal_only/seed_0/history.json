@@ -1,0 +1,35 @@
+[
+  {
+    "epoch": 1,
+    "train_loss": 0.7460585832595825,
+    "val_bce": 0.7495824694633484,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 0.013889074325561523,
+    "stage": "A"
+  },
+  {
+    "epoch": 1,
+    "train_loss": 0.744138240814209,
+    "val_bce": 0.7495672404766083,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 0.008229494094848633,
+    "stage": "B"
+  },
+  {
+    "epoch": 1,
+    "train_loss": 0.7434820234775543,
+    "val_bce": 0.7470563054084778,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 0.010296821594238281,
+    "stage": "C"
+  }
+]

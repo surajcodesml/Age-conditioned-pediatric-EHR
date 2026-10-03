@@ -1,0 +1,17 @@
+{
+  "experiment_id": "E01_target_conditioned_retrieval",
+  "architecture": "target_conditioned",
+  "arm": "age_temporal",
+  "scenario": "S2",
+  "seed": 0,
+  "git_commit": "be9a2b73960bc701272eb08e7bd9f31527fe4efe",
+  "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/content_bottleneck_final/_smoke/E01_target_conditioned_retrieval/s2/age_temporal/seed_0/checkpoint_best.pt",
+  "timestamp": "2026-10-03T07:57:28+00:00",
+  "n_trainable": 56995,
+  "training": {
+    "staged": true,
+    "lr": 0.0003,
+    "max_epochs": 1
+  },
+  "predictions_sha256": "4beb820567fe4a4ef5955c51432d2a72b7466dd82b430ec75b01053d0230679b"
+}

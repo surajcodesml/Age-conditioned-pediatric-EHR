@@ -3,10 +3,15 @@
 Global age_temporal:
     s_*j^(h) = q_*^(h)⊤ k_j^(h) / sqrt(d_h) - λ(a*) τ_*j
     λ(a*) = softplus(θ0 + β z(a*))
+    w_*j^(h) = exp(s_*j^(h))   # mass-preserving (NOT softmax)
+    ctx = Σ_j w_*j^(h) v_j^(h)
 
 Per-head age_temporal_per_head:
     s_*j^(h) = q_*^(h)⊤ k_j^(h) / sqrt(d_h) - λ_h(a*) τ_*j
     λ_h(a*) = softplus(θ0_h + β_h z(a*))
+
+Softmax over history is intentionally avoided: it forces Σ w = 1 and cancels
+absolute temporal evidence mass, making age_temporal ≈ temporal_only.
 
 No Fourier / Chebyshev / age MLP. No sign constraint on β / β_h.
 """
@@ -20,6 +25,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from config import AGE_CENTER, AGE_SCALE, ARMS
+
+# Clamp content+temporal scores before exp(·) for numerical stability.
+# Does not renormalize across history (unlike softmax).
+CONTENT_SCORE_EXP_CLAMP = 20.0
 
 
 class SoftplusAgeTemporal(nn.Module):
@@ -261,19 +270,25 @@ class BenchmarkModel(nn.Module):
             scores = scores + bias[:, None, None, :]
             lam_cache = torch.zeros_like(age)
 
-        key_mask = padding_mask | is_query
-        scores = scores.masked_fill(key_mask[:, None, None, :], float("-inf"))
-        attn = torch.softmax(scores, dim=-1)
-        attn = torch.nan_to_num(attn, nan=0.0)
-        ctx = torch.matmul(attn, v).transpose(1, 2).contiguous().view(b, self.d_model)
+        # Mass-preserving temporal aggregation (raw additive).
+        # Softmax would force Σ_j w = 1 and erase absolute gate magnitude:
+        #   λ(a)↑ → g↓ → evidence mass M↓ must remain visible to the head.
+        key_mask = padding_mask | is_query  # True = ignore
+        hist = ~key_mask
+        scores_clamped = scores.clamp(max=CONTENT_SCORE_EXP_CLAMP)
+        w = torch.exp(scores_clamped) * hist[:, None, None, :].to(scores.dtype)
+        M = w.sum(dim=-1, keepdim=True)  # [B, H, 1, 1]
+        ctx = torch.matmul(w, v).transpose(1, 2).contiguous().view(b, self.d_model)
 
         self._cache = {
-            "attn": attn.detach(),
+            "attn": w.detach(),  # unnormalized weights (legacy key name)
+            "w": w.detach(),
+            "M": M.detach(),
             "bias": bias.detach(),
             "lambda": lam_cache.detach(),
             "tau": tau.detach(),
         }
-        return ctx, attn
+        return ctx, w
 
     def forward(
         self,

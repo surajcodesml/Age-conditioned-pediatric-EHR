@@ -1,0 +1,15 @@
+experiment_id: E02_staged
+architecture: direct
+aggregation: raw_additive
+staged: true
+hypothesis: >
+  Staged optimization, not a change in architecture, improves recovery of the
+  age x lag mechanism.
+change_vs_reference: >
+  Architecture identical to E01. Only the training schedule changes.
+training_difference: >
+  Stage A trains the beta=0 model. That checkpoint is cloned into temporal_only
+  (beta frozen) and age_temporal (beta initialized at 0 and trainable).
+  Stage B freezes the encoder and readout and optimizes theta0/beta only.
+  Stage C unfreezes all parameters. Temporal parameters use 10x backbone
+  learning rate and zero weight decay.

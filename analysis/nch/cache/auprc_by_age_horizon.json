@@ -1,0 +1,393 @@
+{
+  "task": "nch_next_encounter",
+  "models": {
+    "dtr": "dtr_age_temporal_new",
+    "temporal_only": "dtr_temporal_only_new",
+    "checkpoints": {
+      "dtr": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/dtr_age_temporal_new/best_checkpoint.pt",
+      "temporal": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/dtr_temporal_only_new/best_checkpoint.pt"
+    }
+  },
+  "definition": "delta_auprc = micro_AUPRC(DTR) - micro_AUPRC(temporal-only)",
+  "history_rule": "Keep input events with (t_last - t) <= horizon_days; Full leaves the test window unchanged. Labels are not truncated.",
+  "micro_cap": 5000000,
+  "micro_seed": 0,
+  "max_examples": 0,
+  "n_examples": 28147,
+  "age_bands": [
+    "<1",
+    "1-5",
+    "6-11",
+    "12-17"
+  ],
+  "horizons": [
+    "30d",
+    "90d",
+    "180d",
+    "1y",
+    "3y",
+    "5y",
+    "Full"
+  ],
+  "heatmap_horizons": [
+    "30d",
+    "90d",
+    "180d",
+    "1y",
+    "3y",
+    "Full"
+  ],
+  "by_horizon": {
+    "30d": {
+      "horizon_days": 30.0,
+      "cells": {
+        "_overall": {
+          "auprc_dtr": 0.17872550448320812,
+          "auprc_temporal": 0.17898429105007,
+          "delta_auprc": -0.00025878656686187385,
+          "n_windows": 28147,
+          "n_patients": 510,
+          "n_pairs_seen_dtr": 862283345,
+          "micro_subsampled_to": 5000000
+        },
+        "<1": {
+          "auprc_dtr": 0.10242568525209256,
+          "auprc_temporal": 0.10187011855723328,
+          "delta_auprc": 0.0005555666948592747,
+          "n_windows": 3706,
+          "n_patients": 264,
+          "n_pairs_seen_dtr": 113533310,
+          "micro_subsampled_to": 5000000
+        },
+        "1-5": {
+          "auprc_dtr": 0.18464892030731034,
+          "auprc_temporal": 0.18561381529888404,
+          "delta_auprc": -0.000964894991573706,
+          "n_windows": 14038,
+          "n_patients": 407,
+          "n_pairs_seen_dtr": 430054130,
+          "micro_subsampled_to": 5000000
+        },
+        "6-11": {
+          "auprc_dtr": 0.1125378124390044,
+          "auprc_temporal": 0.11242272439664296,
+          "delta_auprc": 0.00011508804236144698,
+          "n_windows": 7283,
+          "n_patients": 283,
+          "n_pairs_seen_dtr": 223114705,
+          "micro_subsampled_to": 5000000
+        },
+        "12-17": {
+          "auprc_dtr": 0.1144153823777852,
+          "auprc_temporal": 0.11390395783454112,
+          "delta_auprc": 0.000511424543244085,
+          "n_windows": 3120,
+          "n_patients": 128,
+          "n_pairs_seen_dtr": 95581200,
+          "micro_subsampled_to": 5000000
+        }
+      }
+    },
+    "90d": {
+      "horizon_days": 90.0,
+      "cells": {
+        "_overall": {
+          "auprc_dtr": 0.1341044505985365,
+          "auprc_temporal": 0.1345497103816582,
+          "delta_auprc": -0.000445259783121682,
+          "n_windows": 28147,
+          "n_patients": 510,
+          "n_pairs_seen_dtr": 862283345,
+          "micro_subsampled_to": 5000000
+        },
+        "<1": {
+          "auprc_dtr": 0.11932715408982325,
+          "auprc_temporal": 0.11964165205621953,
+          "delta_auprc": -0.00031449796639627936,
+          "n_windows": 3706,
+          "n_patients": 264,
+          "n_pairs_seen_dtr": 113533310,
+          "micro_subsampled_to": 5000000
+        },
+        "1-5": {
+          "auprc_dtr": 0.23169431772744503,
+          "auprc_temporal": 0.23208213833407687,
+          "delta_auprc": -0.00038782060663183904,
+          "n_windows": 14038,
+          "n_patients": 407,
+          "n_pairs_seen_dtr": 430054130,
+          "micro_subsampled_to": 5000000
+        },
+        "6-11": {
+          "auprc_dtr": 0.1616291082988987,
+          "auprc_temporal": 0.1611259389731535,
+          "delta_auprc": 0.0005031693257452063,
+          "n_windows": 7283,
+          "n_patients": 283,
+          "n_pairs_seen_dtr": 223114705,
+          "micro_subsampled_to": 5000000
+        },
+        "12-17": {
+          "auprc_dtr": 0.1126834287203613,
+          "auprc_temporal": 0.11230620602487373,
+          "delta_auprc": 0.0003772226954875668,
+          "n_windows": 3120,
+          "n_patients": 128,
+          "n_pairs_seen_dtr": 95581200,
+          "micro_subsampled_to": 5000000
+        }
+      }
+    },
+    "180d": {
+      "horizon_days": 180.0,
+      "cells": {
+        "_overall": {
+          "auprc_dtr": 0.22560438427534604,
+          "auprc_temporal": 0.22555926037860013,
+          "delta_auprc": 4.512389674590778e-05,
+          "n_windows": 28147,
+          "n_patients": 510,
+          "n_pairs_seen_dtr": 862283345,
+          "micro_subsampled_to": 5000000
+        },
+        "<1": {
+          "auprc_dtr": 0.16676749517309772,
+          "auprc_temporal": 0.16627534846338785,
+          "delta_auprc": 0.0004921467097098731,
+          "n_windows": 3706,
+          "n_patients": 264,
+          "n_pairs_seen_dtr": 113533310,
+          "micro_subsampled_to": 5000000
+        },
+        "1-5": {
+          "auprc_dtr": 0.1972332565142186,
+          "auprc_temporal": 0.19778533911318844,
+          "delta_auprc": -0.0005520825989698275,
+          "n_windows": 14038,
+          "n_patients": 407,
+          "n_pairs_seen_dtr": 430054130,
+          "micro_subsampled_to": 5000000
+        },
+        "6-11": {
+          "auprc_dtr": 0.172414002349282,
+          "auprc_temporal": 0.17230963641258976,
+          "delta_auprc": 0.0001043659366922467,
+          "n_windows": 7283,
+          "n_patients": 283,
+          "n_pairs_seen_dtr": 223114705,
+          "micro_subsampled_to": 5000000
+        },
+        "12-17": {
+          "auprc_dtr": 0.13396553732312974,
+          "auprc_temporal": 0.1333454664901073,
+          "delta_auprc": 0.0006200708330224292,
+          "n_windows": 3120,
+          "n_patients": 128,
+          "n_pairs_seen_dtr": 95581200,
+          "micro_subsampled_to": 5000000
+        }
+      }
+    },
+    "1y": {
+      "horizon_days": 365.25,
+      "cells": {
+        "_overall": {
+          "auprc_dtr": 0.17463098394547732,
+          "auprc_temporal": 0.17504212696187965,
+          "delta_auprc": -0.00041114301640232664,
+          "n_windows": 28147,
+          "n_patients": 510,
+          "n_pairs_seen_dtr": 862283345,
+          "micro_subsampled_to": 5000000
+        },
+        "<1": {
+          "auprc_dtr": 0.12499870484271128,
+          "auprc_temporal": 0.12435027943440076,
+          "delta_auprc": 0.0006484254083105184,
+          "n_windows": 3706,
+          "n_patients": 264,
+          "n_pairs_seen_dtr": 113533310,
+          "micro_subsampled_to": 5000000
+        },
+        "1-5": {
+          "auprc_dtr": 0.17828804080157457,
+          "auprc_temporal": 0.17879338421983215,
+          "delta_auprc": -0.0005053434182575867,
+          "n_windows": 14038,
+          "n_patients": 407,
+          "n_pairs_seen_dtr": 430054130,
+          "micro_subsampled_to": 5000000
+        },
+        "6-11": {
+          "auprc_dtr": 0.16799673710322247,
+          "auprc_temporal": 0.16777037086148247,
+          "delta_auprc": 0.00022636624173999476,
+          "n_windows": 7283,
+          "n_patients": 283,
+          "n_pairs_seen_dtr": 223114705,
+          "micro_subsampled_to": 5000000
+        },
+        "12-17": {
+          "auprc_dtr": 0.14908900170532263,
+          "auprc_temporal": 0.14857071094607632,
+          "delta_auprc": 0.0005182907592463093,
+          "n_windows": 3120,
+          "n_patients": 128,
+          "n_pairs_seen_dtr": 95581200,
+          "micro_subsampled_to": 5000000
+        }
+      }
+    },
+    "3y": {
+      "horizon_days": 1095.75,
+      "cells": {
+        "_overall": {
+          "auprc_dtr": 0.1928578867994154,
+          "auprc_temporal": 0.19364196809125064,
+          "delta_auprc": -0.0007840812918352424,
+          "n_windows": 28147,
+          "n_patients": 510,
+          "n_pairs_seen_dtr": 862283345,
+          "micro_subsampled_to": 5000000
+        },
+        "<1": {
+          "auprc_dtr": 0.1302768706473498,
+          "auprc_temporal": 0.13041168252910174,
+          "delta_auprc": -0.00013481188175193393,
+          "n_windows": 3706,
+          "n_patients": 264,
+          "n_pairs_seen_dtr": 113533310,
+          "micro_subsampled_to": 5000000
+        },
+        "1-5": {
+          "auprc_dtr": 0.2202217507082903,
+          "auprc_temporal": 0.22072445149690234,
+          "delta_auprc": -0.0005027007886120316,
+          "n_windows": 14038,
+          "n_patients": 407,
+          "n_pairs_seen_dtr": 430054130,
+          "micro_subsampled_to": 5000000
+        },
+        "6-11": {
+          "auprc_dtr": 0.17408470553869038,
+          "auprc_temporal": 0.1739361407937821,
+          "delta_auprc": 0.00014856474490826388,
+          "n_windows": 7283,
+          "n_patients": 283,
+          "n_pairs_seen_dtr": 223114705,
+          "micro_subsampled_to": 5000000
+        },
+        "12-17": {
+          "auprc_dtr": 0.15438309992234714,
+          "auprc_temporal": 0.15242936235459079,
+          "delta_auprc": 0.001953737567756353,
+          "n_windows": 3120,
+          "n_patients": 128,
+          "n_pairs_seen_dtr": 95581200,
+          "micro_subsampled_to": 5000000
+        }
+      }
+    },
+    "5y": {
+      "horizon_days": 1826.25,
+      "cells": {
+        "_overall": {
+          "auprc_dtr": 0.18637587464646663,
+          "auprc_temporal": 0.18679037264090645,
+          "delta_auprc": -0.00041449799443982194,
+          "n_windows": 28147,
+          "n_patients": 510,
+          "n_pairs_seen_dtr": 862283345,
+          "micro_subsampled_to": 5000000
+        },
+        "<1": {
+          "auprc_dtr": 0.1480898168595019,
+          "auprc_temporal": 0.1483541854498026,
+          "delta_auprc": -0.000264368590300712,
+          "n_windows": 3706,
+          "n_patients": 264,
+          "n_pairs_seen_dtr": 113533310,
+          "micro_subsampled_to": 5000000
+        },
+        "1-5": {
+          "auprc_dtr": 0.23741066263121802,
+          "auprc_temporal": 0.23757202981021475,
+          "delta_auprc": -0.0001613671789967297,
+          "n_windows": 14038,
+          "n_patients": 407,
+          "n_pairs_seen_dtr": 430054130,
+          "micro_subsampled_to": 5000000
+        },
+        "6-11": {
+          "auprc_dtr": 0.13969248625028197,
+          "auprc_temporal": 0.1393159779116607,
+          "delta_auprc": 0.00037650833862126754,
+          "n_windows": 7283,
+          "n_patients": 283,
+          "n_pairs_seen_dtr": 223114705,
+          "micro_subsampled_to": 5000000
+        },
+        "12-17": {
+          "auprc_dtr": 0.13867546988680232,
+          "auprc_temporal": 0.13794999288779744,
+          "delta_auprc": 0.0007254769990048815,
+          "n_windows": 3120,
+          "n_patients": 128,
+          "n_pairs_seen_dtr": 95581200,
+          "micro_subsampled_to": 5000000
+        }
+      }
+    },
+    "Full": {
+      "horizon_days": null,
+      "cells": {
+        "_overall": {
+          "auprc_dtr": 0.16337023175207507,
+          "auprc_temporal": 0.16331513251430402,
+          "delta_auprc": 5.509923777105574e-05,
+          "n_windows": 28147,
+          "n_patients": 510,
+          "n_pairs_seen_dtr": 862283345,
+          "micro_subsampled_to": 5000000
+        },
+        "<1": {
+          "auprc_dtr": 0.12110212063515507,
+          "auprc_temporal": 0.12143120686063748,
+          "delta_auprc": -0.00032908622548240285,
+          "n_windows": 3706,
+          "n_patients": 264,
+          "n_pairs_seen_dtr": 113533310,
+          "micro_subsampled_to": 5000000
+        },
+        "1-5": {
+          "auprc_dtr": 0.21068721699625798,
+          "auprc_temporal": 0.21061776718998598,
+          "delta_auprc": 6.944980627199282e-05,
+          "n_windows": 14038,
+          "n_patients": 407,
+          "n_pairs_seen_dtr": 430054130,
+          "micro_subsampled_to": 5000000
+        },
+        "6-11": {
+          "auprc_dtr": 0.14559893500846532,
+          "auprc_temporal": 0.14518258154154873,
+          "delta_auprc": 0.0004163534669165969,
+          "n_windows": 7283,
+          "n_patients": 283,
+          "n_pairs_seen_dtr": 223114705,
+          "micro_subsampled_to": 5000000
+        },
+        "12-17": {
+          "auprc_dtr": 0.17013559846974197,
+          "auprc_temporal": 0.16891909386209186,
+          "delta_auprc": 0.001216504607650104,
+          "n_windows": 3120,
+          "n_patients": 128,
+          "n_pairs_seen_dtr": 95581200,
+          "micro_subsampled_to": 5000000
+        }
+      }
+    }
+  },
+  "elapsed_s": 562.6986427307129
+}

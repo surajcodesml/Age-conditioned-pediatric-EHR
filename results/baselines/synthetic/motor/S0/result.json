@@ -1,0 +1,128 @@
+{
+  "model": "motor",
+  "scenario": "S0",
+  "seed": 0,
+  "n_codes": 566,
+  "n_targets": 32,
+  "smoke": true,
+  "name_suffix": "",
+  "benchmark_family": "age_temporal_core",
+  "AUROC": 0.6951020685837075,
+  "AUPRC": 0.46973986925220834,
+  "BCE": 0.5074294209480286,
+  "CF_RMSE_age": 0.10640853624250636,
+  "CF_RMSE_lag": 0.08896845818465678,
+  "Surface_RMSE": 0.10866555621628413,
+  "S5_Surface_RMSE_acute": null,
+  "S5_Surface_RMSE_intermediate": null,
+  "S5_Surface_RMSE_chronic": null,
+  "S5_Surface_RMSE_mean": null,
+  "persistence_order_correct": null,
+  "mechanism_classification": "PARTIAL_RECOVERY",
+  "param_counts": {
+    "trainable_params": 4950048,
+    "total_params": 4950048,
+    "embedding_params": 145664,
+    "non_embedding_trainable": 4804384
+  },
+  "train": {
+    "best_val_bce": 0.5011876522937667,
+    "best_epoch": 2,
+    "last_epoch": 2,
+    "epochs_trained": 2,
+    "max_epochs": 2,
+    "min_epochs": 2,
+    "patience": 5,
+    "val_max_batches": null,
+    "stopped_early": false,
+    "amp": "fp32",
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.5547540130976799,
+        "val_bce": 0.5321900795553333,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 8.34622049331665
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.520195236071926,
+        "val_bce": 0.5011876522937667,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 16.068225860595703
+      }
+    ],
+    "total_time_s": 16.165621757507324,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/motor/S0/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/motor/S0/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/motor/S0/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.5074294209480286,
+    "micro_auroc": 0.6951020685837075,
+    "macro_auroc": 0.6702412451626338,
+    "micro_auprc": 0.46973986925220834,
+    "macro_auprc": 0.42948233098352084,
+    "precision@5": 0.489427775144577,
+    "recall@5": 0.30842617527011756
+  },
+  "model_card": {
+    "model": "motor",
+    "paper": "Steinberg et al., ICLR 2024",
+    "official_repo": "som-shahlab/motor_code_release",
+    "trainable_params": 4950048,
+    "embedding_params": 145664,
+    "layers": 6,
+    "heads": 8,
+    "hidden_size": 256,
+    "ffn_size": 1024,
+    "max_seq_len": 112,
+    "temporal_mechanism": "continuous_rope_on_event_ages",
+    "normalization": "RMSNorm"
+  },
+  "benchmark_record": {
+    "scenario": "S0",
+    "model": "motor",
+    "AUROC": 0.6951020685837075,
+    "AUPRC": 0.46973986925220834,
+    "BCE": 0.5074294209480286,
+    "CF_RMSE_age": 0.10640853624250636,
+    "CF_RMSE_lag": 0.08896845818465678,
+    "Surface_RMSE": 0.10866555621628413,
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "mechanism_classification": "PARTIAL_RECOVERY"
+  },
+  "cf_report": {
+    "cf_rmse_age": 0.10640853624250636,
+    "cf_rmse_lag": 0.08896845818465678,
+    "surface_rmse": 0.10866555621628413,
+    "CF_RMSE_age": 0.10640853624250636,
+    "CF_RMSE_lag": 0.08896845818465678,
+    "Surface_RMSE": 0.10866555621628413,
+    "mechanism_classification": "PARTIAL_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "motor",
+    "scenario": "S0"
+  }
+}

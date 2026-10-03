@@ -1,0 +1,313 @@
+{
+  "model": "nest",
+  "scenario": "S3",
+  "seed": 0,
+  "n_codes": 566,
+  "n_targets": 32,
+  "smoke": false,
+  "name_suffix": "",
+  "benchmark_family": "age_temporal_core",
+  "AUROC": 0.7296996127705307,
+  "AUPRC": 0.5180369322069647,
+  "BCE": 0.49284061789512634,
+  "CF_RMSE_age": 0.157644457724748,
+  "CF_RMSE_lag": 0.15959164169795986,
+  "Surface_RMSE": 0.18045759446527787,
+  "S5_Surface_RMSE_acute": null,
+  "S5_Surface_RMSE_intermediate": null,
+  "S5_Surface_RMSE_chronic": null,
+  "S5_Surface_RMSE_mean": null,
+  "persistence_order_correct": null,
+  "mechanism_classification": "NO_MECHANISM_RECOVERY",
+  "param_counts": {
+    "trainable_params": 6734938,
+    "total_params": 6734938,
+    "embedding_params": 145920,
+    "non_embedding_trainable": 6589018
+  },
+  "train": {
+    "best_val_bce": 0.48547877864302874,
+    "best_epoch": 7,
+    "last_epoch": 20,
+    "epochs_trained": 20,
+    "max_epochs": 40,
+    "min_epochs": 20,
+    "patience": 5,
+    "val_max_batches": null,
+    "stopped_early": true,
+    "amp": "fp32",
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.5510395197930552,
+        "val_bce": 0.5161942036352425,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 41.537662744522095
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.512430714409156,
+        "val_bce": 0.49747752742232565,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 83.4176676273346
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.49754763674940133,
+        "val_bce": 0.4896574350160973,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 125.10204339027405
+      },
+      {
+        "epoch": 4,
+        "train_loss": 0.4890916935531548,
+        "val_bce": 0.486813731505492,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 166.75564813613892
+      },
+      {
+        "epoch": 5,
+        "train_loss": 0.48145695546428574,
+        "val_bce": 0.48641282019214094,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 208.7413899898529
+      },
+      {
+        "epoch": 6,
+        "train_loss": 0.4763249851614419,
+        "val_bce": 0.48583170364950307,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 250.50186228752136
+      },
+      {
+        "epoch": 7,
+        "train_loss": 0.4723603269711738,
+        "val_bce": 0.48547877864302874,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 292.25537395477295
+      },
+      {
+        "epoch": 8,
+        "train_loss": 0.4661670689479798,
+        "val_bce": 0.48804703026174384,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 333.9784965515137
+      },
+      {
+        "epoch": 9,
+        "train_loss": 0.46163936190784,
+        "val_bce": 0.48995278795188835,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 375.81824350357056
+      },
+      {
+        "epoch": 10,
+        "train_loss": 0.45632643141748463,
+        "val_bce": 0.493803187842681,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 417.5115296840668
+      },
+      {
+        "epoch": 11,
+        "train_loss": 0.44947779379083436,
+        "val_bce": 0.49566779225786156,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 459.2874948978424
+      },
+      {
+        "epoch": 12,
+        "train_loss": 0.4411021615722157,
+        "val_bce": 0.5007842848234088,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 501.020382642746
+      },
+      {
+        "epoch": 13,
+        "train_loss": 0.434678039427344,
+        "val_bce": 0.5038744543200341,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 542.8351075649261
+      },
+      {
+        "epoch": 14,
+        "train_loss": 0.4252087561587533,
+        "val_bce": 0.5114338130594414,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 584.4440383911133
+      },
+      {
+        "epoch": 15,
+        "train_loss": 0.4163451821061479,
+        "val_bce": 0.5201559735235767,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 626.2839550971985
+      },
+      {
+        "epoch": 16,
+        "train_loss": 0.40360848264843896,
+        "val_bce": 0.5285878689489631,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 668.0684766769409
+      },
+      {
+        "epoch": 17,
+        "train_loss": 0.3929941759175589,
+        "val_bce": 0.540229296461444,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 709.64688372612
+      },
+      {
+        "epoch": 18,
+        "train_loss": 0.3779976831326133,
+        "val_bce": 0.5527490072161237,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 751.2724883556366
+      },
+      {
+        "epoch": 19,
+        "train_loss": 0.3652654455187269,
+        "val_bce": 0.5681979313074985,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 793.2562220096588
+      },
+      {
+        "epoch": 20,
+        "train_loss": 0.34927763371043824,
+        "val_bce": 0.5803110782231126,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 835.0343825817108
+      }
+    ],
+    "total_time_s": 835.1134173870087,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/nest/S3/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/nest/S3/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/nest/S3/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.49284061789512634,
+    "micro_auroc": 0.7296996127705307,
+    "macro_auroc": 0.7032976334826314,
+    "micro_auprc": 0.5180369322069647,
+    "macro_auprc": 0.47679692560814635,
+    "precision@5": 0.5311347842216492,
+    "recall@5": 0.32784527727374746
+  },
+  "model_card": {
+    "model": "nest",
+    "paper": "Sun et al., arXiv:2602.00520 (2026)",
+    "trainable_params": 6734938,
+    "embedding_params": 145920,
+    "layers": 4,
+    "heads": 4,
+    "hidden_size": 256,
+    "ffn_size": 683,
+    "max_encounters": 32,
+    "max_codes_per_encounter": 32,
+    "temporal_mechanism": "interleaved_swe_cse_rope",
+    "feasibility_status": {
+      "official_code_available": false,
+      "official_weights_available": false,
+      "architecture_reproducible_from_paper": true,
+      "note": "NEST architecture (SWE + CSE + RoPE + SwiGLU + MSM) is fully and faithfully reproduced from Section 3 of Sun et al. (arXiv:2602.00520). Official pretrained weights on proprietary Duke CDM data remain unreleased pending paper acceptance."
+    }
+  },
+  "benchmark_record": {
+    "scenario": "S3",
+    "model": "nest",
+    "AUROC": 0.7296996127705307,
+    "AUPRC": 0.5180369322069647,
+    "BCE": 0.49284061789512634,
+    "CF_RMSE_age": 0.157644457724748,
+    "CF_RMSE_lag": 0.15959164169795986,
+    "Surface_RMSE": 0.18045759446527787,
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY"
+  },
+  "cf_report": {
+    "cf_rmse_age": 0.157644457724748,
+    "cf_rmse_lag": 0.15959164169795986,
+    "surface_rmse": 0.18045759446527787,
+    "CF_RMSE_age": 0.157644457724748,
+    "CF_RMSE_lag": 0.15959164169795986,
+    "Surface_RMSE": 0.18045759446527787,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "nest",
+    "scenario": "S3"
+  }
+}

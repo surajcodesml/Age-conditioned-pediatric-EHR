@@ -1,0 +1,26 @@
+[
+  {
+    "epoch": 1,
+    "train_loss": 0.0012626522438949905,
+    "val_bce": 0.0014128904783149304,
+    "val_micro_auroc": 0.5675518579342698,
+    "val_macro_auroc": 0.4904844726412872,
+    "val_micro_auprc": 0.0006488855780562055,
+    "val_macro_auprc": 0.1151084055752416,
+    "val_precision@5": 0.0,
+    "val_recall@5": 0.0,
+    "time_s": 1.3956782817840576
+  },
+  {
+    "epoch": 2,
+    "train_loss": 0.0005548587141674943,
+    "val_bce": 0.0019578538175666375,
+    "val_micro_auroc": 0.5769622510037219,
+    "val_macro_auroc": 0.47429294844316694,
+    "val_micro_auprc": 0.00048131988189591243,
+    "val_macro_auprc": 0.10783263509638875,
+    "val_precision@5": 0.0,
+    "val_recall@5": 0.0,
+    "time_s": 2.806759834289551
+  }
+]

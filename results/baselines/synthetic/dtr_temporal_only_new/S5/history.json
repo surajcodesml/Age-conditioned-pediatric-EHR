@@ -1,0 +1,252 @@
+[
+  {
+    "epoch": 1,
+    "train_loss": 0.6251143400298786,
+    "val_bce": 0.569964846495156,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 3.8475191593170166
+  },
+  {
+    "epoch": 2,
+    "train_loss": 0.545205780002374,
+    "val_bce": 0.5267971110121112,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 7.694219589233398
+  },
+  {
+    "epoch": 3,
+    "train_loss": 0.5105261812635796,
+    "val_bce": 0.5018679743615266,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 11.557288646697998
+  },
+  {
+    "epoch": 4,
+    "train_loss": 0.49413812804406776,
+    "val_bce": 0.49157315013564634,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 15.46399450302124
+  },
+  {
+    "epoch": 5,
+    "train_loss": 0.4861328256188535,
+    "val_bce": 0.4852111798580562,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 19.329094409942627
+  },
+  {
+    "epoch": 6,
+    "train_loss": 0.4805513949745099,
+    "val_bce": 0.47923356706850995,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 23.171916246414185
+  },
+  {
+    "epoch": 7,
+    "train_loss": 0.4757888144101603,
+    "val_bce": 0.47707925199348233,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 27.04823899269104
+  },
+  {
+    "epoch": 8,
+    "train_loss": 0.47179418527686345,
+    "val_bce": 0.4725036246754299,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 30.926318407058716
+  },
+  {
+    "epoch": 9,
+    "train_loss": 0.46895722436797993,
+    "val_bce": 0.4706857547581753,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 34.8356146812439
+  },
+  {
+    "epoch": 10,
+    "train_loss": 0.46647920348038735,
+    "val_bce": 0.4669384733538761,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 38.69586634635925
+  },
+  {
+    "epoch": 11,
+    "train_loss": 0.4645643913036359,
+    "val_bce": 0.46677939691276193,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 42.52585816383362
+  },
+  {
+    "epoch": 12,
+    "train_loss": 0.46317648260728517,
+    "val_bce": 0.4648584196500689,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 46.38971829414368
+  },
+  {
+    "epoch": 13,
+    "train_loss": 0.46200546188544994,
+    "val_bce": 0.46374555569942866,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 50.22257995605469
+  },
+  {
+    "epoch": 14,
+    "train_loss": 0.46086345460528605,
+    "val_bce": 0.46380041603730104,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 54.0539984703064
+  },
+  {
+    "epoch": 15,
+    "train_loss": 0.4597605863639981,
+    "val_bce": 0.46357051813713857,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 57.92710781097412
+  },
+  {
+    "epoch": 16,
+    "train_loss": 0.4589905989835858,
+    "val_bce": 0.46202545076887186,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 61.78384613990784
+  },
+  {
+    "epoch": 17,
+    "train_loss": 0.4583195067404534,
+    "val_bce": 0.46165426423616496,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 65.66359353065491
+  },
+  {
+    "epoch": 18,
+    "train_loss": 0.45785516980371815,
+    "val_bce": 0.461046932790881,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 69.55172204971313
+  },
+  {
+    "epoch": 19,
+    "train_loss": 0.4572837419817023,
+    "val_bce": 0.45990882722016807,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 73.40406036376953
+  },
+  {
+    "epoch": 20,
+    "train_loss": 0.4564465398429804,
+    "val_bce": 0.4609579313581235,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 77.32932305335999
+  },
+  {
+    "epoch": 21,
+    "train_loss": 0.4561348712011789,
+    "val_bce": 0.4601259454388485,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 81.20879459381104
+  },
+  {
+    "epoch": 22,
+    "train_loss": 0.4557723260586766,
+    "val_bce": 0.4592772528389904,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 85.05521726608276
+  },
+  {
+    "epoch": 23,
+    "train_loss": 0.455280273836873,
+    "val_bce": 0.45862469628592517,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 88.93342995643616
+  },
+  {
+    "epoch": 24,
+    "train_loss": 0.45443585634085776,
+    "val_bce": 0.46070072806884194,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 92.81305813789368
+  },
+  {
+    "epoch": 25,
+    "train_loss": 0.4543871592245829,
+    "val_bce": 0.4597470328072521,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 96.68273496627808
+  }
+]

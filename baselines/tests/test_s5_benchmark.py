@@ -82,12 +82,21 @@ class TestS5LoadsThroughAdapters:
         "count_lightgbm", "retain", "ehr_bert", "behrt", "medbert", "cehrbert", "dtr",
     ])
     def test_each_baseline_accepts_s5_batch(self, model_name):
-        _, _, test, vocab, info = make_baseline_loaders(
-            "S5", data_seed=DATA_SEED, batch_size=2,
-        )
-        raw = next(iter(test))
-        batch = model_batch(raw)
-        n_codes, n_types, n_targets = info["n_codes"], info["n_types"], info["n_targets"]
+        from baselines.synthetic.data_adapter import make_dtr_baseline_loaders
+
+        if model_name == "dtr":
+            _, _, test, vocab, info = make_dtr_baseline_loaders(
+                "S5", data_seed=DATA_SEED, batch_size=2,
+            )
+            raw = next(iter(test))
+            batch = model_batch(raw, encounter=True)
+        else:
+            _, _, test, vocab, info = make_baseline_loaders(
+                "S5", data_seed=DATA_SEED, batch_size=2,
+            )
+            raw = next(iter(test))
+            batch = model_batch(raw)
+        n_codes, n_types, n_targets = info["n_codes"], info.get("n_types", 11), info["n_targets"]
 
         if model_name == "dtr":
             model = build_model("dtr", n_codes, n_types, n_targets, arm="age_temporal")

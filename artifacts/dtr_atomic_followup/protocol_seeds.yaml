@@ -1,0 +1,12 @@
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+source: architecture ladder seed list 0-4; fixed before atomic runs
+git_commit: be9a2b73960bc701272eb08e7bd9f31527fe4efe
+timestamp: '2026-10-02T18:33:36+00:00'
+jobs: 2
+reference: C00_current_dtr matched initialization; not the single-seed dtr_age_temporal_new
+  file

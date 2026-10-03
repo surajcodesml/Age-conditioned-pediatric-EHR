@@ -25,10 +25,11 @@ sys.path.insert(0, str(REPO_ROOT / "synthetic_age_temporal"))
 from synthetic_age_temporal.config import Config
 from synthetic_age_temporal.dataset import make_loaders
 
-from baselines.synthetic.runner import ALL_MODELS, DTR_ARMS, build_model
+from baselines.synthetic.runner import ALL_MODELS, DTR_ARMS, build_model, dtr_arm_dirname
 from baselines.synthetic.data_adapter import (
     BENCHMARK_SCENARIOS,
     CORE_SCENARIOS,
+    make_dtr_baseline_loaders,
     model_batch,
     resolve_scenarios,
 )
@@ -51,11 +52,12 @@ def make_predict_fns(
     ``predict_batch`` is used by S5 group evaluation (receives a full batch).
     """
     is_lgb = getattr(model, "name", "") == "count_lightgbm"
+    encounter = bool(getattr(model, "uses_encounter_batch", False))
 
     def _predict_from_batch(b_in: dict[str, torch.Tensor]) -> np.ndarray:
         b = {k: (v.clone() if torch.is_tensor(v) else v) for k, v in b_in.items()}
         # Models never see eval-only keys
-        b_model = model_batch(b)
+        b_model = model_batch(b, encounter=encounter)
         if is_lgb:
             X = build_features_from_batch(b_model, n_codes)
             return model.predict_proba(X)[0]
@@ -76,8 +78,15 @@ def make_predict_fns(
             b["age"] = torch.full_like(b["age"], float(a))
             b["z_age"] = (b["age"] - 9.0) / 9.0
         if lag is not None:
-            b["lag_days"] = torch.full_like(b["lag_days"], float(lag))
-            b["tau"] = torch.log1p(b["lag_days"] / 7.0)
+            if encounter:
+                b["enc_lag_days"] = torch.full_like(b["enc_lag_days"], float(lag))
+                b["enc_tau"] = torch.log1p(b["enc_lag_days"] / 7.0)
+                # Keep padded encounters at tau=0
+                if "enc_padding_mask" in b:
+                    b["enc_tau"] = b["enc_tau"].masked_fill(b["enc_padding_mask"], 0.0)
+            else:
+                b["lag_days"] = torch.full_like(b["lag_days"], float(lag))
+                b["tau"] = torch.log1p(b["lag_days"] / 7.0)
         return _predict_from_batch(b)
 
     return (
@@ -156,16 +165,30 @@ def main():
     )
     parser.add_argument("--data-seed", type=int, default=20260922)
     parser.add_argument("--device", default="cuda")
+    parser.add_argument(
+        "--models",
+        default="all",
+        help="Comma-separated model names or 'all'. Use 'dtr' for DTR arms only.",
+    )
+    parser.add_argument(
+        "--name-suffix",
+        type=str,
+        default="",
+        help="DTR arm suffix (e.g. '_new'). Writes cf_summary_{S}{suffix}.json "
+             "so legacy cf_summary_S*.json are never overwritten.",
+    )
     args = parser.parse_args()
 
     scenarios = resolve_scenarios(args.scenario)
     results_dir = Path(args.results_dir)
     cfg = Config(data_seed=args.data_seed)
     device = get_device(args.device)
+    name_suffix = args.name_suffix
+    models = ALL_MODELS if args.models == "all" else args.models.split(",")
 
     for scenario in scenarios:
         scenario_dir = cfg.data_dir() / "controlled" / scenario
-        print(f"\n=== Counterfactual eval: {scenario} ===")
+        print(f"\n=== Counterfactual eval: {scenario} (suffix={name_suffix!r}) ===")
         print(f"Loading data from {scenario_dir}")
         _, _, test_loader, vocab, info = make_loaders(scenario_dir, batch_size=1)
         n_codes = info["n_codes"]
@@ -195,8 +218,11 @@ def main():
 
         reports: dict[str, Any] = {}
 
-        for model_name in ALL_MODELS:
-            arms = [f"dtr_{arm}" for arm in DTR_ARMS] if model_name == "dtr" else [model_name]
+        for model_name in models:
+            if model_name == "dtr":
+                arms = [dtr_arm_dirname(arm, name_suffix) for arm in DTR_ARMS]
+            else:
+                arms = [f"{model_name}{name_suffix}" if name_suffix else model_name]
 
             for arm_name in arms:
                 model_dir = results_dir / arm_name / scenario
@@ -212,7 +238,10 @@ def main():
                             s0_rmse = json.load(f)["cf_rmse_age"]
 
                 if model_name == "dtr":
-                    arm_type = arm_name.replace("dtr_", "")
+                    # Strip leading 'dtr_' and trailing name_suffix → arm key
+                    arm_type = arm_name[len("dtr_"):]
+                    if name_suffix and arm_type.endswith(name_suffix):
+                        arm_type = arm_type[: -len(name_suffix)]
                     model = build_model("dtr", n_codes, n_types, n_targets, arm=arm_type)
                 else:
                     model = build_model(model_name, n_codes, n_types, n_targets)
@@ -226,8 +255,26 @@ def main():
                 if hasattr(model, "to"):
                     model.to(device)
 
+                # Content-Persistence DTR needs an encounter-level CF template.
+                if getattr(model, "uses_encounter_batch", False):
+                    _, _, dtr_test, _, _ = make_dtr_baseline_loaders(
+                        scenario, data_seed=args.data_seed, batch_size=1,
+                    )
+                    dtr_template = None
+                    for batch in dtr_test:
+                        # Prefer examples with ≥1 non-pad encounter
+                        if (~batch["enc_padding_mask"]).any():
+                            dtr_template = {k: v for k, v in batch.items()}
+                            break
+                    if dtr_template is None:
+                        print(f"No encounter template for {arm_name}; skipping CF")
+                        continue
+                    cf_template = dtr_template
+                else:
+                    cf_template = template
+
                 p_age, p_lag, p_surf, p_batch = make_predict_fns(
-                    model, template, device, n_codes,
+                    model, cf_template, device, n_codes,
                 )
 
                 try:
@@ -242,6 +289,7 @@ def main():
                             cf_rmse_age=base["cf_rmse_age"],
                             cf_rmse_lag=base["cf_rmse_lag"],
                             surface_rmse_full=base["surface_rmse"],
+                            encounter=bool(getattr(model, "uses_encounter_batch", False)),
                         )
                         report = {
                             **base,
@@ -290,9 +338,10 @@ def main():
                     with result_path.open("w") as f:
                         json.dump(result, f, indent=2, default=str)
 
-        with (results_dir / f"cf_summary_{scenario}.json").open("w") as f:
+        summary_name = f"cf_summary_{scenario}{name_suffix}.json"
+        with (results_dir / summary_name).open("w") as f:
             json.dump(reports, f, indent=2)
-        print(f"Wrote cf_summary_{scenario}.json ({len(reports)} models)")
+        print(f"Wrote {summary_name} ({len(reports)} models)")
 
 
 if __name__ == "__main__":

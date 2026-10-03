@@ -1,0 +1,38 @@
+dataset: synthea_controlled
+cohort: controlled
+data_seed: 20260922
+scenarios:
+- S0
+- S1
+- S2
+- S3
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+d_model: 64
+dropout: 0.0
+batch_size: 32
+lr: 0.0003
+weight_decay: 0.01
+max_epochs: 1
+patience: 1
+min_epochs: 1
+grad_clip: 1.0
+n_components: 3
+stage_b_epochs: 1
+temporal_lr_mult: 10.0
+temporal_weight_decay: 0.0
+mass_eps: 1.0e-06
+age_shuffle_seed: 0
+lambda_init: 0.1
+staged: false
+variant: weak_init
+hypothesis: Initializing effective lambda at 0.1 instead of softplus(0) lets long-range
+  evidence survive early training.
+change: Set theta0 so softplus(theta0) = 0.1. Persistence intercept stays 0, so the
+  initial effective lambda is 0.1.
+experiment_id: C03_weak_lambda_init
+config_hash: dab80a546a9a00b9d8119f1f608d2c1209ee6397e9bec21feb6d7e91d7e24b64

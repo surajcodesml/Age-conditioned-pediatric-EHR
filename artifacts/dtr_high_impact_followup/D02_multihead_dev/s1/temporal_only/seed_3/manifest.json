@@ -1,0 +1,26 @@
+{
+  "experiment_id": "D02_multihead_dev",
+  "architecture": "multihead_dev",
+  "variant": "multihead_dev",
+  "arm": "temporal_only",
+  "dataset": "synthea_controlled",
+  "scenario": "S1",
+  "seed": 3,
+  "git_commit": "be9a2b73960bc701272eb08e7bd9f31527fe4efe",
+  "config_hash": "ef7a3fcca21213701e15fed264ee017c2ef31b839688302205d87d0f4bec6978",
+  "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/dtr_high_impact_followup/D02_multihead_dev/s1/temporal_only/seed_3/checkpoint_best.pt",
+  "timestamp": "2026-10-02T22:53:25+00:00",
+  "n_trainable": 59202,
+  "oracle_theta0": 0.0,
+  "oracle_beta": 0.0,
+  "training": {
+    "lr": 0.0003,
+    "weight_decay": 0.01,
+    "batch_size": 32,
+    "max_epochs": 25,
+    "patience": 5,
+    "min_epochs": 12,
+    "staged": true
+  },
+  "predictions_sha256": "f58225fee2655242b89e902d64e1ef3428e4c234a8636a6ed93f67b924e952bb"
+}

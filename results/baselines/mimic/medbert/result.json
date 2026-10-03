@@ -1,0 +1,180 @@
+{
+  "model": "medbert",
+  "seed": 0,
+  "smoke": false,
+  "n_codes": 30635,
+  "batch_size": 128,
+  "val_max_batches": 50,
+  "test_max_batches": 100,
+  "param_counts": {
+    "trainable_params": 14501291,
+    "total_params": 14501291,
+    "embedding_params": 5919168,
+    "non_embedding_trainable": 8582123
+  },
+  "train": {
+    "best_val_bce": 0.009747645959851621,
+    "best_epoch": 10,
+    "last_epoch": 10,
+    "epochs_trained": 10,
+    "max_epochs": 10,
+    "min_epochs": 5,
+    "patience": 3,
+    "val_max_batches": 50,
+    "stopped_early": false,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.020356889328212772,
+        "val_bce": 0.011408841695374991,
+        "val_micro_auroc": 0.9804746598270883,
+        "val_macro_auroc": 0.6376840484031586,
+        "val_micro_auprc": 0.36635035871317606,
+        "val_macro_auprc": 0.026814410785567597,
+        "val_precision@5": 0.7616874999999999,
+        "val_recall@5": 0.05217680695064054,
+        "time_s": 1055.4381868839264
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.011211261593955246,
+        "val_bce": 0.010552876939781582,
+        "val_micro_auroc": 0.9847205641264428,
+        "val_macro_auroc": 0.756103743388762,
+        "val_micro_auprc": 0.42461988912724263,
+        "val_macro_auprc": 0.04528129647391035,
+        "val_precision@5": 0.7696875,
+        "val_recall@5": 0.056484343652620256,
+        "time_s": 1934.9061584472656
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.01072942982307195,
+        "val_bce": 0.010286636766568108,
+        "val_micro_auroc": 0.9861546337578174,
+        "val_macro_auroc": 0.8060287924529601,
+        "val_micro_auprc": 0.4415085426934842,
+        "val_macro_auprc": 0.05691956947641548,
+        "val_precision@5": 0.77496875,
+        "val_recall@5": 0.06521368020338313,
+        "time_s": 2816.4751586914062
+      },
+      {
+        "epoch": 4,
+        "train_loss": 0.010498713317030839,
+        "val_bce": 0.010113580028706246,
+        "val_micro_auroc": 0.9869638671898915,
+        "val_macro_auroc": 0.8264351263366,
+        "val_micro_auprc": 0.4514198058675191,
+        "val_macro_auprc": 0.06563150128961681,
+        "val_precision@5": 0.77678125,
+        "val_recall@5": 0.0694671519134896,
+        "time_s": 3698.8512930870056
+      },
+      {
+        "epoch": 5,
+        "train_loss": 0.010337616086617707,
+        "val_bce": 0.010003608258489236,
+        "val_micro_auroc": 0.987438255730848,
+        "val_macro_auroc": 0.8389635698701394,
+        "val_micro_auprc": 0.4594411733948457,
+        "val_macro_auprc": 0.07432382251267189,
+        "val_precision@5": 0.782875,
+        "val_recall@5": 0.0699900400585549,
+        "time_s": 4581.2603487968445
+      },
+      {
+        "epoch": 6,
+        "train_loss": 0.010213590053614158,
+        "val_bce": 0.009903613739666467,
+        "val_micro_auroc": 0.9878624421323117,
+        "val_macro_auroc": 0.8458352949083099,
+        "val_micro_auprc": 0.4647799968892619,
+        "val_macro_auprc": 0.07724283127376969,
+        "val_precision@5": 0.7866562500000001,
+        "val_recall@5": 0.07641131198889387,
+        "time_s": 5465.079269170761
+      },
+      {
+        "epoch": 7,
+        "train_loss": 0.010118096549027157,
+        "val_bce": 0.009838445335013829,
+        "val_micro_auroc": 0.9881004875999506,
+        "val_macro_auroc": 0.8514815915181964,
+        "val_micro_auprc": 0.4707458285585395,
+        "val_macro_auprc": 0.08182801274781648,
+        "val_precision@5": 0.78875,
+        "val_recall@5": 0.07560232462147105,
+        "time_s": 6348.16227388382
+      },
+      {
+        "epoch": 8,
+        "train_loss": 0.010041775951551642,
+        "val_bce": 0.009815668554129103,
+        "val_micro_auroc": 0.9882658269997114,
+        "val_macro_auroc": 0.8536674815597113,
+        "val_micro_auprc": 0.47077111557734685,
+        "val_macro_auprc": 0.08257104327622311,
+        "val_precision@5": 0.79034375,
+        "val_recall@5": 0.07836853103739645,
+        "time_s": 7229.74729180336
+      },
+      {
+        "epoch": 9,
+        "train_loss": 0.009971235666984254,
+        "val_bce": 0.009835571481756485,
+        "val_micro_auroc": 0.9882659108739394,
+        "val_macro_auroc": 0.8551320874198222,
+        "val_micro_auprc": 0.47228077064387275,
+        "val_macro_auprc": 0.08304950819662055,
+        "val_precision@5": 0.78953125,
+        "val_recall@5": 0.07756075563243416,
+        "time_s": 8112.022345781326
+      },
+      {
+        "epoch": 10,
+        "train_loss": 0.009910086619124485,
+        "val_bce": 0.009747645959851621,
+        "val_micro_auroc": 0.9885261201078087,
+        "val_macro_auroc": 0.8580197442135824,
+        "val_micro_auprc": 0.4745824475903273,
+        "val_macro_auprc": 0.08402625604783417,
+        "val_precision@5": 0.790625,
+        "val_recall@5": 0.07949286003046035,
+        "time_s": 8993.402868032455
+      }
+    ],
+    "total_time_s": 8993.610808372498,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/medbert/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/medbert/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/medbert/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.009670826171681166,
+    "micro_auroc": 0.9882474028665362,
+    "macro_auroc": 0.8553320462831472,
+    "micro_auprc": 0.45941162108094413,
+    "macro_auprc": 0.06547673812522316,
+    "precision@5": 0.78371875,
+    "recall@5": 0.09030234272210493
+  },
+  "model_card": {
+    "trainable_params": 14501291,
+    "embedding_params": 5919168,
+    "layers": 6,
+    "heads": 6,
+    "hidden_size": 192,
+    "ffn_size": 768,
+    "max_seq_len": 257,
+    "age_representation": "none",
+    "time_representation": "none",
+    "pooling": "mean_pool"
+  },
+  "AUROC": 0.9882474028665362,
+  "AUPRC": 0.45941162108094413,
+  "BCE": 0.009670826171681166,
+  "best_val_bce": 0.009747645959851621,
+  "epochs_trained": 10
+}

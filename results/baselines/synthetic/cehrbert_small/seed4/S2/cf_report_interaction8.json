@@ -1,0 +1,24 @@
+{
+  "cf_rmse_age": 0.17926878318796444,
+  "cf_rmse_lag": 0.20601112667538019,
+  "surface_rmse": 0.2523692853014313,
+  "CF_RMSE_age": 0.17926878318796444,
+  "CF_RMSE_lag": 0.20601112667538019,
+  "Surface_RMSE": 0.2523692853014313,
+  "mechanism_classification": "NO_MECHANISM_RECOVERY",
+  "S5_Surface_RMSE_acute": null,
+  "S5_Surface_RMSE_intermediate": null,
+  "S5_Surface_RMSE_chronic": null,
+  "S5_Surface_RMSE_mean": null,
+  "persistence_order_correct": null,
+  "thresholds": {
+    "functional": 0.1,
+    "partial": 0.25,
+    "s0_max_cf_age": 0.05
+  },
+  "model": "cehrbert_small",
+  "scenario": "S2",
+  "seed": 4,
+  "n_targets": 8,
+  "note": "SECONDARY: interaction targets only; not primary result."
+}

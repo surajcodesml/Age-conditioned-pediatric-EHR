@@ -1,0 +1,19 @@
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+source: existing cehrbert_small seed list; fixed before ladder runs
+git_commit: be9a2b73960bc701272eb08e7bd9f31527fe4efe
+timestamp: '2026-10-02T16:32:05+00:00'
+jobs: 2
+data: cached encounter tensors, split-max padding, masked; shuffle from trainer seed
+unchanged:
+- batch_size
+- lr
+- weight_decay
+- max_epochs
+- patience
+- min_epochs
+- seeds

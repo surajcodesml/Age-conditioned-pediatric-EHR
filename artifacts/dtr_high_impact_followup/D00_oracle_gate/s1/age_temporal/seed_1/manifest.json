@@ -1,0 +1,26 @@
+{
+  "experiment_id": "D00_oracle_gate",
+  "architecture": "oracle_gate",
+  "variant": "oracle_gate",
+  "arm": "age_temporal",
+  "dataset": "synthea_controlled",
+  "scenario": "S1",
+  "seed": 1,
+  "git_commit": "be9a2b73960bc701272eb08e7bd9f31527fe4efe",
+  "config_hash": "1d7dae022d42335ba95b68a57c7096c53825b1c52adc926c949cfc122ffa4f26",
+  "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/dtr_high_impact_followup/D00_oracle_gate/s1/age_temporal/seed_1/checkpoint_best.pt",
+  "timestamp": "2026-10-02T22:08:55+00:00",
+  "n_trainable": 55040,
+  "oracle_theta0": 0.0,
+  "oracle_beta": 0.0,
+  "training": {
+    "lr": 0.0003,
+    "weight_decay": 0.01,
+    "batch_size": 32,
+    "max_epochs": 25,
+    "patience": 5,
+    "min_epochs": 12,
+    "staged": true
+  },
+  "predictions_sha256": "41843055421a0965340332a3a9d600d2f2059c77bb996206bc679d2d02991205"
+}

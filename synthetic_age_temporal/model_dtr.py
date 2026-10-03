@@ -306,6 +306,7 @@ class DevelopmentalTemporalRetrieval(nn.Module):
         enc_padding_mask: torch.Tensor,  # True = pad encounter
         age: torch.Tensor,
         return_parts: bool = False,
+        gate_age: torch.Tensor | None = None,
         **kwargs: Any,
     ) -> torch.Tensor | dict[str, torch.Tensor]:
         # Encounter content representation — no age / lag / cutoff.
@@ -326,8 +327,11 @@ class DevelopmentalTemporalRetrieval(nn.Module):
         theta_m = self.theta0 + theta_content
 
         z = self.z_of(age)
+        # gate_age isolates the temporal gate from the additive age head.
+        # Default None keeps the historical single-age path unchanged.
+        z_gate = z if gate_age is None else self.z_of(gate_age)
         if self.age_temporal:
-            lam = F.softplus(theta_m + self.beta * z.unsqueeze(-1))
+            lam = F.softplus(theta_m + self.beta * z_gate.unsqueeze(-1))
         else:
             lam = F.softplus(theta_m)
         lam = lam * hist_f + (1.0 - hist_f) * 1.0  # unused pads → finite

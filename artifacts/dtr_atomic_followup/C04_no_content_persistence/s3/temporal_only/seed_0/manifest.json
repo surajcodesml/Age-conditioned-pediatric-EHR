@@ -1,0 +1,25 @@
+{
+  "experiment_id": "C04_no_content_persistence",
+  "architecture": "no_persistence",
+  "variant": "no_persistence",
+  "arm": "temporal_only",
+  "dataset": "synthea_controlled",
+  "scenario": "S3",
+  "seed": 0,
+  "split": "test",
+  "git_commit": "be9a2b73960bc701272eb08e7bd9f31527fe4efe",
+  "config_hash": "09e3fb85ae36c8c344a3787a3110b7a997e50221493a761ab5013ad9799e4fae",
+  "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/dtr_atomic_followup/C04_no_content_persistence/s3/temporal_only/seed_0/checkpoint_best.pt",
+  "timestamp": "2026-10-02T20:00:52+00:00",
+  "n_trainable": 55041,
+  "training": {
+    "lr": 0.0003,
+    "weight_decay": 0.01,
+    "batch_size": 32,
+    "max_epochs": 25,
+    "patience": 5,
+    "min_epochs": 12,
+    "staged": false
+  },
+  "predictions_sha256": "9d8b3384dc10ef08173c963651370f11c89496658ef335f3fa549efcc1a086e2"
+}

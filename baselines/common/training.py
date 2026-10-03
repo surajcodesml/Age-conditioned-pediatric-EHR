@@ -47,39 +47,67 @@ def evaluate_loader(
     device: torch.device,
     ks: tuple[int, ...] = (5,),
     max_batches: int | None = None,
+    metrics_mode: str = "full",
 ) -> dict[str, float]:
     """Run predictions over a loader and compute multilabel metrics.
 
     ``max_batches`` caps how many batches are scored. Required for MIMIC-scale
     next-visit heads (~30k codes) where concatenating the full val/test
     logit tensor OOMs (tens of GB).
+
+    ``metrics_mode``: ``"bce"`` (early-stopping), ``"fast"``, or ``"full"``.
+    Training validation should use ``"bce"`` — full micro/macro AUROC on a
+    30k-code head can take >30 minutes and thrash host RAM.
     """
     model.eval()
+    # Online BCE avoids building a giant logit tensor when only BCE is needed.
+    bce_sum, n_elem = 0.0, 0
     all_y, all_logits = [], []
     for i, batch in enumerate(loader):
         if max_batches is not None and i >= int(max_batches):
             break
-        batch = {k: v.to(device) if torch.is_tensor(v) else v
+        batch = {k: v.to(device, non_blocking=True) if torch.is_tensor(v) else v
                  for k, v in batch.items()}
         out = predict_fn(batch)
-        y = batch["labels"].detach().cpu().numpy()
+        y_t = batch["labels"]
         if isinstance(out, ModelOutput):
-            logits = out.logits.detach().cpu().numpy()
+            logits_t = out.logits
         elif isinstance(out, dict) and "logits" in out:
-            logits = out["logits"].detach().cpu().numpy()
+            logits_t = out["logits"]
         elif isinstance(out, torch.Tensor):
-            logits = out.detach().cpu().numpy()
+            logits_t = out
         else:
             raise TypeError(f"predict_fn returned unexpected type {type(out)}")
-        all_y.append(y)
-        all_logits.append(logits)
-    if not all_y:
+
+        # Running BCE in float32 on device (matches training objective).
+        bce_sum += float(
+            torch.nn.functional.binary_cross_entropy_with_logits(
+                logits_t.float(), y_t.float(), reduction="sum"
+            ).item()
+        )
+        n_elem += int(y_t.numel())
+
+        if metrics_mode != "bce":
+            all_y.append(y_t.detach().cpu().numpy())
+            all_logits.append(logits_t.detach().cpu().numpy())
+
+    if n_elem == 0:
         return {"bce": float("nan"), "micro_auroc": float("nan"),
                 "macro_auroc": float("nan"), "micro_auprc": float("nan"),
                 "macro_auprc": float("nan")}
+
+    if metrics_mode == "bce":
+        return {
+            "bce": bce_sum / max(n_elem, 1),
+            "micro_auroc": float("nan"),
+            "macro_auroc": float("nan"),
+            "micro_auprc": float("nan"),
+            "macro_auprc": float("nan"),
+        }
+
     y = np.concatenate(all_y, axis=0)
     logits = np.concatenate(all_logits, axis=0)
-    return multilabel_metrics(y, logits, ks=ks)
+    return multilabel_metrics(y, logits, ks=ks, mode=metrics_mode)
 
 
 def train_neural_baseline(
@@ -100,6 +128,8 @@ def train_neural_baseline(
     seed: int = 0,
     optimizer_groups: list[dict] | None = None,
     val_max_batches: int | None = None,
+    grad_accum_steps: int = 1,
+    amp: str = "fp32",
 ) -> dict[str, Any]:
     """Common training loop for neural baselines.
 
@@ -107,6 +137,14 @@ def train_neural_baseline(
     ``min_epochs`` have completed. Default ``min_epochs`` is
     ``max(patience, max_epochs // 2)`` so short budgets still train
     a meaningful number of epochs.
+
+    ``grad_accum_steps`` > 1 accumulates gradients over micro-batches before
+    each optimizer step (effective batch ≈ micro-batch × accum). Default 1
+    preserves prior behavior.
+
+    ``amp``: ``"fp32"`` (default), ``"bf16"``, or ``"fp16"``. BF16 on ROCm/CUDA
+    materially raises samples/sec for Transformer baselines; BCEWithLogits stays
+    in float32 under autocast.
 
     When ``run_dir`` is set, writes:
       - ``last_checkpoint.pt``  — weights after the final trained epoch
@@ -116,6 +154,14 @@ def train_neural_baseline(
     set_seed(seed)
     dev = get_device(device)
     model.to(dev)
+    grad_accum_steps = max(1, int(grad_accum_steps))
+    amp = str(amp or "fp32").lower()
+    if amp not in ("fp32", "bf16", "fp16"):
+        raise ValueError(f"amp must be fp32|bf16|fp16, got {amp!r}")
+    use_amp = amp in ("bf16", "fp16") and dev.type == "cuda"
+    amp_dtype = torch.bfloat16 if amp == "bf16" else torch.float16
+    # GradScaler only required for fp16; bf16 is numerically stable without it.
+    scaler = torch.amp.GradScaler("cuda", enabled=(use_amp and amp == "fp16"))
 
     if min_epochs is None:
         min_epochs = max(int(patience), int(max_epochs) // 2)
@@ -145,36 +191,67 @@ def train_neural_baseline(
         epoch_t0 = time.time()
         print(
             f"  epoch {epoch}/{max_epochs} start"
-            + (f" ({n_train_batches} train batches)" if n_train_batches else ""),
+            + (f" ({n_train_batches} train batches)" if n_train_batches else "")
+            + (f"  accum={grad_accum_steps}" if grad_accum_steps > 1 else "")
+            + (f"  amp={amp}" if use_amp else ""),
             flush=True,
         )
+        optimizer.zero_grad(set_to_none=True)
         for batch in train_loader:
-            batch = {k: v.to(dev) if torch.is_tensor(v) else v
+            batch = {k: v.to(dev, non_blocking=True) if torch.is_tensor(v) else v
                      for k, v in batch.items()}
-            optimizer.zero_grad(set_to_none=True)
-            result = train_fn(batch)
-            loss = result["loss"]
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
-            optimizer.step()
+            with torch.autocast(
+                device_type=dev.type, dtype=amp_dtype, enabled=use_amp,
+            ):
+                result = train_fn(batch)
+                loss = result["loss"] / grad_accum_steps
+            if scaler.is_enabled():
+                scaler.scale(loss).backward()
+            else:
+                loss.backward()
             bsz = batch["labels"].size(0)
-            total_loss += loss.item() * bsz
+            total_loss += loss.item() * grad_accum_steps * bsz
             n_samples += bsz
             n_batches += 1
+            if (n_batches % grad_accum_steps) == 0:
+                if scaler.is_enabled():
+                    scaler.unscale_(optimizer)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
+                if scaler.is_enabled():
+                    scaler.step(optimizer)
+                    scaler.update()
+                else:
+                    optimizer.step()
+                optimizer.zero_grad(set_to_none=True)
             # Heartbeat so long MIMIC epochs aren't silent for hours.
             if n_batches == 1 or n_batches % 200 == 0:
                 print(
                     f"    batch {n_batches}"
                     + (f"/{n_train_batches}" if n_train_batches else "")
-                    + f"  loss={loss.item():.4f}  "
+                    + f"  loss={loss.item() * grad_accum_steps:.4f}  "
                     f"elapsed={time.time() - epoch_t0:.0f}s",
                     flush=True,
                 )
+        # Flush leftover micro-batches that didn't fill an accum window.
+        if (n_batches % grad_accum_steps) != 0:
+            if scaler.is_enabled():
+                scaler.unscale_(optimizer)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
+            if scaler.is_enabled():
+                scaler.step(optimizer)
+                scaler.update()
+            else:
+                optimizer.step()
+            optimizer.zero_grad(set_to_none=True)
 
         train_loss = total_loss / max(n_samples, 1)
+        print(f"    train done ({n_batches} batches); starting val...", flush=True)
+        # BCE-only val: early stopping key. Full AUROC on |V|≈30k is prohibitively slow.
         val_metrics = evaluate_loader(
-            model, predict_fn, val_loader, dev, max_batches=val_max_batches,
+            model, predict_fn, val_loader, dev,
+            max_batches=val_max_batches, metrics_mode="bce",
         )
+        print(f"    val done  val_bce={val_metrics['bce']:.6f}", flush=True)
 
         row = {
             "epoch": epoch,
@@ -237,6 +314,7 @@ def train_neural_baseline(
         "patience": patience,
         "val_max_batches": val_max_batches,
         "stopped_early": stopped_early,
+        "amp": amp,
         "history": history,
         "total_time_s": time.time() - t0,
         "checkpoints": {

@@ -1,12 +1,13 @@
 {
-  "dtr_S5": {
-    "model": "dtr",
-    "scenario": "S5",
+  "motor_S0": {
+    "model": "motor",
+    "scenario": "S0",
     "seed": 0,
     "n_codes": 566,
     "n_targets": 32,
-    "smoke": false,
-    "benchmark_family": "heterogeneous_persistence",
+    "smoke": true,
+    "name_suffix": "",
+    "benchmark_family": "age_temporal_core",
     "AUROC": null,
     "AUPRC": null,
     "BCE": null,
@@ -18,6 +19,308 @@
     "S5_Surface_RMSE_chronic": null,
     "S5_Surface_RMSE_mean": null,
     "persistence_order_correct": null,
-    "mechanism_classification": null
+    "mechanism_classification": null,
+    "param_counts": {
+      "trainable_params": 4950048,
+      "total_params": 4950048,
+      "embedding_params": 145664,
+      "non_embedding_trainable": 4804384
+    },
+    "train": {
+      "best_val_bce": 0.5011876522937667,
+      "best_epoch": 2,
+      "last_epoch": 2,
+      "epochs_trained": 2,
+      "max_epochs": 2,
+      "min_epochs": 2,
+      "patience": 5,
+      "val_max_batches": null,
+      "stopped_early": false,
+      "amp": "fp32",
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.5547540130976799,
+          "val_bce": 0.5321900795553333,
+          "val_micro_auroc": NaN,
+          "val_macro_auroc": NaN,
+          "val_micro_auprc": NaN,
+          "val_macro_auprc": NaN,
+          "time_s": 8.273316621780396
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.520195236071926,
+          "val_bce": 0.5011876522937667,
+          "val_micro_auroc": NaN,
+          "val_macro_auroc": NaN,
+          "val_micro_auprc": NaN,
+          "val_macro_auprc": NaN,
+          "time_s": 16.148270845413208
+        }
+      ],
+      "total_time_s": 16.23980689048767,
+      "checkpoints": {
+        "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/motor/S0/best_checkpoint.pt",
+        "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/motor/S0/last_checkpoint.pt",
+        "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/motor/S0/checkpoint.pt"
+      }
+    },
+    "test_metrics": {
+      "bce": 0.5074294209480286,
+      "micro_auroc": 0.6951020685837075,
+      "macro_auroc": 0.6702412451626338,
+      "micro_auprc": 0.46973986925220834,
+      "macro_auprc": 0.42948233098352084,
+      "precision@5": 0.489427775144577,
+      "recall@5": 0.30842617527011756
+    },
+    "model_card": {
+      "model": "motor",
+      "paper": "Steinberg et al., ICLR 2024",
+      "official_repo": "som-shahlab/motor_code_release",
+      "trainable_params": 4950048,
+      "embedding_params": 145664,
+      "layers": 6,
+      "heads": 8,
+      "hidden_size": 256,
+      "ffn_size": 1024,
+      "max_seq_len": 112,
+      "temporal_mechanism": "continuous_rope_on_event_ages",
+      "normalization": "RMSNorm"
+    },
+    "benchmark_record": {
+      "scenario": "S0",
+      "model": "motor",
+      "AUROC": 0.6951020685837075,
+      "AUPRC": 0.46973986925220834,
+      "BCE": 0.5074294209480286,
+      "CF_RMSE_age": null,
+      "CF_RMSE_lag": null,
+      "Surface_RMSE": null,
+      "S5_Surface_RMSE_acute": null,
+      "S5_Surface_RMSE_intermediate": null,
+      "S5_Surface_RMSE_chronic": null,
+      "S5_Surface_RMSE_mean": null,
+      "persistence_order_correct": null,
+      "mechanism_classification": null
+    }
+  },
+  "tale_ehr_S0": {
+    "model": "tale_ehr",
+    "scenario": "S0",
+    "seed": 0,
+    "n_codes": 566,
+    "n_targets": 32,
+    "smoke": true,
+    "name_suffix": "",
+    "benchmark_family": "age_temporal_core",
+    "AUROC": null,
+    "AUPRC": null,
+    "BCE": null,
+    "CF_RMSE_age": null,
+    "CF_RMSE_lag": null,
+    "Surface_RMSE": null,
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "mechanism_classification": null,
+    "param_counts": {
+      "trainable_params": 4165438,
+      "total_params": 4165438,
+      "embedding_params": 145664,
+      "non_embedding_trainable": 4019774
+    },
+    "train": {
+      "best_val_bce": 0.48864804517442934,
+      "best_epoch": 2,
+      "last_epoch": 2,
+      "epochs_trained": 2,
+      "max_epochs": 2,
+      "min_epochs": 2,
+      "patience": 5,
+      "val_max_batches": null,
+      "stopped_early": false,
+      "amp": "fp32",
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.5271696712938659,
+          "val_bce": 0.49364455481555974,
+          "val_micro_auroc": NaN,
+          "val_macro_auroc": NaN,
+          "val_micro_auprc": NaN,
+          "val_macro_auprc": NaN,
+          "time_s": 6.897596836090088
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.49531911527969574,
+          "val_bce": 0.48864804517442934,
+          "val_micro_auroc": NaN,
+          "val_macro_auroc": NaN,
+          "val_micro_auprc": NaN,
+          "val_macro_auprc": NaN,
+          "time_s": 13.655244827270508
+        }
+      ],
+      "total_time_s": 13.7425217628479,
+      "checkpoints": {
+        "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/tale_ehr/S0/best_checkpoint.pt",
+        "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/tale_ehr/S0/last_checkpoint.pt",
+        "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/tale_ehr/S0/checkpoint.pt"
+      }
+    },
+    "test_metrics": {
+      "bce": 0.4934421479701996,
+      "micro_auroc": 0.7113039021117477,
+      "macro_auroc": 0.6781057401772845,
+      "micro_auprc": 0.5015051634235985,
+      "macro_auprc": 0.4540949113780838,
+      "precision@5": 0.5202715992927551,
+      "recall@5": 0.3277226637626134
+    },
+    "model_card": {
+      "model": "tale_ehr",
+      "paper": "Yu et al., arXiv:2507.14847 (2025)",
+      "trainable_params": 4165438,
+      "embedding_params": 145664,
+      "layers": 4,
+      "heads": 4,
+      "hidden_size": 256,
+      "ffn_size": 1024,
+      "max_seq_len": 112,
+      "temporal_mechanism": "continuous_poly5_attention"
+    },
+    "benchmark_record": {
+      "scenario": "S0",
+      "model": "tale_ehr",
+      "AUROC": 0.7113039021117477,
+      "AUPRC": 0.5015051634235985,
+      "BCE": 0.4934421479701996,
+      "CF_RMSE_age": null,
+      "CF_RMSE_lag": null,
+      "Surface_RMSE": null,
+      "S5_Surface_RMSE_acute": null,
+      "S5_Surface_RMSE_intermediate": null,
+      "S5_Surface_RMSE_chronic": null,
+      "S5_Surface_RMSE_mean": null,
+      "persistence_order_correct": null,
+      "mechanism_classification": null
+    }
+  },
+  "nest_S0": {
+    "model": "nest",
+    "scenario": "S0",
+    "seed": 0,
+    "n_codes": 566,
+    "n_targets": 32,
+    "smoke": true,
+    "name_suffix": "",
+    "benchmark_family": "age_temporal_core",
+    "AUROC": null,
+    "AUPRC": null,
+    "BCE": null,
+    "CF_RMSE_age": null,
+    "CF_RMSE_lag": null,
+    "Surface_RMSE": null,
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "mechanism_classification": null,
+    "param_counts": {
+      "trainable_params": 6734938,
+      "total_params": 6734938,
+      "embedding_params": 145920,
+      "non_embedding_trainable": 6589018
+    },
+    "train": {
+      "best_val_bce": 0.4994796440980145,
+      "best_epoch": 2,
+      "last_epoch": 2,
+      "epochs_trained": 2,
+      "max_epochs": 2,
+      "min_epochs": 2,
+      "patience": 5,
+      "val_max_batches": null,
+      "stopped_early": false,
+      "amp": "fp32",
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.5331879750446937,
+          "val_bce": 0.50548504557565,
+          "val_micro_auroc": NaN,
+          "val_macro_auroc": NaN,
+          "val_micro_auprc": NaN,
+          "val_macro_auprc": NaN,
+          "time_s": 33.33869481086731
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.5076786060990288,
+          "val_bce": 0.4994796440980145,
+          "val_micro_auroc": NaN,
+          "val_macro_auroc": NaN,
+          "val_micro_auprc": NaN,
+          "val_macro_auprc": NaN,
+          "time_s": 66.64792513847351
+        }
+      ],
+      "total_time_s": 66.77337980270386,
+      "checkpoints": {
+        "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/nest/S0/best_checkpoint.pt",
+        "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/nest/S0/last_checkpoint.pt",
+        "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/nest/S0/checkpoint.pt"
+      }
+    },
+    "test_metrics": {
+      "bce": 0.5022295713424683,
+      "micro_auroc": 0.6974447568354595,
+      "macro_auroc": 0.6641574460383353,
+      "micro_auprc": 0.47957819225259213,
+      "macro_auprc": 0.4346029554629631,
+      "precision@5": 0.5076624751091003,
+      "recall@5": 0.3204996115180269
+    },
+    "model_card": {
+      "model": "nest",
+      "paper": "Sun et al., arXiv:2602.00520 (2026)",
+      "trainable_params": 6734938,
+      "embedding_params": 145920,
+      "layers": 4,
+      "heads": 4,
+      "hidden_size": 256,
+      "ffn_size": 683,
+      "max_encounters": 32,
+      "max_codes_per_encounter": 32,
+      "temporal_mechanism": "interleaved_swe_cse_rope",
+      "feasibility_status": {
+        "official_code_available": false,
+        "official_weights_available": false,
+        "architecture_reproducible_from_paper": true,
+        "note": "NEST architecture (SWE + CSE + RoPE + SwiGLU + MSM) is fully and faithfully reproduced from Section 3 of Sun et al. (arXiv:2602.00520). Official pretrained weights on proprietary Duke CDM data remain unreleased pending paper acceptance."
+      }
+    },
+    "benchmark_record": {
+      "scenario": "S0",
+      "model": "nest",
+      "AUROC": 0.6974447568354595,
+      "AUPRC": 0.47957819225259213,
+      "BCE": 0.5022295713424683,
+      "CF_RMSE_age": null,
+      "CF_RMSE_lag": null,
+      "Surface_RMSE": null,
+      "S5_Surface_RMSE_acute": null,
+      "S5_Surface_RMSE_intermediate": null,
+      "S5_Surface_RMSE_chronic": null,
+      "S5_Surface_RMSE_mean": null,
+      "persistence_order_correct": null,
+      "mechanism_classification": null
+    }
   }
 }

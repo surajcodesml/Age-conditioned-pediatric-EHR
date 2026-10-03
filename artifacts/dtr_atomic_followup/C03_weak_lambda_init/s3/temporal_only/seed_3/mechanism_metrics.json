@@ -1,0 +1,76 @@
+{
+  "architecture": "weak_init",
+  "surface_rmse": 0.19357879807215042,
+  "cf_rmse_age": 0.15733926640790719,
+  "cf_rmse_lag": 0.10847837058113964,
+  "beta_true": 2.5,
+  "theta0_true": 0.0,
+  "beta": [
+    0.0
+  ],
+  "beta_mean": 0.0,
+  "abs_beta_mean": 0.0,
+  "theta": [
+    -2.1727397441864014
+  ],
+  "gate_signal_rmse": 0.27776253586690614,
+  "gate_signal_mae": 0.22916131402075834,
+  "gate_signal_correlation": 0.4842290039372152,
+  "gate_signal_n": 6166,
+  "gate_signal_rmse_by_code": {
+    "SYN_SIGNAL_A": {
+      "rmse": 0.2571644211569821,
+      "n": 488
+    },
+    "SYN_SIGNAL_B": {
+      "rmse": 0.2746663225618176,
+      "n": 498
+    },
+    "SYN_SIGNAL_C": {
+      "rmse": 0.2966353937672112,
+      "n": 529
+    },
+    "SYN_SIGNAL_D": {
+      "rmse": 0.23320968780245474,
+      "n": 511
+    },
+    "SYN_SIGNAL_E": {
+      "rmse": 0.23800871325815307,
+      "n": 482
+    },
+    "SYN_SIGNAL_F": {
+      "rmse": 0.24146748187552314,
+      "n": 528
+    },
+    "SYN_SIGNAL_G": {
+      "rmse": 0.4874595671787747,
+      "n": 499
+    },
+    "SYN_SIGNAL_H": {
+      "rmse": 0.22085566421230818,
+      "n": 543
+    },
+    "SYN_SIGNAL_I": {
+      "rmse": 0.23062160510703075,
+      "n": 483
+    },
+    "SYN_SIGNAL_J": {
+      "rmse": 0.30031543520910337,
+      "n": 525
+    },
+    "SYN_SIGNAL_K": {
+      "rmse": 0.22312762450902596,
+      "n": 554
+    },
+    "SYN_SIGNAL_L": {
+      "rmse": 0.22976971408657437,
+      "n": 526
+    }
+  },
+  "gate_surface_rmse": null,
+  "gate_surface_mae": null,
+  "gate_surface_correlation": null,
+  "gate_surface_note": "content-dependent gate; signal-encounter g_eff is the gate metric",
+  "content_free_lambda_rmse": 1.1502523474945663,
+  "content_free_lambda_corr": null
+}

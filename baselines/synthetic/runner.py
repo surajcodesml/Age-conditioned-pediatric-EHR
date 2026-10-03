@@ -48,6 +48,7 @@ from baselines.synthetic.data_adapter import (
     BENCHMARK_SCENARIOS,
     CORE_SCENARIOS,
     make_baseline_loaders,
+    make_dtr_baseline_loaders,
     model_batch,
     resolve_scenarios,
 )
@@ -60,6 +61,9 @@ from baselines.ehr_bert.model import EHRBertModel
 from baselines.behrt.model import BEHRTModel
 from baselines.medbert.model import MedBERTModel
 from baselines.cehrbert_adapter.adapter import CEHRBertAdapter
+from baselines.motor.model import MOTORModel
+from baselines.tale_ehr.model import TALEEHRModel
+from baselines.nest.model import NESTModel
 from baselines.dtr_adapter.adapter import DTRAdapter
 
 from baselines.common.registry import REGISTRY  # noqa: F401
@@ -76,26 +80,45 @@ BASELINE_CONFIGS: dict[str, dict[str, Any]] = {
                 "max_seq_len": MAX_SEQ_LEN + 16},
     "cehrbert": {"d_model": 128, "n_layers": 5, "n_heads": 8, "dropout": DROPOUT,
                  "max_seq_len": MAX_SEQ_LEN + 16},
+    "motor": {"d_model": 256, "n_layers": 6, "n_heads": 8, "dropout": DROPOUT,
+              "max_seq_len": MAX_SEQ_LEN + 16},
+    "tale_ehr": {"d_model": 256, "n_layers": 4, "n_heads": 4, "dropout": DROPOUT,
+                 "max_seq_len": MAX_SEQ_LEN + 16},
+    "nest": {"d_model": 256, "n_layers": 4, "n_heads": 4, "dropout": DROPOUT,
+             "max_encounters": 32, "max_codes_per_encounter": 32, "max_seq_len": MAX_SEQ_LEN + 16},
 }
 
-# DTR arms to evaluate
-DTR_ARMS = ("no_age", "age_only", "temporal_only", "age_temporal")
+# Locked Content-Persistence DTR ablation pair (β off vs β on).
+# Legacy Transformer arms (no_age / age_only) are not part of the CP contract.
+DTR_ARMS = ("temporal_only", "age_temporal")
+
+# Canonical CP width (BenchmarkModel previously used D_MODEL=256).
+DTR_D_MODEL = 64
+
+# Suffix for corrected CP DTR runs. Must not collide with prior Transformer DTR dirs.
+DEFAULT_DTR_NAME_SUFFIX = "_new"
 
 
-def _wrap_model_batch(raw_batch: dict[str, Any]) -> dict[str, Any]:
+def dtr_arm_dirname(arm: str, name_suffix: str = "") -> str:
+    """Directory / result key for a DTR arm, e.g. ``dtr_age_temporal_new``."""
+    return f"dtr_{arm}{name_suffix}"
+
+
+def _wrap_model_batch(raw_batch: dict[str, Any], *, encounter: bool = False) -> dict[str, Any]:
     """Strip evaluation-only keys before any model call."""
-    return model_batch(raw_batch)
+    return model_batch(raw_batch, encounter=encounter)
 
 
 class _SafeLoader:
     """DataLoader wrapper that strips eval-only keys on iteration."""
 
-    def __init__(self, loader):
+    def __init__(self, loader, *, encounter: bool = False):
         self._loader = loader
+        self._encounter = encounter
 
     def __iter__(self):
         for batch in self._loader:
-            yield _wrap_model_batch(batch)
+            yield _wrap_model_batch(batch, encounter=self._encounter)
 
     def __len__(self):
         return len(self._loader)
@@ -130,11 +153,24 @@ def build_model(
     elif name == "cehrbert":
         cfg = BASELINE_CONFIGS["cehrbert"]
         return CEHRBertAdapter(n_codes=n_codes, n_targets=n_targets, **cfg)
+    elif name == "motor":
+        cfg = BASELINE_CONFIGS["motor"]
+        return MOTORModel(n_codes=n_codes, n_targets=n_targets, **cfg)
+    elif name == "tale_ehr":
+        cfg = BASELINE_CONFIGS["tale_ehr"]
+        return TALEEHRModel(n_codes=n_codes, n_targets=n_targets, **cfg)
+    elif name == "nest":
+        cfg = BASELINE_CONFIGS["nest"]
+        return NESTModel(n_codes=n_codes, n_targets=n_targets, **cfg)
     elif name == "dtr":
+        # Content-Persistence DTR uses canonical d_model=64; β only differs by arm.
         return DTRAdapter(
-            arm=arm, n_codes=n_codes, n_types=n_types, n_targets=n_targets,
-            d_model=D_MODEL, n_heads=N_HEADS, n_layers=N_LAYERS,
-            dim_feedforward=D_MODEL * 2, dropout=DROPOUT,
+            arm=arm,
+            n_codes=n_codes,
+            n_types=n_types,
+            n_targets=n_targets,
+            d_model=DTR_D_MODEL,
+            dropout=0.0,
         )
     else:
         raise ValueError(f"Unknown model: {name}")
@@ -247,10 +283,16 @@ def run_one_model(
     device: str = "cuda",
     smoke: bool = False,
     data_seed: int = 20260922,
+    name_suffix: str = "",
 ) -> dict[str, Any]:
-    """Train and evaluate one model on one scenario (S0–S3 or S5)."""
+    """Train and evaluate one model on one scenario (S0–S3 or S5).
+
+    ``name_suffix`` (e.g. ``_new``) is appended to DTR arm directory names so
+    corrected Content-Persistence runs never overwrite prior Transformer DTR
+    artifacts (``dtr_temporal_only``, ``dtr_age_temporal``, …).
+    """
     print(f"\n{'='*60}")
-    print(f"Model: {model_name} | Scenario: {scenario}")
+    print(f"Model: {model_name} | Scenario: {scenario} | suffix={name_suffix!r}")
     print(f"{'='*60}")
 
     batch_size = 8 if smoke else BATCH_SIZE
@@ -259,19 +301,30 @@ def run_one_model(
     # Smoke: allow stopping immediately after the short budget.
     min_ep = max_ep if smoke else None
 
-    train_raw, val_raw, test_raw, vocab, info = make_baseline_loaders(
-        scenario,
-        data_seed=data_seed,
-        batch_size=batch_size,
-        max_seq_len=MAX_SEQ_LEN,
-    )
+    # Content-Persistence DTR and NEST need encounter-level batches; other baselines use tokens.
+    if model_name in ("dtr", "nest"):
+        train_raw, val_raw, test_raw, vocab, info = make_dtr_baseline_loaders(
+            scenario,
+            data_seed=data_seed,
+            batch_size=batch_size,
+            max_seq_len=MAX_SEQ_LEN,
+        )
+        encounter = True
+    else:
+        train_raw, val_raw, test_raw, vocab, info = make_baseline_loaders(
+            scenario,
+            data_seed=data_seed,
+            batch_size=batch_size,
+            max_seq_len=MAX_SEQ_LEN,
+        )
+        encounter = False
     # Strip eval-only keys for all model training/eval
-    train_loader = _SafeLoader(train_raw)
-    val_loader = _SafeLoader(val_raw)
-    test_loader = _SafeLoader(test_raw)
+    train_loader = _SafeLoader(train_raw, encounter=encounter)
+    val_loader = _SafeLoader(val_raw, encounter=encounter)
+    test_loader = _SafeLoader(test_raw, encounter=encounter)
 
     n_codes = info["n_codes"]
-    n_types = info["n_types"]
+    n_types = info.get("n_types", 11)
     n_targets = info["n_targets"]
 
     run_dir = output_dir / model_name / scenario
@@ -291,6 +344,7 @@ def run_one_model(
         "n_codes": n_codes,
         "n_targets": n_targets,
         "smoke": smoke,
+        "name_suffix": name_suffix,
         "benchmark_family": (
             "heterogeneous_persistence" if scenario == "S5" else "age_temporal_core"
         ),
@@ -317,8 +371,13 @@ def run_one_model(
         model.save_checkpoint(run_dir)
     elif model_name == "dtr":
         for arm in DTR_ARMS:
-            arm_name = f"dtr_{arm}"
+            arm_name = dtr_arm_dirname(arm, name_suffix)
             arm_dir = output_dir / arm_name / scenario
+            # Guard: when a suffix is requested, never write into unsuffixed legacy dirs.
+            if name_suffix and name_suffix not in arm_name:
+                raise RuntimeError(f"Refusing unsuffixed DTR arm name: {arm_name}")
+            if name_suffix and arm_dir.parent.name != arm_name:
+                raise RuntimeError(f"Refusing unexpected DTR path: {arm_dir}")
             arm_dir.mkdir(parents=True, exist_ok=True)
 
             if (arm_dir / "result.json").exists() and not smoke:
@@ -332,14 +391,20 @@ def run_one_model(
                 device=device,
             )
             test_metrics = evaluate_test(model, test_loader, device)
+            theta0_hat = float(model.temporal.theta0.detach().cpu().reshape(-1)[0])
+            beta_hat = float(model.temporal.beta.detach().cpu().reshape(-1)[0])
             arm_result = {
                 "model": arm_name,
                 "arm": arm,
                 "scenario": scenario,
                 "seed": seed,
+                "name_suffix": name_suffix,
+                "architecture": "Content-Persistence DTR",
                 "train": train_result,
                 "test_metrics": test_metrics,
                 "model_card": model.model_card,
+                "theta0_hat": theta0_hat,
+                "beta_hat": beta_hat,
                 "benchmark_family": result["benchmark_family"],
                 "S5_Surface_RMSE_acute": None,
                 "S5_Surface_RMSE_intermediate": None,
@@ -351,7 +416,10 @@ def run_one_model(
             _attach_schema_fields(arm_result)
             with (arm_dir / "result.json").open("w") as f:
                 json.dump(arm_result, f, indent=2, default=str)
-            print(f"  {arm_name}: test AUROC={test_metrics.get('micro_auroc', 'N/A'):.4f}")
+            print(
+                f"  {arm_name}: test AUROC={test_metrics.get('micro_auroc', 'N/A'):.4f} "
+                f"β={beta_hat:+.4f} θ0={theta0_hat:+.4f}"
+            )
         return result
     else:
         model = build_model(model_name, n_codes, n_types, n_targets)
@@ -384,7 +452,18 @@ def run_one_model(
     return result
 
 
-ALL_MODELS = ["count_lightgbm", "retain", "ehr_bert", "behrt", "medbert", "cehrbert", "dtr"]
+ALL_MODELS = [
+    "count_lightgbm",
+    "retain",
+    "ehr_bert",
+    "behrt",
+    "medbert",
+    "cehrbert",
+    "motor",
+    "tale_ehr",
+    "nest",
+    "dtr",
+]
 
 
 def main():
@@ -402,6 +481,13 @@ def main():
     parser.add_argument("--smoke", action="store_true", help="Quick smoke test (2 epochs)")
     parser.add_argument("--data-seed", type=int, default=20260922)
     parser.add_argument("--output-dir", type=str, default=None)
+    parser.add_argument(
+        "--name-suffix",
+        type=str,
+        default="",
+        help="Append to DTR arm dirs (e.g. '_new' → dtr_age_temporal_new). "
+             "Never overwrites unsuffixed legacy runs.",
+    )
     args = parser.parse_args()
 
     cfg = Config(data_seed=args.data_seed)
@@ -414,6 +500,7 @@ def main():
 
     scenarios = resolve_scenarios(args.scenario)
     models = ALL_MODELS if args.models == "all" else args.models.split(",")
+    name_suffix = args.name_suffix
 
     all_results: dict[str, dict[str, Any]] = {}
 
@@ -424,12 +511,12 @@ def main():
             continue
 
         for model_name in models:
-            key = f"{model_name}_{scenario}"
+            key = f"{model_name}{name_suffix}_{scenario}" if name_suffix else f"{model_name}_{scenario}"
             try:
                 result = run_one_model(
                     model_name, scenario, scenario_dir, output_dir,
                     seed=args.seed, device=args.device, smoke=args.smoke,
-                    data_seed=args.data_seed,
+                    data_seed=args.data_seed, name_suffix=name_suffix,
                 )
                 all_results[key] = result
             except Exception as e:
@@ -438,7 +525,9 @@ def main():
                 traceback.print_exc()
                 all_results[key] = {"error": str(e)}
 
-    combined_path = output_dir / "all_results.json"
+    # Never overwrite legacy all_results.json when running suffixed DTR.
+    combined_name = f"all_results{name_suffix}.json" if name_suffix else "all_results.json"
+    combined_path = output_dir / combined_name
     combined_path.parent.mkdir(parents=True, exist_ok=True)
     with combined_path.open("w") as f:
         json.dump(all_results, f, indent=2, default=str)
@@ -446,6 +535,8 @@ def main():
     print(f"Scenarios run: {scenarios}")
     print(f"Core scenarios: {list(CORE_SCENARIOS)}")
     print("S5 included:" , "S5" in scenarios)
+    if name_suffix:
+        print(f"DTR arm dirs use suffix {name_suffix!r} (legacy dirs untouched)")
 
 
 if __name__ == "__main__":

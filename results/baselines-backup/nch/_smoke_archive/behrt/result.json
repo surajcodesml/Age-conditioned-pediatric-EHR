@@ -1,0 +1,63 @@
+{
+  "model": "behrt",
+  "seed": 0,
+  "smoke": true,
+  "n_codes": 30635,
+  "param_counts": {
+    "trainable_params": 23759531,
+    "total_params": 23759531,
+    "embedding_params": 8827776,
+    "non_embedding_trainable": 14931755
+  },
+  "train": {
+    "best_val_bce": 0.32351460952576094,
+    "epochs_trained": 2,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.6427105888724327,
+        "val_bce": 0.5379616256211989,
+        "val_micro_auroc": 0.5080175536732281,
+        "val_macro_auroc": 0.43013491695371914,
+        "val_micro_auprc": 0.00020276227047753677,
+        "val_macro_auprc": 0.1062135576726408,
+        "val_precision@5": 0.0,
+        "val_recall@5": 0.0,
+        "time_s": 1.7954280376434326
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.4438793659210205,
+        "val_bce": 0.32351460952576094,
+        "val_micro_auroc": 0.5179623070130513,
+        "val_macro_auroc": 0.4310385891670442,
+        "val_micro_auprc": 0.00024154592901255917,
+        "val_macro_auprc": 0.10536892698238395,
+        "val_precision@5": 0.0,
+        "val_recall@5": 0.0,
+        "time_s": 3.4434196949005127
+      }
+    ],
+    "total_time_s": 3.5111961364746094
+  },
+  "test_metrics": {
+    "bce": 0.3234764472318267,
+    "micro_auroc": 0.47186325111937105,
+    "macro_auroc": 0.556155083146454,
+    "micro_auprc": 0.00013042541446597653,
+    "macro_auprc": 0.09342812647950863,
+    "precision@5": 0.003125,
+    "recall@5": 0.0026041666666666665
+  },
+  "model_card": {
+    "trainable_params": 23759531,
+    "embedding_params": 8827200,
+    "layers": 6,
+    "heads": 12,
+    "hidden_size": 288,
+    "ffn_size": 1152,
+    "max_seq_len": 257,
+    "age_representation": "learnable_bucket_embedding",
+    "n_age_buckets": 14
+  }
+}

@@ -1,0 +1,308 @@
+{
+  "model": "motor",
+  "scenario": "S3",
+  "seed": 0,
+  "n_codes": 566,
+  "n_targets": 32,
+  "smoke": false,
+  "name_suffix": "",
+  "benchmark_family": "age_temporal_core",
+  "AUROC": 0.737664925786894,
+  "AUPRC": 0.5325146167653347,
+  "BCE": 0.4861469566822052,
+  "CF_RMSE_age": 0.1130228999091933,
+  "CF_RMSE_lag": 0.08909831209823176,
+  "Surface_RMSE": 0.13738591472499137,
+  "S5_Surface_RMSE_acute": null,
+  "S5_Surface_RMSE_intermediate": null,
+  "S5_Surface_RMSE_chronic": null,
+  "S5_Surface_RMSE_mean": null,
+  "persistence_order_correct": null,
+  "mechanism_classification": "NO_MECHANISM_RECOVERY",
+  "param_counts": {
+    "trainable_params": 4950048,
+    "total_params": 4950048,
+    "embedding_params": 145664,
+    "non_embedding_trainable": 4804384
+  },
+  "train": {
+    "best_val_bce": 0.47726957285515614,
+    "best_epoch": 7,
+    "last_epoch": 20,
+    "epochs_trained": 20,
+    "max_epochs": 40,
+    "min_epochs": 20,
+    "patience": 5,
+    "val_max_batches": null,
+    "stopped_early": true,
+    "amp": "fp32",
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.5584975778206096,
+        "val_bce": 0.5287428940568015,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 4.643697500228882
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.5185583295065969,
+        "val_bce": 0.5010009542803898,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 9.323495864868164
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.4986198401140088,
+        "val_bce": 0.4900400068158301,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 14.025146961212158
+      },
+      {
+        "epoch": 4,
+        "train_loss": 0.4892523216195268,
+        "val_bce": 0.4842955286257735,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 18.730472326278687
+      },
+      {
+        "epoch": 5,
+        "train_loss": 0.4823739826800723,
+        "val_bce": 0.48772145654553567,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 23.441930294036865
+      },
+      {
+        "epoch": 6,
+        "train_loss": 0.47758871790733914,
+        "val_bce": 0.47854504808087217,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 28.11502480506897
+      },
+      {
+        "epoch": 7,
+        "train_loss": 0.4744202935034724,
+        "val_bce": 0.47726957285515614,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 32.819785356521606
+      },
+      {
+        "epoch": 8,
+        "train_loss": 0.47001149242039947,
+        "val_bce": 0.4783098889288501,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 37.526246786117554
+      },
+      {
+        "epoch": 9,
+        "train_loss": 0.46761236100161846,
+        "val_bce": 0.4788657393410941,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 42.19730353355408
+      },
+      {
+        "epoch": 10,
+        "train_loss": 0.4644363681928897,
+        "val_bce": 0.47917401367258805,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 46.867637634277344
+      },
+      {
+        "epoch": 11,
+        "train_loss": 0.46111422987359424,
+        "val_bce": 0.47924963068739274,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 51.540013790130615
+      },
+      {
+        "epoch": 12,
+        "train_loss": 0.45673769734316927,
+        "val_bce": 0.47832935859109754,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 56.30009913444519
+      },
+      {
+        "epoch": 13,
+        "train_loss": 0.45354643622029817,
+        "val_bce": 0.4792233614163978,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 61.05370855331421
+      },
+      {
+        "epoch": 14,
+        "train_loss": 0.4494994995038071,
+        "val_bce": 0.48219881859895225,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 65.7267050743103
+      },
+      {
+        "epoch": 15,
+        "train_loss": 0.4446544875745816,
+        "val_bce": 0.48361387787578264,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 70.40064334869385
+      },
+      {
+        "epoch": 16,
+        "train_loss": 0.4402058324155835,
+        "val_bce": 0.4881388138387805,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 75.15322494506836
+      },
+      {
+        "epoch": 17,
+        "train_loss": 0.43445866319582116,
+        "val_bce": 0.48949908452613333,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 79.86240720748901
+      },
+      {
+        "epoch": 18,
+        "train_loss": 0.42928809678365004,
+        "val_bce": 0.4917803710866197,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 84.5394823551178
+      },
+      {
+        "epoch": 19,
+        "train_loss": 0.421793271923765,
+        "val_bce": 0.4941755428492466,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 89.21917963027954
+      },
+      {
+        "epoch": 20,
+        "train_loss": 0.4141317743502779,
+        "val_bce": 0.4999570472218166,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 93.89395999908447
+      }
+    ],
+    "total_time_s": 93.95253682136536,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/motor/S3/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/motor/S3/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/motor/S3/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.4861469566822052,
+    "micro_auroc": 0.737664925786894,
+    "macro_auroc": 0.7102224106883437,
+    "micro_auprc": 0.5325146167653347,
+    "macro_auprc": 0.48858340960050695,
+    "precision@5": 0.5489815473556519,
+    "recall@5": 0.3391457805129998
+  },
+  "model_card": {
+    "model": "motor",
+    "paper": "Steinberg et al., ICLR 2024",
+    "official_repo": "som-shahlab/motor_code_release",
+    "trainable_params": 4950048,
+    "embedding_params": 145664,
+    "layers": 6,
+    "heads": 8,
+    "hidden_size": 256,
+    "ffn_size": 1024,
+    "max_seq_len": 112,
+    "temporal_mechanism": "continuous_rope_on_event_ages",
+    "normalization": "RMSNorm"
+  },
+  "benchmark_record": {
+    "scenario": "S3",
+    "model": "motor",
+    "AUROC": 0.737664925786894,
+    "AUPRC": 0.5325146167653347,
+    "BCE": 0.4861469566822052,
+    "CF_RMSE_age": 0.1130228999091933,
+    "CF_RMSE_lag": 0.08909831209823176,
+    "Surface_RMSE": 0.13738591472499137,
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY"
+  },
+  "cf_report": {
+    "cf_rmse_age": 0.1130228999091933,
+    "cf_rmse_lag": 0.08909831209823176,
+    "surface_rmse": 0.13738591472499137,
+    "CF_RMSE_age": 0.1130228999091933,
+    "CF_RMSE_lag": 0.08909831209823176,
+    "Surface_RMSE": 0.13738591472499137,
+    "mechanism_classification": "NO_MECHANISM_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "motor",
+    "scenario": "S3"
+  }
+}

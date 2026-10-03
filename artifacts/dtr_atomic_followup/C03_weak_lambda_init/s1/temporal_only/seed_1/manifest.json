@@ -1,0 +1,25 @@
+{
+  "experiment_id": "C03_weak_lambda_init",
+  "architecture": "weak_init",
+  "variant": "weak_init",
+  "arm": "temporal_only",
+  "dataset": "synthea_controlled",
+  "scenario": "S1",
+  "seed": 1,
+  "split": "test",
+  "git_commit": "be9a2b73960bc701272eb08e7bd9f31527fe4efe",
+  "config_hash": "dab80a546a9a00b9d8119f1f608d2c1209ee6397e9bec21feb6d7e91d7e24b64",
+  "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/dtr_atomic_followup/C03_weak_lambda_init/s1/temporal_only/seed_1/checkpoint_best.pt",
+  "timestamp": "2026-10-02T19:37:52+00:00",
+  "n_trainable": 55106,
+  "training": {
+    "lr": 0.0003,
+    "weight_decay": 0.01,
+    "batch_size": 32,
+    "max_epochs": 25,
+    "patience": 5,
+    "min_epochs": 12,
+    "staged": false
+  },
+  "predictions_sha256": "3c7c0a9d5704405cf93485025fd1fd1172dae02c06caa23403fb4e0236a9bfa2"
+}

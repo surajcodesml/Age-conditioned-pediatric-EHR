@@ -1,0 +1,6 @@
+{
+  "n_long_rows": 333,
+  "n_summary_rows": 309,
+  "metrics_csv": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/synthetic_architecture_ladder/_smoke/architecture_ladder_metrics.csv",
+  "summary_csv": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/synthetic_architecture_ladder/_smoke/architecture_ladder_summary.csv"
+}

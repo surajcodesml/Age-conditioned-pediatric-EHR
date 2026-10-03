@@ -1,0 +1,88 @@
+{
+  "model": "tale_ehr",
+  "seed": 0,
+  "smoke": true,
+  "n_codes": 30635,
+  "batch_size": 8,
+  "test_batch_size": 8,
+  "val_max_batches": null,
+  "test_max_batches": null,
+  "stage": "nch_stage2",
+  "name_suffix": "",
+  "amp": "bf16",
+  "pretrained_from": "results/baselines/mimic/tale_ehr",
+  "param_counts": {
+    "trainable_params": 19728073,
+    "total_params": 19728073,
+    "embedding_params": 7843328,
+    "non_embedding_trainable": 11884745
+  },
+  "train": {
+    "best_val_bce": 0.01341443429943475,
+    "best_epoch": 2,
+    "last_epoch": 2,
+    "epochs_trained": 2,
+    "max_epochs": 2,
+    "min_epochs": 2,
+    "patience": 3,
+    "val_max_batches": null,
+    "stopped_early": false,
+    "amp": "bf16",
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.011901530553586781,
+        "val_bce": 0.01388448712408241,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 0.18642187118530273
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.009891095804050565,
+        "val_bce": 0.01341443429943475,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 0.5206596851348877
+      }
+    ],
+    "total_time_s": 0.7682385444641113,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/_smoke/tale_ehr/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/_smoke/tale_ehr/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/_smoke/tale_ehr/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.009980916045606136,
+    "micro_auroc": 0.9787695956000294,
+    "macro_auroc": NaN,
+    "micro_auprc": 0.43176431342085586,
+    "macro_auprc": NaN,
+    "precision@5": 0.778124988079071,
+    "recall@5": 0.06944673508405685,
+    "macro_skipped": true,
+    "macro_skip_reason": "n_classes=30635>2000"
+  },
+  "model_card": {
+    "model": "tale_ehr",
+    "paper": "Yu et al., arXiv:2507.14847 (2025)",
+    "trainable_params": 19728073,
+    "embedding_params": 7843328,
+    "layers": 4,
+    "heads": 4,
+    "hidden_size": 256,
+    "ffn_size": 1024,
+    "max_seq_len": 257,
+    "temporal_mechanism": "continuous_poly5_attention"
+  },
+  "AUROC": 0.9787695956000294,
+  "AUPRC": 0.43176431342085586,
+  "BCE": 0.009980916045606136,
+  "best_val_bce": 0.01341443429943475,
+  "epochs_trained": 2
+}

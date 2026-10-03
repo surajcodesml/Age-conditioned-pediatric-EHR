@@ -1,0 +1,152 @@
+{
+  "name_suffix": "_new",
+  "architecture": "Content-Persistence DTR",
+  "seed": 0,
+  "test_max_batches": 100,
+  "init_verify": {
+    "shared_ckpt": "results/baselines/mimic/dtr_temporal_only_new",
+    "fingerprint_temporal_only": "56c480c00662e0ae0b48f23ebe95a1b203bcb1d64da34a04e684e54ff39142a6",
+    "fingerprint_age_temporal": "56c480c00662e0ae0b48f23ebe95a1b203bcb1d64da34a04e684e54ff39142a6",
+    "fingerprints_match": true,
+    "beta_to": 0.0,
+    "beta_at": 0.0,
+    "theta0_to": 0.14370284974575043,
+    "theta0_at": 0.14370284974575043,
+    "beta_requires_grad_to": false,
+    "beta_requires_grad_at": true
+  },
+  "arms": {
+    "temporal_only": {
+      "run_dir": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/dtr_temporal_only_new",
+      "result_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/dtr_temporal_only_new/result.json",
+      "best_epoch": 10,
+      "best_val_bce": 0.0005452706944170056,
+      "pretrained_from": "results/baselines/mimic/dtr_temporal_only_new",
+      "pretrained_fingerprint_ex_beta": "56c480c00662e0ae0b48f23ebe95a1b203bcb1d64da34a04e684e54ff39142a6",
+      "beta_init": 0.0,
+      "test_metrics": {
+        "bce": 0.00041180543485097587,
+        "micro_auroc": 0.9893935949415409,
+        "macro_auroc": NaN,
+        "micro_auprc": 0.16637968762201658,
+        "macro_auprc": NaN,
+        "precision@5": 0.1419375091791153,
+        "recall@5": 0.32569419498206115,
+        "micro_subsampled_to": 5000000,
+        "macro_skipped": true,
+        "macro_skip_reason": "n_classes=30635>2000"
+      },
+      "AUROC": 0.9893935949415409,
+      "AUPRC": 0.16637968762201658,
+      "BCE": 0.00041180543485097587,
+      "theta0": 0.11203921586275101,
+      "beta": 0.0,
+      "lambda_of_age": {
+        "1.0": 0.7507350444793701,
+        "5.0": 0.7507350444793701,
+        "10.0": 0.7507350444793701,
+        "15.0": 0.7507350444793701,
+        "18.0": 0.7507350444793701
+      },
+      "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/dtr_temporal_only_new/best_checkpoint.pt",
+      "age_shuffle": {
+        "bce_full": 0.0004122787655829916,
+        "bce_age_shuffle": 0.00041475421226256157,
+        "delta_bce": 2.475446679569952e-06
+      },
+      "bce_by_age_band": {
+        "<1": {
+          "bce": 0.0004281966240901406,
+          "n": 520
+        },
+        "1-5": {
+          "bce": 0.00039267764044088324,
+          "n": 1420
+        },
+        "6-11": {
+          "bce": 0.00042095572967501993,
+          "n": 839
+        },
+        "12-17": {
+          "bce": 0.0004414386231126243,
+          "n": 421
+        }
+      }
+    },
+    "age_temporal": {
+      "run_dir": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/dtr_age_temporal_new",
+      "result_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/dtr_age_temporal_new/result.json",
+      "best_epoch": 10,
+      "best_val_bce": 0.0005456036473830372,
+      "pretrained_from": "results/baselines/mimic/dtr_temporal_only_new",
+      "pretrained_fingerprint_ex_beta": "56c480c00662e0ae0b48f23ebe95a1b203bcb1d64da34a04e684e54ff39142a6",
+      "beta_init": 0.0,
+      "test_metrics": {
+        "bce": 0.0004116755735594779,
+        "micro_auroc": 0.9893753442070029,
+        "macro_auroc": NaN,
+        "micro_auprc": 0.16644375481159818,
+        "macro_auprc": NaN,
+        "precision@5": 0.1419375091791153,
+        "recall@5": 0.32553273664438165,
+        "micro_subsampled_to": 5000000,
+        "macro_skipped": true,
+        "macro_skip_reason": "n_classes=30635>2000"
+      },
+      "AUROC": 0.9893753442070029,
+      "AUPRC": 0.16644375481159818,
+      "BCE": 0.0004116755735594779,
+      "theta0": 0.11243176460266113,
+      "beta": 0.027374576777219772,
+      "lambda_of_age": {
+        "1.0": 0.7381663918495178,
+        "5.0": 0.7445359230041504,
+        "10.0": 0.7525497078895569,
+        "15.0": 0.7606210708618164,
+        "18.0": 0.7654916048049927
+      },
+      "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/dtr_age_temporal_new/best_checkpoint.pt",
+      "age_shuffle": {
+        "bce_full": 0.000412136028072506,
+        "bce_age_shuffle": 0.0004146144234065969,
+        "delta_bce": 2.4783953340909155e-06
+      },
+      "bce_by_age_band": {
+        "<1": {
+          "bce": 0.0004280804038059544,
+          "n": 520
+        },
+        "1-5": {
+          "bce": 0.00039260067705853684,
+          "n": 1420
+        },
+        "6-11": {
+          "bce": 0.00042095236668231536,
+          "n": 839
+        },
+        "12-17": {
+          "bce": 0.0004407635162584968,
+          "n": 421
+        }
+      },
+      "beta0": {
+        "bce_full": 0.000412136028072506,
+        "bce_beta0": 0.0004121455750108174,
+        "delta_bce": 9.546938311406038e-09,
+        "beta_restored": 0.027374576777219772
+      }
+    }
+  },
+  "delta_age_temporal_minus_temporal_only": {
+    "bce": -1.2986129149794579e-07,
+    "micro_auroc": -1.8250734537983426e-05,
+    "micro_auprc": 6.40671895816014e-05,
+    "precision@5": 0.0,
+    "recall@5": -0.0001614583376794987,
+    "beta_at": 0.027374576777219772,
+    "beta_to": 0.0,
+    "theta0_at": 0.11243176460266113,
+    "theta0_to": 0.11203921586275101,
+    "init_fingerprints_match": true
+  }
+}

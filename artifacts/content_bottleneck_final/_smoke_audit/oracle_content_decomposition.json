@@ -1,0 +1,66 @@
+[
+  {
+    "scenario": "S2",
+    "arm": "C1",
+    "metric": "bce",
+    "mean": 0.47188209762120614,
+    "std": 0.0,
+    "n": 1
+  },
+  {
+    "scenario": "S2",
+    "arm": "C1",
+    "metric": "auroc",
+    "mean": 0.7752458850277709,
+    "std": 0.0,
+    "n": 1
+  },
+  {
+    "scenario": "S2",
+    "arm": "C1",
+    "metric": "auprc",
+    "mean": 0.5879553109456113,
+    "std": 0.0,
+    "n": 1
+  },
+  {
+    "scenario": "S2",
+    "arm": "C1",
+    "metric": "surface_rmse",
+    "mean": 0.16901325514146354,
+    "std": 0.0,
+    "n": 1
+  },
+  {
+    "scenario": "S2",
+    "arm": "C2",
+    "metric": "bce",
+    "mean": 0.43321741180756335,
+    "std": 0.0,
+    "n": 1
+  },
+  {
+    "scenario": "S2",
+    "arm": "C2",
+    "metric": "auroc",
+    "mean": 0.7931278855470902,
+    "std": 0.0,
+    "n": 1
+  },
+  {
+    "scenario": "S2",
+    "arm": "C2",
+    "metric": "auprc",
+    "mean": 0.6274676200968484,
+    "std": 0.0,
+    "n": 1
+  },
+  {
+    "scenario": "S2",
+    "arm": "C2",
+    "metric": "surface_rmse",
+    "mean": 0.1026532627356414,
+    "std": 0.0,
+    "n": 1
+  }
+]

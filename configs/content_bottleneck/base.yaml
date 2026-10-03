@@ -1,0 +1,22 @@
+# Content bottleneck final test. Training matches C01_staged_current.
+dataset: synthea_controlled
+cohort: controlled
+data_seed: 20260922
+scenarios: [S0, S1, S2, S3]
+seeds: [0, 1, 2, 3, 4]
+d_model: 64
+dropout: 0.0
+batch_size: 32
+lr: 0.0003
+weight_decay: 0.01
+max_epochs: 25
+patience: 5
+min_epochs: 12
+grad_clip: 1.0
+stage_b_epochs: 5
+temporal_lr_mult: 10.0
+temporal_weight_decay: 0.0
+age_shuffle_seed: 0
+staged: true
+variant: target_conditioned
+experiment_id: E01_target_conditioned_retrieval

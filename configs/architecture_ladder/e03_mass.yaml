@@ -1,0 +1,11 @@
+experiment_id: E03_mass
+architecture: direct
+aggregation: mass
+staged: false
+hypothesis: >
+  Separating history composition from surviving evidence mass improves
+  stability and mechanism recovery.
+change_vs_reference: >
+  Start from E01. Replace only raw aggregation by the normalized composition
+  plus log evidence mass, then the same linear readout.
+training_difference: none

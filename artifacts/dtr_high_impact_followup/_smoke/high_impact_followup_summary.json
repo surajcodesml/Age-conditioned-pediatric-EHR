@@ -1,0 +1,8 @@
+{
+  "n_metric_rows": 801,
+  "n_paired_rows": 99,
+  "metrics_csv": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/dtr_high_impact_followup/_smoke/high_impact_followup_metrics.csv",
+  "summary_csv": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/dtr_high_impact_followup/_smoke/high_impact_followup_summary.csv",
+  "paired_csv": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/dtr_high_impact_followup/_smoke/paired_delta_vs_C01.csv",
+  "c01_source": "/home/suraj/Git/Age-conditioned-pediatric-EHR/artifacts/dtr_atomic_followup/C01_staged_current"
+}

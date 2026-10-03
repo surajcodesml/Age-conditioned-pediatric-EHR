@@ -1,0 +1,22 @@
+[
+  {
+    "epoch": 1,
+    "train_loss": 0.011901530553586781,
+    "val_bce": 0.01388448712408241,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 0.18642187118530273
+  },
+  {
+    "epoch": 2,
+    "train_loss": 0.009891095804050565,
+    "val_bce": 0.01341443429943475,
+    "val_micro_auroc": NaN,
+    "val_macro_auroc": NaN,
+    "val_micro_auprc": NaN,
+    "val_macro_auprc": NaN,
+    "time_s": 0.5206596851348877
+  }
+]

@@ -1,0 +1,31 @@
+device cuda
+=== 1 provenance ===
+wrote result_provenance.md
+=== 2 diagnostics ===
+wrote dtr_functional_diagnostics.*
+=== 3 surfaces ===
+  surface S2 oracle...
+  surface S2 cehrbert...
+/home/suraj/miniconda3/envs/ehr/lib/python3.10/site-packages/torch/nn/modules/transformer.py:515: UserWarning: The PyTorch API of nested tensors is in prototype stage and will change in the near future. We recommend specifying layout=torch.jagged when constructing a nested tensor, as this layout receives active development, has better operator coverage, and works with torch.compile. (Triggered internally at /pytorch/aten/src/ATen/NestedTensorImpl.cpp:178.)
+  output = torch._nested_tensor_from_mask(
+  surface S2 dtr_temporal_only_new...
+  surface S2 dtr_age_temporal_new...
+  surface S3 oracle...
+  surface S3 cehrbert...
+  surface S3 dtr_temporal_only_new...
+  surface S3 dtr_age_temporal_new...
+=== 8 capacity ===
+wrote model_capacity.csv
+=== figures ===
+wrote /home/suraj/Git/Age-conditioned-pediatric-EHR/figures/final/synthetic_surface_comparison_32target.{png,svg}
+wrote /home/suraj/Git/Age-conditioned-pediatric-EHR/figures/final/synthetic_surface_comparison_s2_s3.{png,svg}
+wrote /home/suraj/Git/Age-conditioned-pediatric-EHR/figures/final/synthetic_functional_recovery.{png,svg}
+wrote /home/suraj/Git/Age-conditioned-pediatric-EHR/figures/final/s2_prediction_vs_surface.{png,svg}
+wrote /home/suraj/Git/Age-conditioned-pediatric-EHR/figures/final/dtr_gain_across_scenarios.{png,svg}
+wrote /home/suraj/Git/Age-conditioned-pediatric-EHR/figures/final/s5_persistence_recovery.{png,svg}
+wrote /home/suraj/Git/Age-conditioned-pediatric-EHR/figures/final/parameter_vs_functional_recovery.{png,svg}
+=== 9 NCH ===
+wrote nch_final_analysis.md (skip)
+=== 10 report ===
+wrote figure_analysis_report.md
+DONE

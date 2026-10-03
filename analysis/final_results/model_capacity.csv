@@ -1,0 +1,7 @@
+model,trainable_params,frozen_params,total_params,hidden_dim,layers,heads,explicit_age_input,explicit_lag_input,explicit_age_x_lag_pathway
+DTR,55107,0,55107,64,,,True,True,True
+Temporal-only DTR,55106,0,55106,64,,,True,True,False
+CEHR-BERT,1126304,0,1126304,128,5,8,True,True,False
+BEHRT,6255392,0,6255392,288,6,12,True,False,False
+RETAIN,291489,0,291489,128,2 GRUs,N/A,False,True,False
+Count+LightGBM,N/A (tree model),N/A,N/A (tree model),N/A,N/A,N/A,True,False,False

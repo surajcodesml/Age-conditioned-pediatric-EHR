@@ -1,0 +1,16 @@
+{
+  "scenario": "S2",
+  "surface_rmse": {
+    "oracle": 0.0,
+    "cehrbert": 0.13078465452453683,
+    "dtr_temporal_only_new": 0.23606079048992756,
+    "dtr_age_temporal_new": 0.20129356921286942
+  },
+  "source": "/home/suraj/Git/Age-conditioned-pediatric-EHR/analysis/final_results/surface_grids_s2_s3.json",
+  "models": [
+    "oracle",
+    "dtr_age_temporal_new",
+    "dtr_temporal_only_new",
+    "cehrbert"
+  ]
+}

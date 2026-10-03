@@ -1,0 +1,58 @@
+dataset: synthea_controlled
+cohort: controlled
+data_seed: 20260922
+scenarios:
+- S0
+- S1
+- S2
+- S3
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+split_fractions:
+  train: 0.7
+  val: 0.15
+  test: 0.15
+d_model: 64
+dropout: 0.0
+lambda_init: 0.1
+batch_size: 32
+lr: 0.0003
+weight_decay: 0.01
+max_epochs: 1
+patience: 1
+min_epochs: 1
+grad_clip: 1.0
+n_channels: 4
+n_components: 3
+knots:
+- 0.0
+- 6.0
+- 12.0
+- 18.0
+stage_b_epochs: 1
+temporal_lr_mult: 10.0
+temporal_weight_decay: 0.0
+mass_eps: 1.0e-06
+age_shuffle_seed: 0
+staged: false
+aggregation: raw_additive
+architecture: integrated_hazard
+experiment_id: E06_integrated_hazard
+hypothesis: 'A small positive piecewise-linear integrated hazard can express developmental
+  persistence between event age and prediction age.
+
+  '
+change_vs_reference: 'Separate extension from E01. Gate is exp of minus the integral
+  of rho between event age and current age. Temporal-only uses a constant hazard.
+  The S2 oracle was generated with current-age lambda(a), not this integral, so oracle-surface
+  recovery is not expected to favor E06 by construction.
+
+  '
+training_difference: none
+config_path: /home/suraj/Git/Age-conditioned-pediatric-EHR/configs/architecture_ladder/e06_integrated_hazard.yaml
+base_config_path: /home/suraj/Git/Age-conditioned-pediatric-EHR/configs/architecture_ladder/base.yaml
+config_hash: c0f30142015b3c9800a64b6c9ec2aa27c79b531b27bb7facb5c117182ee2e1cf

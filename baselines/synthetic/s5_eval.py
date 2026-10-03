@@ -84,15 +84,42 @@ def build_controlled_group_batch(
     lag: float = 7.0,
     n_targets: int = 32,
     stoi: dict[str, int] | None = None,
+    encounter: bool = False,
 ) -> dict[str, torch.Tensor]:
     """Build a minimal batch with only ``group`` signal codes + query.
 
     Evaluation-only. No persistence labels are written into the batch.
+    When ``encounter=True``, emit Content-Persistence DTR enc_* tensors
+    (one singleton encounter per signal code; no query token).
     """
     if stoi is None:
         stoi = {tok: i for i, tok in itos.items()}
     codes = list(S5_PERSISTENCE_GROUPS[group])
     code_ids = [int(stoi[c]) for c in codes]
+    age_t = torch.tensor([float(age)], dtype=torch.float32)
+    z_t = (age_t - 9.0) / 9.0
+    labels = torch.zeros(1, n_targets, dtype=torch.float32)
+
+    if encounter:
+        M = len(code_ids)
+        enc_code = torch.zeros(1, M, 1, dtype=torch.long)
+        enc_mask = torch.ones(1, M, 1, dtype=torch.bool)
+        for j, cid in enumerate(code_ids):
+            enc_code[0, j, 0] = cid
+        enc_lag = torch.full((1, M), float(lag), dtype=torch.float32)
+        enc_tau = torch.log1p(enc_lag / 7.0)
+        enc_pad = torch.zeros(1, M, dtype=torch.bool)
+        return {
+            "enc_code_ids": enc_code,
+            "enc_code_mask": enc_mask,
+            "enc_lag_days": enc_lag,
+            "enc_tau": enc_tau,
+            "enc_padding_mask": enc_pad,
+            "age": age_t,
+            "z_age": z_t,
+            "labels": labels,
+        }
+
     query_id = int(stoi.get("PRED_QUERY", 2))
     code_ids = code_ids + [query_id]
     L = len(code_ids)
@@ -107,9 +134,6 @@ def build_controlled_group_batch(
     is_signal = torch.zeros(1, L, dtype=torch.bool)
     is_signal[0, : L - 1] = True
     pad = torch.zeros(1, L, dtype=torch.bool)
-    age_t = torch.tensor([float(age)], dtype=torch.float32)
-    z_t = (age_t - 9.0) / 9.0
-    labels = torch.zeros(1, n_targets, dtype=torch.float32)
     return {
         "code_ids": code_t,
         "type_ids": type_t,
@@ -163,23 +187,30 @@ def make_controlled_predict_surface_fn(
     group: str,
     itos: dict[int, str],
     n_targets: int,
+    *,
+    encounter: bool = False,
 ) -> PredictSurfaceFn:
     """Model surface on controlled mono-group history (no persistence labels)."""
     stoi = {tok: i for i, tok in itos.items()}
     base = build_controlled_group_batch(
-        group, itos, n_targets=n_targets, stoi=stoi,
+        group, itos, n_targets=n_targets, stoi=stoi, encounter=encounter,
     )
 
     def _fn(age: float, lag: float) -> np.ndarray:
         b = clone_batch(base)
         b["age"] = torch.full_like(b["age"], float(age))
         b["z_age"] = (b["age"] - 9.0) / 9.0
-        is_query = b["is_query"]
-        for j in range(b["code_ids"].size(1)):
-            if bool(is_query[0, j]):
-                continue
-            b["lag_days"][0, j] = float(lag)
-            b["tau"][0, j] = float(np.log1p(float(lag) / 7.0))
+        if encounter:
+            b["enc_lag_days"].fill_(float(lag))
+            b["enc_tau"] = torch.log1p(b["enc_lag_days"] / 7.0)
+            b["enc_tau"] = b["enc_tau"].masked_fill(b["enc_padding_mask"], 0.0)
+        else:
+            is_query = b["is_query"]
+            for j in range(b["code_ids"].size(1)):
+                if bool(is_query[0, j]):
+                    continue
+                b["lag_days"][0, j] = float(lag)
+                b["tau"][0, j] = float(np.log1p(float(lag) / 7.0))
         return np.asarray(predict_fn(b), dtype=np.float64)
 
     return _fn
@@ -189,6 +220,8 @@ def make_empty_predict_fn(
     predict_fn: Callable[[dict[str, torch.Tensor]], np.ndarray],
     itos: dict[int, str],
     n_targets: int,
+    *,
+    encounter: bool = False,
 ) -> PredictSurfaceFn:
     """Predictions with no clinical-signal history (evaluation-only).
 
@@ -197,23 +230,38 @@ def make_empty_predict_fn(
     crashes nested-tensor encoders. We keep one non-query UNK placeholder
     (not a SYN_SIGNAL_*) plus the query token so the forward pass is valid
     while remaining empty of clinical signal content.
+
+    For Content-Persistence DTR (``encounter=True``), use a single padded
+    encounter slot (zero history mass).
     """
     stoi = {tok: i for i, tok in itos.items()}
-    query_id = int(stoi.get("PRED_QUERY", 2))
-    unk_id = int(stoi.get("<UNK>", 1))
-    # type: background=10, query=2 (see synthetic_age_temporal.dataset.TYPE_STOI)
-    base = {
-        "code_ids": torch.tensor([[unk_id, query_id]], dtype=torch.long),
-        "type_ids": torch.tensor([[10, 2]], dtype=torch.long),
-        "lag_days": torch.tensor([[0.0, 0.0]], dtype=torch.float32),
-        "tau": torch.tensor([[0.0, 0.0]], dtype=torch.float32),
-        "is_query": torch.tensor([[False, True]]),
-        "is_signal": torch.tensor([[False, False]]),
-        "padding_mask": torch.tensor([[False, False]]),
-        "age": torch.tensor([9.0]),
-        "z_age": torch.tensor([0.0]),
-        "labels": torch.zeros(1, n_targets),
-    }
+    if encounter:
+        base = {
+            "enc_code_ids": torch.zeros(1, 1, 1, dtype=torch.long),
+            "enc_code_mask": torch.zeros(1, 1, 1, dtype=torch.bool),
+            "enc_lag_days": torch.zeros(1, 1, dtype=torch.float32),
+            "enc_tau": torch.zeros(1, 1, dtype=torch.float32),
+            "enc_padding_mask": torch.ones(1, 1, dtype=torch.bool),  # fully padded
+            "age": torch.tensor([9.0]),
+            "z_age": torch.tensor([0.0]),
+            "labels": torch.zeros(1, n_targets),
+        }
+    else:
+        query_id = int(stoi.get("PRED_QUERY", 2))
+        unk_id = int(stoi.get("<UNK>", 1))
+        # type: background=10, query=2 (see synthetic_age_temporal.dataset.TYPE_STOI)
+        base = {
+            "code_ids": torch.tensor([[unk_id, query_id]], dtype=torch.long),
+            "type_ids": torch.tensor([[10, 2]], dtype=torch.long),
+            "lag_days": torch.tensor([[0.0, 0.0]], dtype=torch.float32),
+            "tau": torch.tensor([[0.0, 0.0]], dtype=torch.float32),
+            "is_query": torch.tensor([[False, True]]),
+            "is_signal": torch.tensor([[False, False]]),
+            "padding_mask": torch.tensor([[False, False]]),
+            "age": torch.tensor([9.0]),
+            "z_age": torch.tensor([0.0]),
+            "labels": torch.zeros(1, n_targets),
+        }
 
     def _fn(age: float, lag: float) -> np.ndarray:
         b = clone_batch(base)
@@ -265,6 +313,8 @@ def persistence_order_correct_from_surfaces(
     predict_fn: Callable[[dict[str, torch.Tensor]], np.ndarray],
     batch: dict[str, torch.Tensor],
     itos: dict[int, str],
+    *,
+    encounter: bool = False,
 ) -> dict[str, Any]:
     """Check acute decays fastest > intermediate > chronic from CF surfaces.
 
@@ -272,12 +322,12 @@ def persistence_order_correct_from_surfaces(
     ``batch`` supplies ``n_targets`` via ``labels`` shape.
     """
     n_targets = int(batch["labels"].shape[-1])
-    empty_fn = make_empty_predict_fn(predict_fn, itos, n_targets)
+    empty_fn = make_empty_predict_fn(predict_fn, itos, n_targets, encounter=encounter)
 
     scores: dict[str, float] = {}
     for group in ("acute", "intermediate", "chronic"):
         surf = make_controlled_predict_surface_fn(
-            predict_fn, group, itos, n_targets,
+            predict_fn, group, itos, n_targets, encounter=encounter,
         )
         scores[group] = lag_decay_proxy(surf, empty_fn=empty_fn)
 
@@ -300,13 +350,14 @@ def group_surface_rmses(
     *,
     ages: tuple[float, ...] = SURFACE_AGES,
     lags_days: tuple[float, ...] = SURFACE_LAGS_DAYS,
+    encounter: bool = False,
 ) -> dict[str, float]:
     """Surface RMSE per persistence group + mean (controlled histories)."""
     n_targets = int(batch["labels"].shape[-1])
     out: dict[str, float] = {}
     for group in ("acute", "intermediate", "chronic"):
         p_surf = make_controlled_predict_surface_fn(
-            predict_fn, group, itos, n_targets,
+            predict_fn, group, itos, n_targets, encounter=encounter,
         )
         o_surf = make_controlled_oracle_surface_fn(
             group, specs, theta0, beta, scenario="S5",
@@ -376,12 +427,15 @@ def full_s5_counterfactual_report(
     cf_rmse_age: float | None = None,
     cf_rmse_lag: float | None = None,
     surface_rmse_full: float | None = None,
+    encounter: bool = False,
 ) -> dict[str, Any]:
     """Assemble S5-specific evaluation fields for a result record."""
     group_rmses = group_surface_rmses(
-        predict_fn, batch, itos, specs, theta0, beta,
+        predict_fn, batch, itos, specs, theta0, beta, encounter=encounter,
     )
-    order = persistence_order_correct_from_surfaces(predict_fn, batch, itos)
+    order = persistence_order_correct_from_surfaces(
+        predict_fn, batch, itos, encounter=encounter,
+    )
     classification = classify_heterogeneous_persistence(
         group_rmses["mean"], order["persistence_order_correct"],
     )

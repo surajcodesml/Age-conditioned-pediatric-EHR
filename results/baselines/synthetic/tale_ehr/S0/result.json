@@ -1,0 +1,126 @@
+{
+  "model": "tale_ehr",
+  "scenario": "S0",
+  "seed": 0,
+  "n_codes": 566,
+  "n_targets": 32,
+  "smoke": true,
+  "name_suffix": "",
+  "benchmark_family": "age_temporal_core",
+  "AUROC": 0.7113039021117477,
+  "AUPRC": 0.5015051634235985,
+  "BCE": 0.4934421479701996,
+  "CF_RMSE_age": 0.0747557365413309,
+  "CF_RMSE_lag": 0.07858157291971012,
+  "Surface_RMSE": 0.1087335786264148,
+  "S5_Surface_RMSE_acute": null,
+  "S5_Surface_RMSE_intermediate": null,
+  "S5_Surface_RMSE_chronic": null,
+  "S5_Surface_RMSE_mean": null,
+  "persistence_order_correct": null,
+  "mechanism_classification": "PARTIAL_RECOVERY",
+  "param_counts": {
+    "trainable_params": 4165438,
+    "total_params": 4165438,
+    "embedding_params": 145664,
+    "non_embedding_trainable": 4019774
+  },
+  "train": {
+    "best_val_bce": 0.48864804517442934,
+    "best_epoch": 2,
+    "last_epoch": 2,
+    "epochs_trained": 2,
+    "max_epochs": 2,
+    "min_epochs": 2,
+    "patience": 5,
+    "val_max_batches": null,
+    "stopped_early": false,
+    "amp": "fp32",
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.5271696712938659,
+        "val_bce": 0.49364455481555974,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 6.754338264465332
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.49531911527969574,
+        "val_bce": 0.48864804517442934,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 13.581064462661743
+      }
+    ],
+    "total_time_s": 13.665894508361816,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/tale_ehr/S0/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/tale_ehr/S0/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/tale_ehr/S0/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.4934421479701996,
+    "micro_auroc": 0.7113039021117477,
+    "macro_auroc": 0.6781057401772845,
+    "micro_auprc": 0.5015051634235985,
+    "macro_auprc": 0.4540949113780838,
+    "precision@5": 0.5202715992927551,
+    "recall@5": 0.3277226637626134
+  },
+  "model_card": {
+    "model": "tale_ehr",
+    "paper": "Yu et al., arXiv:2507.14847 (2025)",
+    "trainable_params": 4165438,
+    "embedding_params": 145664,
+    "layers": 4,
+    "heads": 4,
+    "hidden_size": 256,
+    "ffn_size": 1024,
+    "max_seq_len": 112,
+    "temporal_mechanism": "continuous_poly5_attention"
+  },
+  "benchmark_record": {
+    "scenario": "S0",
+    "model": "tale_ehr",
+    "AUROC": 0.7113039021117477,
+    "AUPRC": 0.5015051634235985,
+    "BCE": 0.4934421479701996,
+    "CF_RMSE_age": 0.0747557365413309,
+    "CF_RMSE_lag": 0.07858157291971012,
+    "Surface_RMSE": 0.1087335786264148,
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "mechanism_classification": "PARTIAL_RECOVERY"
+  },
+  "cf_report": {
+    "cf_rmse_age": 0.0747557365413309,
+    "cf_rmse_lag": 0.07858157291971012,
+    "surface_rmse": 0.1087335786264148,
+    "CF_RMSE_age": 0.0747557365413309,
+    "CF_RMSE_lag": 0.07858157291971012,
+    "Surface_RMSE": 0.1087335786264148,
+    "mechanism_classification": "PARTIAL_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "tale_ehr",
+    "scenario": "S0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "model": "tale_ehr",
+  "paper": "Yu et al., arXiv:2507.14847 (2025)",
+  "trainable_params": 4165438,
+  "embedding_params": 145664,
+  "layers": 4,
+  "heads": 4,
+  "hidden_size": 256,
+  "ffn_size": 1024,
+  "max_seq_len": 112,
+  "temporal_mechanism": "continuous_poly5_attention"
+}

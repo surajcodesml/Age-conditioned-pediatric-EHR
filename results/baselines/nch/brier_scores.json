@@ -1,0 +1,67 @@
+{
+  "retain": {
+    "brier": 8.290015559650195e-05,
+    "bce": 0.0005009789945485056,
+    "published_bce": 0.0005009901360608637,
+    "bce_delta": -1.1141512358103095e-08,
+    "n_batches": 100,
+    "n_elem": 392128000,
+    "batch_size": 128,
+    "max_batches": 100,
+    "device": "cuda",
+    "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/retain/best_checkpoint.pt",
+    "definition": "mean((sigmoid(logits)-y)^2) over all label elements"
+  },
+  "behrt": {
+    "brier": 8.550443220473199e-05,
+    "bce": 0.0005449509677479156,
+    "published_bce": 0.0005448657902888954,
+    "bce_delta": 8.517745902028064e-08,
+    "n_batches": 100,
+    "n_elem": 392128000,
+    "batch_size": 128,
+    "max_batches": 100,
+    "device": "cuda",
+    "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/behrt/best_checkpoint.pt",
+    "definition": "mean((sigmoid(logits)-y)^2) over all label elements"
+  },
+  "cehrbert": {
+    "brier": 8.544324396562086e-05,
+    "bce": 0.0005433208894550616,
+    "published_bce": 0.000543269095942378,
+    "bce_delta": 5.17935126835567e-08,
+    "n_batches": 100,
+    "n_elem": 392128000,
+    "batch_size": 128,
+    "max_batches": 100,
+    "device": "cuda",
+    "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/cehrbert/best_checkpoint.pt",
+    "definition": "mean((sigmoid(logits)-y)^2) over all label elements"
+  },
+  "dtr_no_interaction": {
+    "brier": 7.529340439020216e-05,
+    "bce": 0.0004147887299184175,
+    "published_bce": 0.0004147475119680166,
+    "bce_delta": 4.1217950400886105e-08,
+    "n_batches": 100,
+    "n_elem": 392128000,
+    "batch_size": 128,
+    "max_batches": 100,
+    "device": "cuda",
+    "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/dtr_no_interaction/best_checkpoint.pt",
+    "definition": "mean((sigmoid(logits)-y)^2) over all label elements"
+  },
+  "dtr_age_temporal": {
+    "brier": 7.589503400415663e-05,
+    "bce": 0.0004173106214866682,
+    "published_bce": 0.00041728687938302755,
+    "bce_delta": 2.374210364061973e-08,
+    "n_batches": 100,
+    "n_elem": 392128000,
+    "batch_size": 128,
+    "max_batches": 100,
+    "device": "cuda",
+    "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/nch/dtr_age_temporal/best_checkpoint.pt",
+    "definition": "mean((sigmoid(logits)-y)^2) over all label elements"
+  }
+}

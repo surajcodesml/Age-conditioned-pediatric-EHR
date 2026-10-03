@@ -1,0 +1,133 @@
+{
+  "model": "nest",
+  "scenario": "S0",
+  "seed": 0,
+  "n_codes": 566,
+  "n_targets": 32,
+  "smoke": true,
+  "name_suffix": "",
+  "benchmark_family": "age_temporal_core",
+  "AUROC": 0.6974447568354595,
+  "AUPRC": 0.47957819225259213,
+  "BCE": 0.5022295713424683,
+  "CF_RMSE_age": 0.0928864450032537,
+  "CF_RMSE_lag": 0.12297842712969152,
+  "Surface_RMSE": 0.14826718880160572,
+  "S5_Surface_RMSE_acute": null,
+  "S5_Surface_RMSE_intermediate": null,
+  "S5_Surface_RMSE_chronic": null,
+  "S5_Surface_RMSE_mean": null,
+  "persistence_order_correct": null,
+  "mechanism_classification": "PARTIAL_RECOVERY",
+  "param_counts": {
+    "trainable_params": 6734938,
+    "total_params": 6734938,
+    "embedding_params": 145920,
+    "non_embedding_trainable": 6589018
+  },
+  "train": {
+    "best_val_bce": 0.4994796440980145,
+    "best_epoch": 2,
+    "last_epoch": 2,
+    "epochs_trained": 2,
+    "max_epochs": 2,
+    "min_epochs": 2,
+    "patience": 5,
+    "val_max_batches": null,
+    "stopped_early": false,
+    "amp": "fp32",
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.5331879750446937,
+        "val_bce": 0.50548504557565,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 33.36352515220642
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.5076786060990288,
+        "val_bce": 0.4994796440980145,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 66.81197261810303
+      }
+    ],
+    "total_time_s": 66.936851978302,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/nest/S0/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/nest/S0/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/synthetic/nest/S0/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.5022295713424683,
+    "micro_auroc": 0.6974447568354595,
+    "macro_auroc": 0.6641574460383353,
+    "micro_auprc": 0.47957819225259213,
+    "macro_auprc": 0.4346029554629631,
+    "precision@5": 0.5076624751091003,
+    "recall@5": 0.3204996115180269
+  },
+  "model_card": {
+    "model": "nest",
+    "paper": "Sun et al., arXiv:2602.00520 (2026)",
+    "trainable_params": 6734938,
+    "embedding_params": 145920,
+    "layers": 4,
+    "heads": 4,
+    "hidden_size": 256,
+    "ffn_size": 683,
+    "max_encounters": 32,
+    "max_codes_per_encounter": 32,
+    "temporal_mechanism": "interleaved_swe_cse_rope",
+    "feasibility_status": {
+      "official_code_available": false,
+      "official_weights_available": false,
+      "architecture_reproducible_from_paper": true,
+      "note": "NEST architecture (SWE + CSE + RoPE + SwiGLU + MSM) is fully and faithfully reproduced from Section 3 of Sun et al. (arXiv:2602.00520). Official pretrained weights on proprietary Duke CDM data remain unreleased pending paper acceptance."
+    }
+  },
+  "benchmark_record": {
+    "scenario": "S0",
+    "model": "nest",
+    "AUROC": 0.6974447568354595,
+    "AUPRC": 0.47957819225259213,
+    "BCE": 0.5022295713424683,
+    "CF_RMSE_age": 0.0928864450032537,
+    "CF_RMSE_lag": 0.12297842712969152,
+    "Surface_RMSE": 0.14826718880160572,
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "mechanism_classification": "PARTIAL_RECOVERY"
+  },
+  "cf_report": {
+    "cf_rmse_age": 0.0928864450032537,
+    "cf_rmse_lag": 0.12297842712969152,
+    "surface_rmse": 0.14826718880160572,
+    "CF_RMSE_age": 0.0928864450032537,
+    "CF_RMSE_lag": 0.12297842712969152,
+    "Surface_RMSE": 0.14826718880160572,
+    "mechanism_classification": "PARTIAL_RECOVERY",
+    "S5_Surface_RMSE_acute": null,
+    "S5_Surface_RMSE_intermediate": null,
+    "S5_Surface_RMSE_chronic": null,
+    "S5_Surface_RMSE_mean": null,
+    "persistence_order_correct": null,
+    "thresholds": {
+      "functional": 0.1,
+      "partial": 0.25,
+      "s0_max_cf_age": 0.05
+    },
+    "model": "nest",
+    "scenario": "S0"
+  }
+}

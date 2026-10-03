@@ -1,0 +1,19 @@
+{
+  "model": "nest",
+  "paper": "Sun et al., arXiv:2602.00520 (2026)",
+  "trainable_params": 30025306,
+  "embedding_params": 7843584,
+  "layers": 4,
+  "heads": 4,
+  "hidden_size": 256,
+  "ffn_size": 683,
+  "max_encounters": 32,
+  "max_codes_per_encounter": 32,
+  "temporal_mechanism": "interleaved_swe_cse_rope",
+  "feasibility_status": {
+    "official_code_available": false,
+    "official_weights_available": false,
+    "architecture_reproducible_from_paper": true,
+    "note": "NEST architecture (SWE + CSE + RoPE + SwiGLU + MSM) is fully and faithfully reproduced from Section 3 of Sun et al. (arXiv:2602.00520). Official pretrained weights on proprietary Duke CDM data remain unreleased pending paper acceptance."
+  }
+}

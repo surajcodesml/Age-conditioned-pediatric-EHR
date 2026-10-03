@@ -1,0 +1,96 @@
+# CEHR-BERT-small — parameter-matched capacity control for PRIMARY S2 32-target.
+#
+# Scientific goal: match DTR trainable capacity (~55,107) while preserving
+# CEHR-BERT's age/time architecture (Time2Vec age + Time2Vec elapsed time,
+# concept+segment+time+age concat → projection → Transformer).
+#
+# Do NOT use this config to overwrite full CEHR-BERT artifacts under
+# results/baselines/synthetic/cehrbert/.
+
+experiment: cehr_bert_small_s2_32target
+model_name: cehrbert_small
+scenario: S2
+n_targets: 32
+data_seed: 20260922
+
+# Architecture (capacity-control only; age/time inputs retained)
+architecture:
+  d_model: 32
+  d_ff: 88
+  n_layers: 3
+  n_heads: 4
+  dropout: 0.1
+  time_dim: 32          # same Time2Vec dim as full CEHR-BERT
+  age_dim: 32           # same Time2Vec dim as full CEHR-BERT
+  max_seq_len: 112      # MAX_SEQ_LEN(96) + 16, matches full baseline
+
+# Parameter accounting (count_parameters convention; n_codes=566, n_targets=32)
+parameter_count:
+  target_trainable: 55107          # DTR age_temporal
+  acceptable_range: [50000, 60000]
+  preferred_delta: 2500
+  chosen_trainable: 55016
+  frozen: 0
+  total: 55016
+  code_embeddings_trainable: true
+  segment_embeddings_trainable: true
+  notes: >
+    Chosen among candidates with time_dim=age_dim=32 fixed (representation
+    semantics unchanged). Closest multi-layer config: Δ=91 vs DTR.
+    Heads do not change PyTorch MultiheadAttention parameter count when
+    d_model is fixed; n_heads=4 chosen for architectural validity (32 % 4 == 0).
+
+# Candidate table (time_dim=age_dim=32, n_codes=566, n_targets=32)
+candidates:
+  - {hidden_dim: 32, ffn_dim: 88, layers: 3, heads: 4, trainable_params: 55016}
+  - {hidden_dim: 36, ffn_dim: 108, layers: 2, heads: 4, trainable_params: 54988}
+  - {hidden_dim: 48, ffn_dim: 64, layers: 1, heads: 4, trainable_params: 55136}
+  - {hidden_dim: 32, ffn_dim: 48, layers: 4, heads: 4, trainable_params: 54720}
+  - {hidden_dim: 40, ffn_dim: 64, layers: 2, heads: 4, trainable_params: 55688}
+
+# Full CEHR-BERT reference (same pipeline, unchanged)
+full_cehrbert_reference:
+  d_model: 128
+  d_ff: 512
+  n_layers: 5
+  n_heads: 8
+  time_dim: 32
+  age_dim: 32
+  trainable_params_approx: 1126304
+
+# Training (matched to full CEHR-BERT / synthetic baseline protocol)
+training:
+  lr: 3.0e-4
+  weight_decay: 1.0e-2
+  max_epochs: 25
+  patience: 5
+  grad_clip: 1.0
+  batch_size: 32
+  checkpoint_selection: best_val_bce
+  loss: BCEWithLogitsLoss
+  seeds: [0, 1, 2, 3, 4]   # seed 0 = canonical (matches DTR); 1–4 = uncertainty
+  device_preference: cuda   # GPU0 (R9700); iGPU GPU1 is not ROCm-capable for this torch build
+
+# Evaluation
+evaluation:
+  primary: 32_target
+  secondary_interaction_only: 8   # first 8 targets with mechanism=interaction
+  counterfactual:
+    - CF_RMSE_age
+    - CF_RMSE_lag
+    - Surface_RMSE
+  save_artifacts:
+    - age_cf_curves
+    - lag_cf_curves
+    - age_lag_surface
+    - residual_surface_vs_oracle
+
+# Output paths (never overwrite full cehrbert/)
+paths:
+  results_root: results/baselines/synthetic/cehrbert_small
+  report: analysis/cehr_small_s2/report.md
+  figures:
+    - figures/final/capacity_vs_surface_rmse.svg
+    - figures/final/capacity_vs_surface_rmse.png
+    - figures/final/capacity_vs_auprc.svg
+    - figures/final/capacity_vs_auprc.png

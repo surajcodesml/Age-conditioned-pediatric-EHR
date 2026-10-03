@@ -33,7 +33,7 @@ S5_SCENARIO = "S5"
 # Full synthetic baseline suite (no S6 / multi-horizon).
 BENCHMARK_SCENARIOS: tuple[str, ...] = CORE_SCENARIOS + (S5_SCENARIO,)
 
-# Keys allowed into model forward / training_step.
+# Keys allowed into model forward / training_step (token-level baselines).
 MODEL_INPUT_KEYS: frozenset[str] = frozenset(
     {
         "code_ids",
@@ -42,6 +42,20 @@ MODEL_INPUT_KEYS: frozenset[str] = frozenset(
         "tau",
         "is_query",
         "padding_mask",
+        "age",
+        "z_age",
+        "labels",
+    }
+)
+
+# Encounter-level keys for Content-Persistence DTR.
+DTR_ENCOUNTER_INPUT_KEYS: frozenset[str] = frozenset(
+    {
+        "enc_code_ids",
+        "enc_code_mask",
+        "enc_tau",
+        "enc_lag_days",
+        "enc_padding_mask",
         "age",
         "z_age",
         "labels",
@@ -106,9 +120,14 @@ def load_splits(scenario: str, data_seed: int = 20260922) -> dict[str, list[str]
         return json.load(f)
 
 
-def strip_eval_only(batch: dict[str, Any]) -> dict[str, Any]:
+def strip_eval_only(
+    batch: dict[str, Any],
+    *,
+    allowed_keys: frozenset[str] | None = None,
+) -> dict[str, Any]:
     """Return a copy containing only model-visible tensors."""
-    return {k: v for k, v in batch.items() if k in MODEL_INPUT_KEYS}
+    keys = allowed_keys if allowed_keys is not None else MODEL_INPUT_KEYS
+    return {k: v for k, v in batch.items() if k in keys}
 
 
 def assert_no_eval_leakage(batch: dict[str, Any]) -> None:
@@ -170,11 +189,66 @@ def make_baseline_loaders(
     return train_loader, val_loader, test_loader, vocab, info
 
 
-def model_batch(batch: dict[str, Any]) -> dict[str, Any]:
-    """Strip evaluation-only fields and assert no leakage."""
-    out = strip_eval_only(batch)
+def model_batch(
+    batch: dict[str, Any],
+    *,
+    encounter: bool = False,
+) -> dict[str, Any]:
+    """Strip evaluation-only fields and assert no leakage.
+
+    ``encounter=True`` keeps Content-Persistence DTR enc_* tensors.
+    """
+    allowed = DTR_ENCOUNTER_INPUT_KEYS if encounter else MODEL_INPUT_KEYS
+    out = strip_eval_only(batch, allowed_keys=allowed)
     assert_no_eval_leakage(out)
     return out
+
+
+def make_dtr_baseline_loaders(
+    scenario: str,
+    *,
+    data_seed: int = 20260922,
+    batch_size: int = 32,
+    max_seq_len: int = MAX_SEQ_LEN,
+    num_workers: int = 0,
+) -> tuple[Any, Any, Any, Any, dict[str, Any]]:
+    """Encounter-level loaders for Content-Persistence DTR baselines."""
+    if scenario not in BENCHMARK_SCENARIOS:
+        raise ValueError(
+            f"Scenario {scenario} is not part of the synthetic baseline benchmark. "
+            f"Supported: {BENCHMARK_SCENARIOS}"
+        )
+    from synthetic_age_temporal.dataset_dtr import make_dtr_loaders
+
+    sdir = scenario_dir(scenario, data_seed)
+    if not sdir.exists():
+        raise FileNotFoundError(f"Scenario directory not found: {sdir}")
+
+    train_loader, val_loader, test_loader, vocab, info = make_dtr_loaders(
+        sdir,
+        batch_size=batch_size,
+        max_seq_len=max_seq_len,
+        num_workers=num_workers,
+    )
+    info = dict(info)
+    info["adapter"] = {
+        "scenario": scenario,
+        "scenario_dir": str(sdir),
+        "is_core": scenario in CORE_SCENARIOS,
+        "is_s5": scenario == S5_SCENARIO,
+        "model_input_keys": sorted(DTR_ENCOUNTER_INPUT_KEYS),
+        "eval_only_keys": sorted(EVAL_ONLY_KEYS),
+        "batch_format": "encounter",
+        "s5_persistence_groups": (
+            {g: list(codes) for g, codes in S5_PERSISTENCE_GROUPS.items()}
+            if scenario == S5_SCENARIO
+            else None
+        ),
+    }
+    info["n_types"] = info.get("n_types", 11)  # unused by CP DTR; kept for build_model
+    info["vocab"] = vocab
+    info["scenario_dir"] = sdir
+    return train_loader, val_loader, test_loader, vocab, info
 
 
 def clone_batch(batch: dict[str, Any]) -> dict[str, Any]:

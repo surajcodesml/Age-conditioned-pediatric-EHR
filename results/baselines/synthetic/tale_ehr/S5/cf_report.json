@@ -1,0 +1,26 @@
+{
+  "cf_rmse_age": 0.14371534875222466,
+  "cf_rmse_lag": 0.09475210288830277,
+  "surface_rmse": 0.18001660147076629,
+  "CF_RMSE_age": 0.14371534875222466,
+  "CF_RMSE_lag": 0.09475210288830277,
+  "Surface_RMSE": 0.18001660147076629,
+  "mechanism_classification": "PARTIAL_HETEROGENEOUS_PERSISTENCE_RECOVERY",
+  "S5_Surface_RMSE_acute": 0.10853724533749806,
+  "S5_Surface_RMSE_intermediate": 0.15520167807062224,
+  "S5_Surface_RMSE_chronic": 0.13480855705662592,
+  "S5_Surface_RMSE_mean": 0.1328491601549154,
+  "persistence_order_correct": true,
+  "thresholds": {
+    "functional": 0.1,
+    "partial": 0.25,
+    "s0_max_cf_age": 0.05
+  },
+  "decay_proxy": {
+    "acute": 0.4608840532788327,
+    "intermediate": 0.19571540284473188,
+    "chronic": 0.14797395363189192
+  },
+  "model": "tale_ehr",
+  "scenario": "S5"
+}

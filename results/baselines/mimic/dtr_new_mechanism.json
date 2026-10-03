@@ -1,0 +1,119 @@
+{
+  "name_suffix": "_new",
+  "architecture": "Content-Persistence DTR",
+  "seed": 0,
+  "test_max_batches": 100,
+  "arms": {
+    "temporal_only": {
+      "run_dir": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/dtr_temporal_only_new",
+      "result_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/dtr_temporal_only_new/result.json",
+      "best_epoch": 10,
+      "best_val_bce": 0.009913821218374485,
+      "val_history_tail": [
+        {
+          "epoch": 10,
+          "train_loss": 0.010607718356672494,
+          "val_bce": 0.009913821218374485,
+          "val_micro_auroc": NaN,
+          "val_macro_auroc": NaN,
+          "val_micro_auprc": NaN,
+          "val_macro_auprc": NaN,
+          "time_s": 1487.864718914032
+        }
+      ],
+      "test_metrics": {
+        "bce": 0.010547430254518986,
+        "micro_auroc": 0.9863080146618561,
+        "macro_auroc": NaN,
+        "micro_auprc": 0.4346993617987172,
+        "macro_auprc": NaN,
+        "precision@5": 0.7809999585151672,
+        "recall@5": 0.05903509259223938,
+        "micro_subsampled_to": 5000000,
+        "macro_skipped": true,
+        "macro_skip_reason": "n_classes=30635>2000"
+      },
+      "theta0": 0.14370284974575043,
+      "beta": 0.0,
+      "lambda_of_age": {
+        "1.0": 0.7675777077674866,
+        "5.0": 0.7675777077674866,
+        "10.0": 0.7675777077674866,
+        "18.0": 0.7675777077674866,
+        "40.0": 0.7675777077674866,
+        "65.0": 0.7675777077674866,
+        "80.0": 0.7675777077674866
+      },
+      "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/dtr_temporal_only_new/best_checkpoint.pt",
+      "age_shuffle": {
+        "bce_full": 0.010547617298871478,
+        "bce_age_shuffle": 0.010733594029922947,
+        "delta_bce": 0.00018597673105146852
+      }
+    },
+    "age_temporal": {
+      "run_dir": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/dtr_age_temporal_new",
+      "result_path": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/dtr_age_temporal_new/result.json",
+      "best_epoch": 9,
+      "best_val_bce": 0.009949116901878979,
+      "val_history_tail": [
+        {
+          "epoch": 10,
+          "train_loss": 0.010610553581351065,
+          "val_bce": 0.009950037479789762,
+          "val_micro_auroc": NaN,
+          "val_macro_auroc": NaN,
+          "val_micro_auprc": NaN,
+          "val_macro_auprc": NaN,
+          "time_s": 1457.1211524009705
+        }
+      ],
+      "test_metrics": {
+        "bce": 0.010556225664913654,
+        "micro_auroc": 0.9862578972652277,
+        "macro_auroc": NaN,
+        "micro_auprc": 0.4354562446336449,
+        "macro_auprc": NaN,
+        "precision@5": 0.7816874980926514,
+        "recall@5": 0.060208722949028015,
+        "micro_subsampled_to": 5000000,
+        "macro_skipped": true,
+        "macro_skip_reason": "n_classes=30635>2000"
+      },
+      "theta0": 0.12951752543449402,
+      "beta": 0.05510467290878296,
+      "lambda_of_age": {
+        "1.0": 0.7342255115509033,
+        "5.0": 0.7470386028289795,
+        "10.0": 0.7632653713226318,
+        "18.0": 0.7897129058837891,
+        "40.0": 0.8655005097389221,
+        "65.0": 0.9569813013076782,
+        "80.0": 1.0145410299301147
+      },
+      "checkpoint": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/dtr_age_temporal_new/best_checkpoint.pt",
+      "age_shuffle": {
+        "bce_full": 0.010556414806377796,
+        "bce_age_shuffle": 0.010743339143843018,
+        "delta_bce": 0.0001869243374652222
+      },
+      "beta0": {
+        "bce_full": 0.010556414806377796,
+        "bce_beta0": 0.01056524792685679,
+        "delta_bce": 8.833120478994594e-06,
+        "beta_restored": 0.05510467290878296
+      }
+    }
+  },
+  "delta_age_temporal_minus_temporal_only": {
+    "bce": 8.795410394668579e-06,
+    "micro_auroc": -5.011739662841297e-05,
+    "micro_auprc": 0.0007568828349276968,
+    "precision@5": 0.0006875395774841309,
+    "recall@5": 0.0011736303567886353,
+    "beta_at": 0.05510467290878296,
+    "beta_to": 0.0,
+    "theta0_at": 0.12951752543449402,
+    "theta0_to": 0.14370284974575043
+  }
+}

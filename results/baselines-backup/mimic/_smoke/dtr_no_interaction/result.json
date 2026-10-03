@@ -1,0 +1,77 @@
+{
+  "model": "dtr_no_interaction",
+  "seed": 0,
+  "smoke": true,
+  "n_codes": 30635,
+  "arm": "no_interaction",
+  "param_counts": {
+    "trainable_params": 13949996,
+    "total_params": 13949997,
+    "embedding_params": 0,
+    "non_embedding_trainable": 13949996
+  },
+  "train": {
+    "best_val_bce": 0.015608005481346022,
+    "best_epoch": 2,
+    "last_epoch": 2,
+    "epochs_trained": 2,
+    "max_epochs": 2,
+    "min_epochs": 2,
+    "patience": 3,
+    "stopped_early": false,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.028283590894369853,
+        "val_bce": 0.017017253428222908,
+        "val_micro_auroc": 0.772822006302734,
+        "val_macro_auroc": 0.4905563694815717,
+        "val_micro_auprc": 0.04021770909973433,
+        "val_macro_auprc": 0.3649599993195228,
+        "val_precision@5": 0.3428571428571429,
+        "val_recall@5": 0.023037754843167477,
+        "time_s": 0.40014028549194336
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.026237599906467256,
+        "val_bce": 0.015608005481346022,
+        "val_micro_auroc": 0.8366889694715378,
+        "val_macro_auroc": 0.5155124144847865,
+        "val_micro_auprc": 0.07042204896919489,
+        "val_macro_auprc": 0.3759984792504651,
+        "val_precision@5": 0.3428571428571429,
+        "val_recall@5": 0.023037754843167477,
+        "time_s": 0.8641223907470703
+      }
+    ],
+    "total_time_s": 1.525808572769165,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/dtr_no_interaction/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/dtr_no_interaction/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/dtr_no_interaction/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.007017579779520573,
+    "micro_auroc": 0.8792683732306142,
+    "macro_auroc": 0.4336686787391013,
+    "micro_auprc": 0.04851281529291453,
+    "macro_auprc": 0.3509043147775542,
+    "precision@5": 0.275,
+    "recall@5": 0.031356457672247144
+  },
+  "model_card": {
+    "name": "dtr_no_interaction",
+    "arm": "no_interaction",
+    "n_codes": 30635,
+    "d_model": 256,
+    "n_heads": 4,
+    "n_layers": 4
+  },
+  "AUROC": 0.8792683732306142,
+  "AUPRC": 0.04851281529291453,
+  "BCE": 0.007017579779520573,
+  "best_val_bce": 0.015608005481346022,
+  "epochs_trained": 2
+}

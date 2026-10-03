@@ -1,0 +1,95 @@
+{
+  "model": "nest",
+  "seed": 0,
+  "smoke": true,
+  "n_codes": 30635,
+  "batch_size": 8,
+  "test_batch_size": 8,
+  "val_max_batches": null,
+  "test_max_batches": null,
+  "name_suffix": "",
+  "grad_accum_steps": 1,
+  "effective_batch_size": 8,
+  "amp": "bf16",
+  "param_counts": {
+    "trainable_params": 30025306,
+    "total_params": 30025306,
+    "embedding_params": 7843584,
+    "non_embedding_trainable": 22181722
+  },
+  "train": {
+    "best_val_bce": 0.6299425916318869,
+    "best_epoch": 2,
+    "last_epoch": 2,
+    "epochs_trained": 2,
+    "max_epochs": 2,
+    "min_epochs": 2,
+    "patience": 3,
+    "val_max_batches": null,
+    "stopped_early": false,
+    "amp": "bf16",
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.6914574617431277,
+        "val_bce": 0.6732979683018956,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 0.15657854080200195
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.6635682185490926,
+        "val_bce": 0.6299425916318869,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 0.4763152599334717
+      }
+    ],
+    "total_time_s": 0.838111162185669,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/nest/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/nest/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/_smoke/nest/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.6297959089279175,
+    "micro_auroc": 0.5752869147631308,
+    "macro_auroc": NaN,
+    "micro_auprc": 0.0018179283448388195,
+    "macro_auprc": NaN,
+    "precision@5": 0.0,
+    "recall@5": 0.0,
+    "macro_skipped": true,
+    "macro_skip_reason": "n_classes=30635>2000"
+  },
+  "model_card": {
+    "model": "nest",
+    "paper": "Sun et al., arXiv:2602.00520 (2026)",
+    "trainable_params": 30025306,
+    "embedding_params": 7843584,
+    "layers": 4,
+    "heads": 4,
+    "hidden_size": 256,
+    "ffn_size": 683,
+    "max_encounters": 32,
+    "max_codes_per_encounter": 32,
+    "temporal_mechanism": "interleaved_swe_cse_rope",
+    "feasibility_status": {
+      "official_code_available": false,
+      "official_weights_available": false,
+      "architecture_reproducible_from_paper": true,
+      "note": "NEST architecture (SWE + CSE + RoPE + SwiGLU + MSM) is fully and faithfully reproduced from Section 3 of Sun et al. (arXiv:2602.00520). Official pretrained weights on proprietary Duke CDM data remain unreleased pending paper acceptance."
+    }
+  },
+  "AUROC": 0.5752869147631308,
+  "AUPRC": 0.0018179283448388195,
+  "BCE": 0.6297959089279175,
+  "best_val_bce": 0.6299425916318869,
+  "epochs_trained": 2
+}

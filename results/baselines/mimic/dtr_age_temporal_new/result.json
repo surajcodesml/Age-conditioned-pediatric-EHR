@@ -1,0 +1,175 @@
+{
+  "model": "dtr_age_temporal_new",
+  "seed": 0,
+  "smoke": false,
+  "n_codes": 30635,
+  "batch_size": 32,
+  "val_max_batches": 50,
+  "test_max_batches": 100,
+  "name_suffix": "_new",
+  "grad_accum_steps": 1,
+  "effective_batch_size": 32,
+  "arm": "age_temporal",
+  "architecture": "Content-Persistence DTR",
+  "param_counts": {
+    "trainable_params": 2165423,
+    "total_params": 2165423,
+    "embedding_params": 0,
+    "non_embedding_trainable": 2165423
+  },
+  "train": {
+    "best_val_bce": 0.009949116901878979,
+    "best_epoch": 9,
+    "last_epoch": 10,
+    "epochs_trained": 10,
+    "max_epochs": 10,
+    "min_epochs": 5,
+    "patience": 3,
+    "val_max_batches": 50,
+    "stopped_early": false,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.015807276324169648,
+        "val_bce": 0.011356158007955948,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 327.7246277332306
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.012036912202847003,
+        "val_bce": 0.011077122646734612,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 452.9062190055847
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.011777554728889163,
+        "val_bce": 0.010829326357560542,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 578.5650761127472
+      },
+      {
+        "epoch": 4,
+        "train_loss": 0.011530369596267222,
+        "val_bce": 0.010511218026623323,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 704.1389079093933
+      },
+      {
+        "epoch": 5,
+        "train_loss": 0.011102407290150699,
+        "val_bce": 0.010224708194773136,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 829.4926316738129
+      },
+      {
+        "epoch": 6,
+        "train_loss": 0.01090711585056374,
+        "val_bce": 0.010112365184726033,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 955.053275346756
+      },
+      {
+        "epoch": 7,
+        "train_loss": 0.010794015820932422,
+        "val_bce": 0.010001201835720733,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 1080.7239120006561
+      },
+      {
+        "epoch": 8,
+        "train_loss": 0.010711162577481266,
+        "val_bce": 0.01004053144795832,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 1206.2828810214996
+      },
+      {
+        "epoch": 9,
+        "train_loss": 0.0106524179615806,
+        "val_bce": 0.009949116901878979,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 1331.59947681427
+      },
+      {
+        "epoch": 10,
+        "train_loss": 0.010610553581351065,
+        "val_bce": 0.009950037479789762,
+        "val_micro_auroc": NaN,
+        "val_macro_auroc": NaN,
+        "val_micro_auprc": NaN,
+        "val_macro_auprc": NaN,
+        "time_s": 1457.1211524009705
+      }
+    ],
+    "total_time_s": 1457.6081705093384,
+    "checkpoints": {
+      "best": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/dtr_age_temporal_new/best_checkpoint.pt",
+      "last": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/dtr_age_temporal_new/last_checkpoint.pt",
+      "canonical": "/home/suraj/Git/Age-conditioned-pediatric-EHR/results/baselines/mimic/dtr_age_temporal_new/checkpoint.pt"
+    }
+  },
+  "test_metrics": {
+    "bce": 0.010556225664913654,
+    "micro_auroc": 0.9862578972652277,
+    "macro_auroc": NaN,
+    "micro_auprc": 0.4354562446336449,
+    "macro_auprc": NaN,
+    "precision@5": 0.7816874980926514,
+    "recall@5": 0.060208722949028015,
+    "micro_subsampled_to": 5000000,
+    "macro_skipped": true,
+    "macro_skip_reason": "n_classes=30635>2000"
+  },
+  "model_card": {
+    "name": "dtr_age_temporal",
+    "arm": "age_temporal",
+    "architecture": "Content-Persistence DTR",
+    "n_codes": 30635,
+    "d_model": 64,
+    "aggregation": "raw_additive",
+    "code_embeddings": "frozen_bge_plus_linear_proj",
+    "n_emb_codes": 30637,
+    "model": "Content-Persistence DTR",
+    "content_dependent_persistence": true,
+    "persistence_projection": "linear",
+    "temporal_aggregation": "raw_additive",
+    "num_content_queries": 1,
+    "age_conditioning": "linear_softplus",
+    "beta_scope": "global",
+    "age_temporal": true,
+    "content_score_exp_clamp": 20.0
+  },
+  "AUROC": 0.9862578972652277,
+  "AUPRC": 0.4354562446336449,
+  "BCE": 0.010556225664913654,
+  "best_val_bce": 0.009949116901878979,
+  "epochs_trained": 10
+}

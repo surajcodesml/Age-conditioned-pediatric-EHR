@@ -1,0 +1,23 @@
+{
+  "architecture": "direct",
+  "surface_rmse": 0.2029098075910483,
+  "cf_rmse_age": 0.17384077453083588,
+  "cf_rmse_lag": 0.15986874340861015,
+  "beta": [
+    0.0
+  ],
+  "theta": [
+    -1.458236813545227
+  ],
+  "abs_beta_mean": 0.0,
+  "beta_true": 0.0,
+  "theta0_true": 0.0,
+  "lambda_rmse": 0.48398402142794156,
+  "lambda_corr": null,
+  "mean_gate": [
+    0.5196796985344417
+  ],
+  "mean_mass": [
+    10.678384575533936
+  ]
+}
